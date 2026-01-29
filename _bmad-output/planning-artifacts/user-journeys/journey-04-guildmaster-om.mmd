@@ -1,0 +1,111 @@
+%% Journey 4: Guild Master Om (Project Manager)
+%% CORRECTED: เห็นภาพรวม 6 HP Bars ของทุก Flow + 4 Task Sheets
+%% BUG = กองหนุนจากราชาปีศาจ (ไม่ใช่ Minion ปกติ)
+%% MCOP Quest = Read-Only, Auto-Sync ทุก 1 นาที
+
+flowchart TD
+    subgraph CONTEXT["Guild Master Om - Project Manager"]
+        CTX1["<b>บทบาท:</b> Project Manager"]
+        CTX2["<b>ดูแล:</b> ภาพรวมทั้งโปรเจค"]
+        CTX3["<b>เป้าหมาย:</b> รู้ว่าอยู่ตรงไหน<br/>มี Bottleneck อะไร"]
+    end
+
+    subgraph DATASOURCE["Google Sheets - Data Sources"]
+        direction TB
+        DS1["<b>Flows Sheet</b><br/>6 status columns ต่อ Flow"]
+
+        subgraph MINIONS["👾 Minions (Tasks ปกติ)"]
+            DS2["UI-tasks - Designer"]
+            DS3["API-tasks - Backend"]
+            DS4["FE-tasks - Frontend"]
+        end
+
+        subgraph DEMONS["👹 Demon Reinforcements"]
+            DS5["<b>Bugs Sheet</b><br/>กองหนุนจากราชาปีศาจ<br/>มาจากประตูมิติ<br/>ไม่รู้จำนวน ไม่รู้เวลา<br/>ฆ่าแล้วไม่ได้ XP"]
+        end
+
+        DS1 --- MINIONS
+        DS1 --- DEMONS
+    end
+
+    subgraph QUEST["MCOP Quest - PM Dashboard View"]
+        direction TB
+
+        subgraph WORLDMAP["World Map Level"]
+            WM1["เห็น Cities (Systems) ทั้งหมด"]
+            WM2["สีบอก Health รวม<br/>🟢 On Track | 🟡 At Risk | 🔴 Blocked"]
+            WM3["⚠️ Portal Alert!<br/>เมื่อมี Bug ใหม่"]
+        end
+
+        subgraph CITYVIEW["City View (System Level)"]
+            CV1["คลิกเข้า City"]
+            CV2["เห็น Commanders ทั้งหมด"]
+            CV3["👹 Demon Portal Icon<br/>ถ้า City มี Bug"]
+        end
+
+        subgraph COMMANDER["Commander View (Flow Level)"]
+            CM1["<b>Flow: ระบบ Login</b>"]
+            CM2["📐 Design ████████ 100% ✓"]
+            CM3["📋 AC ████████ 100% ✓"]
+            CM4["⚙️ API ██████░░ 80%"]
+            CM5["💻 FE/App ████░░░░ 50% ← Bottleneck"]
+            CM6["🧪 Testing ░░░░░░░░ 0%"]
+            CM7["✅ UAT ░░░░░░░░ 0%"]
+        end
+
+        subgraph MINIONSVIEW["Minions View (Task Level)"]
+            MN1["🎨 UI Tasks (5/5 Done)"]
+            MN2["⚙️ API Tasks (4/5 Done)"]
+            MN3["💻 FE Tasks (2/4 Done)"]
+        end
+
+        subgraph BUGPORTAL["👹 Demon Portal View"]
+            BG1["กองหนุนจากราชาปีศาจ"]
+            BG2["มาจากประตูมิติ - ไม่รู้เวลา"]
+            BG3["🔴 BUG-001: Login Error"]
+            BG4["🔴 BUG-002: Payment Crash"]
+            BG5["⚠️ ฆ่าแล้วไม่ได้ XP<br/>แต่ต้องกำจัดให้หมด"]
+        end
+
+        WORLDMAP --> CITYVIEW --> COMMANDER
+        COMMANDER --> MINIONSVIEW
+        COMMANDER --> BUGPORTAL
+    end
+
+    subgraph BOTTLENECK["Bottleneck Detection"]
+        B1["Om เห็น FE/App HP ต่ำ"]
+        B2["คลิกดู FE Tasks"]
+        B3["เห็นว่า Task ติด 'Blocked'"]
+        B4["รู้ว่าต้องไปคุยกับ FE Team"]
+    end
+
+    subgraph PRESENT["Present to Stakeholder"]
+        P1["👔 ผู้บริหารถาม<br/>'Login จะเสร็จเมื่อไหร่?'"]
+        P2["Om เปิด MCOP Quest"]
+        P3["ชี้ไปที่ 6 HP Bars"]
+        P4["'Design AC เสร็จแล้ว<br/>API 80% FE 50%<br/>รอ FE อีก 2 Tasks<br/>+ มี Bug 2 ตัวต้องจัดการ'"]
+        P5["👔 'เห็นภาพเลย'"]
+    end
+
+    subgraph INSIGHT["Om ได้อะไรจาก Dashboard"]
+        I1["✅ เห็น Pipeline ชัด<br/>6 HP Bars บอกหมด"]
+        I2["✅ รู้ Bottleneck ทันที<br/>HP ไหนต่ำผิดปกติ"]
+        I3["✅ Present ได้ทันที<br/>ไม่ต้องทำ Report"]
+        I4["✅ ดู Team Performance"]
+        I5["⚠️ เห็น Bug Portal<br/>รู้ว่ามี Demon เข้ามา"]
+    end
+
+    subgraph TELEGRAM["Telegram Notifications"]
+        T1["'Flow Login ผ่าน UAT แล้ว! 🎉'"]
+        T2["'Flow Payment ติด Testing 2 วันแล้ว ⚠️'"]
+        T3["'Ken ขึ้น Level 5! 🏆'"]
+        T4["'👹 Demon Portal Opened!<br/>Bug ใหม่ 2 ตัวใน Login'"]
+    end
+
+    %% Connections
+    CONTEXT --> DATASOURCE
+    DATASOURCE -.->|"Auto-Sync 1 min"| QUEST
+    QUEST --> INSIGHT
+    QUEST --> BOTTLENECK
+    QUEST --> PRESENT
+    QUEST -.->|"Events"| TELEGRAM

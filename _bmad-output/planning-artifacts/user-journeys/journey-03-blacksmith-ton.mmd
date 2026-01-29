@@ -1,0 +1,81 @@
+%% Journey 3: Blacksmith Ton (UX Designer)
+%% CORRECTED: Tasks อยู่ใน UI-tasks Sheet, Flow มี Design HP Bar
+%% MCOP Quest = Read-Only, Auto-Sync ทุก 1 นาที
+
+flowchart TD
+    subgraph CONTEXT["🎮 Blacksmith Ton - UX Designer"]
+        CTX1["<b>บทบาท:</b> UX Designer"]
+        CTX2["<b>ทำงานใน:</b> UI-tasks Sheet"]
+        CTX3["<b>เป้าหมาย:</b> ดูว่า Flow ไหน<br/>รอ Design อยู่"]
+    end
+
+    subgraph SHEETS["📊 Google Sheets - ที่ทำงานจริง"]
+        direction TB
+        S1["เปิด MCOP-Dev Sheet"]
+        S2["ไปที่ Tab: UI-tasks"]
+        S3["หา Task ที่ Assign ให้ Ton"]
+        S4["เห็น Task Row:<br/>Flow ID | Task | Assignee | Status"]
+        S5["เปลี่ยน Status → 'Doing'"]
+        S6["ทำงานออกแบบใน Figma..."]
+        S7["เปลี่ยน Status → '6 - Done'"]
+        S8["(อาจ) ไปอัพเดท Flows Sheet<br/>Design column → Done"]
+
+        S1 --> S2 --> S3 --> S4 --> S5 --> S6 --> S7 --> S8
+    end
+
+    subgraph UITASKS["📋 UI-tasks Sheet Structure"]
+        UT1["Flow ID | ID | Type | System | Group"]
+        UT2["Task | Assignee | Status"]
+        UT3["---"]
+        UT4["001 | UT-001 | UI | ระบบสมาชิก | Login"]
+        UT5["Wireframe Login | Ton | Doing"]
+    end
+
+    subgraph QUEST["🗺️ MCOP Quest - Read-Only Dashboard"]
+        direction TB
+        Q1["🌍 เปิด App → World Map"]
+        Q2["มองหา Cities ที่มี<br/>Design HP ยังไม่เต็ม"]
+        Q3["คลิกเข้า City"]
+
+        subgraph COMMANDER["⚔️ Commander Card"]
+            CM1["Flow: ระบบ Login"]
+            CM2["📐 Design ████░░░░ 50% ← Ton ทำอยู่"]
+            CM3["📋 AC ░░░░░░░░ 0%"]
+            CM4["⚙️ API ░░░░░░░░ 0%"]
+            CM5["💻 FE/App ░░░░░░░░ 0%"]
+            CM6["🧪 Testing ░░░░░░░░ 0%"]
+            CM7["✅ UAT ░░░░░░░░ 0%"]
+        end
+
+        Q4["คลิก Commander → ดู Minions"]
+
+        subgraph MINIONS["👾 UI Minions (Tasks)"]
+            MN1["🎨 Wireframe Login - Ton - Doing"]
+            MN2["🎨 Error States - Rita - Done ✓"]
+            MN3["🎨 Responsive View - Pending"]
+        end
+
+        Q1 --> Q2 --> Q3 --> COMMANDER --> Q4 --> MINIONS
+    end
+
+    subgraph RANKING["🏆 Designer Leaderboard"]
+        R1["1. JJ - 450 XP 🥇"]
+        R2["2. Rita - 380 XP 🥈"]
+        R3["3. Ton - 350 XP 🥉"]
+        R4["4. Sun - 320 XP"]
+        R5["5. New - 280 XP"]
+    end
+
+    subgraph INSIGHT["💡 Ton ได้อะไรจาก Dashboard"]
+        I1["✅ เห็น Flow ไหน<br/>รอ Design อยู่"]
+        I2["✅ รู้ Priority<br/>จาก Flow ที่ Block อยู่"]
+        I3["✅ เห็น XP สะสม<br/>แข่งกับ Designer คนอื่น"]
+        I4["✅ เห็น Contribution<br/>ต่อ Flow Progress"]
+    end
+
+    %% Connections
+    CONTEXT --> SHEETS
+    SHEETS -.-> UITASKS
+    SHEETS -.->|"Auto-Sync 1 min"| QUEST
+    QUEST --> INSIGHT
+    I3 -.-> RANKING

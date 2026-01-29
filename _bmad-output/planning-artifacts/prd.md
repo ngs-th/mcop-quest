@@ -58,8 +58,12 @@ classification:
 ### MVP - Minimum Viable Product
 
 *   **Core Logic:**
-    *   **Sync Engine (One-Way):** ระบบดึงข้อมูลจาก Google Sheets อัตโนมัติ (Read-only) ห้ามมีการแก้ไขข้อมูล Task ในเกม เด็ดขาด
-    *   **Entity Mapping:** System (City) -> Epic (Boss) -> Flow (Lieutenant) -> Task (Minion)
+    *   **Sync Engine (One-Way):** ระบบดึงข้อมูลจาก Google Sheets อัตโนมัติ (Read-only) ห้ามมีการแก้ไขข้อมูล Task ในเกม เด็ดขาด - ไม่มี Manual Sync Button (Auto-Sync ทุก 1 นาที)
+    *   **Entity Mapping:**
+        - System → City (เมือง)
+        - Flow → Commander (หัวหน้าหน่วย) - **มี 6 HP Bars: Design, AC, API, FE/App, Testing, UAT**
+        - Task → Minion (สมุน) - **แยก 3 ประเภท: UI-tasks, API-tasks, FE-tasks**
+        - Bug → **Demon Reinforcements (กองหนุนจากราชาปีศาจ)** - มาจากประตูมิติ, ไม่รู้จำนวน/เวลา, ฆ่าแล้วไม่ได้ reward
 *   **Visualization:**
     *   **Tri-View:** Hero Task Board (รายคน), World Map (ภาพรวม), Scout/Team Camp (ปาร์ตี้)
     *   **Fog of War:** แสดง Effect หมอกบังพื้นที่ Epic ที่ Req ไม่ครบ
@@ -83,35 +87,35 @@ classification:
 
 ### 1. Journey of "Warrior Ken" (Backend Developer)
 *   **Persona:** Ken, Senior Backend Dev ผู้เบื่อหน่ายกับการกรอก Google Sheets ตอนสิ้นวัน
-*   **Goal:** อยากอัปเดตงานให้เสร็จเร็วๆ แล้วเห็นผลงานของตัวเองมีความหมาย
-*   **Opening Scene:** Ken ทำงาน Coding ฟีเจอร์ "User Auth" เสร็จตอน 17:30 น. เขาลากเมาส์ไปที่ Bookmark "MCOP Quest" ด้วยความคาดหวัง ไม่ใช่ความเบื่อหน่ายเหมือนแต่ก่อน
-*   **Rising Action (The Attack):** Ken เข้าสู่หน้าระบบ เห็นแถบ HP ของบอส "Epic: Authentication" เหลืออยู่ 15% เขาคลิกเลือก Task ของตัวเองที่ทำเสร็จแล้ว กดปุ่ม "Submit Strike" (Update Status)
-*   **Climax (The Hit):** หน้าจอแสดง Animation ดาบฟันฉับ! ตัวเลข Damage สีแดงเด้งขึ้น "-500 HP" บอสส่งเสียงคำรามและสลายไป (Epic Completed!) Loot Box หล่นลงมาโชว์ว่าทีมได้รับ XP เพิ่ม
-*   **Resolution:** Ken ยิ้มมุมปาก รู้สึกว่าวันนี้เขาคือผู้ปิดเกม เขาแชร์ Screenshot หน้าจอไปใน Slack กลุ่มทีมว่า "Auth Boss Down!" ก่อนปิดคอมกลับบ้านด้วยความฟิน
+*   **Goal:** อยากเห็นผลงานของตัวเองมีความหมาย เมื่อทำงานเสร็จแล้วอยากเห็นผลกระทบทันที
+*   **Opening Scene:** Ken ทำงาน Coding ฟีเจอร์ "User Auth" เสร็จตอน 17:30 น. เขาเปิด Google Sheets → API-tasks tab → เปลี่ยน Status เป็น "6 - Done" แล้วปิด Sheets กลับไปทำงานต่อ
+*   **Rising Action (Auto-Sync):** ระบบ MCOP Quest ดึงข้อมูลอัตโนมัติทุก 1 นาที Ken เปิด MCOP Quest บนมือถือ → เห็น World Map → คลิกเข้า City "ระบบสมาชิก" → เห็น Commander "Flow: Login" มี **6 HP Bars** โดย API HP Bar เพิ่มขึ้นจากงานที่เขาเพิ่งทำเสร็จ
+*   **Climax (The Hit):** Animation แสดง Damage Number เด้งขึ้น "+50 DMG" ที่ Commander! **API HP Bar** เต็ม 100% แล้ว → Commander รอแค่ FE/Testing/UAT Ken เห็นว่างานเขามีผลจริง ได้ Gold +50, XP +100
+*   **Resolution:** Ken ยิ้มมุมปาก รู้สึกว่าวันนี้เขามีส่วนในการ Clear Commander เขาแชร์ Screenshot หน้าจอไปใน Telegram กลุ่มทีมว่า "API Done! รอ FE แล้วไป Testing!" ก่อนปิดคอมกลับบ้านด้วยความฟิน
 
 ### 2. Journey of "Scout Sarah" (Business Analyst)
 *   **Persona:** Sarah, BA ผู้ต้องรับแรงกดดันจากลูกค้าและต้องแปล Req ให้ทีมเข้าใจ
 *   **Goal:** ต้องการให้ทีมเห็นภาพ Requirement ชัดเจนก่อนเริ่มงาน และไม่อยากตอบคำถามซ้ำๆ
-*   **Opening Scene:** เช้าวันจันทร์ Sarah เปิด World Map ดูพื้นที่ "Epic: Payment Gateway" ที่กำลังจะเข้า Sprint หน้า เธอเห็นพื้นที่นั้นปกคลุมด้วย **Fog of War** (หมอกหนาทึบ) แสดงว่า Req ยังไม่พร้อม
-*   **Rising Action (The Clearing):** Sarah รีบเปิด Google Sheets เพื่อเติม Definition of Done และ Acceptance Criteria ที่ขาดไป ทันทีที่เธอกด Save ใน Sheet
-*   **Climax (Map Revealed):** หน้าจอ MCOP Quest บนจอที่สองของเธอแสดง Effect ลมพัดหมอกจางหายไป เผยให้เห็นจำนวน Minion (Task) และบอสที่ชัดเจน พร้อมขึ้น status "Ready for Battle"
-*   **Resolution:** ทีม Dev เดินมาดูจอแล้วบอกว่า "โห Payment มีบอสย่อย 3 ตัวเลยเหรอ ดีนะเห็นก่อน จะได้เตรียมอาวุธถูก" Sarah ถอนหายใจโล่งอกที่ทีมเห็นภาพเดียวกัน
+*   **Opening Scene:** เช้าวันจันทร์ Sarah เปิด MCOP Quest → World Map → ดูพื้นที่ "City: Payment Gateway" ที่กำลังจะเข้า Sprint หน้า เธอเห็นพื้นที่นั้นปกคลุมด้วย **Fog of War** (หมอกหนาทึบ) แสดงว่า Req ยังไม่พร้อม → เห็น Commander หลายตัวมี **AC HP Bar** ยังแดงอยู่
+*   **Rising Action (The Clearing):** Sarah รีบเปิด Google Sheets → Flows tab → เติม AC column และ Definition of Done ที่ขาดไป → กด Save
+*   **Climax (Map Revealed - Auto-Sync 1 min):** ภายใน 1 นาที หน้าจอ MCOP Quest อัพเดทอัตโนมัติ Effect ลมพัดหมอกจางหายไป Commander แสดง **AC HP Bar** เป็นสีเขียว พร้อมขึ้น status "Ready for Battle" → ทีมเห็น Pipeline ชัดเจน (Design ✓ → AC ✓ → รอ API)
+*   **Resolution:** ทีม Dev เดินมาดูจอแล้วบอกว่า "โห Payment มี Commander 3 ตัวเลยเหรอ ดีนะเห็นก่อน จะได้เตรียมอาวุธถูก" Sarah ถอนหายใจโล่งอกที่ทีมเห็นภาพเดียวกัน → Telegram แจ้ง "Payment City Fog Cleared!"
 
 ### 3. Journey of "Blacksmith Ton" (UX Designer)
 *   **Persona:** Ton, UX Designer ผู้สร้าง Asset และ Flow หน้าจอ
 *   **Goal:** ต้องการส่งมอบ Design Asset ให้ Dev โดยไม่หลุดธีม และอยากรู้สึกเป็นส่วนหนึ่งของการต่อสู้
 *   **Opening Scene:** Ton ออกแบบหน้าจอ Login เสร็จแล้ว แต่รู้สึกว่าถ้าเป็นแค่ไฟล์ Figma วางแปะไว้ Dev อาจจะงง
-*   **Rising Action (Crafting):** ใน MCOP Quest, Ton เข้าไปที่ "Forge" (หน้ารายละเอียด Task - Design) เขาแนบลิงก์ Figma และอัปโหลด Asset ลงในช่อง "Enchanted Items" (Design Assets field)
-*   **Climax (Weapon Upgrade):** เมื่อ Warrior Ken (Dev) เปิด Task นี้ขึ้นมา เขาเห็นไอคอน "ดาบติดไฟ" (Design Ready) แจ้งเตือน พอกดรับของ ก็ได้ลิงก์ Figma ที่ Ton แปะไว้ทันที พร้อมบัฟ "Accuracy +10%" (ลดโอกาส Dev ผิด)
-*   **Resolution:** Ton รู้สึกว่างาน Design ของเขาคืออาวุธสำคัญที่ช่วยให้เพื่อนตีบอสเข้า ไม่ใช่แค่รูปวาดสวยๆ
+*   **Rising Action (Crafting):** Ton เปิด Google Sheets → UI-tasks tab → หา Task ที่ Assign ให้ตัวเอง → Paste Figma Link ในช่อง Description → เปลี่ยน Status เป็น "6 - Done"
+*   **Climax (Weapon Forged - Auto-Sync 1 min):** ภายใน 1 นาที MCOP Quest อัพเดทอัตโนมัติ → Commander "Flow: Login" แสดง **Design HP Bar** เต็ม 100% → Telegram แจ้ง Ken ว่า "Equipment Ready! Design for Login is complete" → Ken เปิด Task ใน MCOP Quest เห็นไอคอน "ดาบติดไฟ" (Design Ready) พร้อม Link ไป Figma
+*   **Resolution:** Ton รู้สึกว่างาน Design ของเขาคืออาวุธสำคัญที่ช่วยให้เพื่อนตีบอสเข้า ไม่ใช่แค่รูปวาดสวยๆ → เห็น **Design HP Bar** ขึ้นทุกครั้งที่ทำ task เสร็จ
 
 ### 4. Journey of "Guild Master Om" (Project Manager/Admin)
 *   **Persona:** Om, PM ผู้ต้องคอยตอบคำถามผู้บริหารว่า "โปรเจกต์ถึงไหนแล้ว"
 *   **Goal:** ต้องการข้อมูลสรุปที่ดูง่าย เพื่อนำไป Present ผู้บริหารโดยไม่ต้องทำ Slide ใหม่
 *   **Opening Scene:** ผู้บริหารเดินมาถามหน้างานว่า "Payment Gateway จะเสร็จทันสิ้นเดือนไหม?"
-*   **Rising Action (The Oracle View):** แทนที่จะเปิด Excel ตาลาย Om เปิด MCOP Quest บน iPad โชว์หน้า **World Map** ให้ผู้บริหารดู
-*   **Climax:** เขาชี้ไปที่เมือง Payment City "ตอนนี้เราตีป้อมปราการด่านหน้าแตกแล้วครับ (Backend Done) เหลือแค่บอสตัวสุดท้าย (Frontend Integration) ที่เลือดเหลือ 30% คาดว่าอีก 2 วันจบครับ"
-*   **Resolution:** ผู้บริหารพยักหน้าเข้าใจทันที "อ๋อ เห็นภาพเลย งั้นลุยต่อ" Om รอดตายจากการทำ Report ด่วน
+*   **Rising Action (The Oracle View):** แทนที่จะเปิด Excel ตาลาย Om เปิด MCOP Quest บน iPad โชว์หน้า **World Map** ให้ผู้บริหารดู → ข้อมูล Fresh เพราะ Auto-Sync ทุก 1 นาที
+*   **Climax (6 HP Bars):** Om คลิกเข้า Payment City → เห็น Commander Cards แต่ละตัวมี **6 HP Bars** → ชี้ให้ผู้บริหารดู "Flow: Login ตอนนี้ Design ✓ AC ✓ API 80% FE 50% Testing 0% UAT 0% — รอ FE อีก 2 Tasks แล้วไป Testing ครับ" → เห็นว่า Commander 2 ตัวมี **Demon Portal** (Bug) อยู่ 3 ตัวที่ต้องจัดการ
+*   **Resolution:** ผู้บริหารพยักหน้าเข้าใจทันที "อ๋อ เห็นภาพเลย เห็น Pipeline ชัดเจน งั้นลุยต่อ" Om รอดตายจากการทำ Report ด่วน
 
 ### Journey Requirements Summary
 
@@ -193,9 +197,10 @@ classification:
 1.  **Google Sheets Integration (Core):**
     *   Read-only access via Google Drive API / Sheets API
     *   Trigger: Manual Sync Button & Scheduled Job (every 15 mins)
-2.  **Slack Notification (Secondary):**
-    *   แจ้งเตือนเมื่อ Boss Down (Epic Completed)
+2.  **Telegram Notification (Secondary):**
+    *   แจ้งเตือนเมื่อ Commander Down (Flow Completed - 6 HP Bars = 100%)
     *   แจ้งเตือนเมื่อ Fog Cleared (New Req Ready)
+    *   แจ้งเตือนเมื่อ Demon Portal Opened (Bug ใหม่)
 
 ### Platform & Device Support
 *   **Mobile First Strategy:** ออกแบบ UI/UX ให้ใช้งานบนมือถือเป็นหลัก (Responsive Web) เพื่อให้ Dev/Admin เช็คสถานะหรือกดตีบอสระหว่างเดินทางได้สะดวก
@@ -221,10 +226,10 @@ classification:
 
 **Must-Have Capabilities:**
 *   **Hero Task Board (Mobile):** UI แบบ Card List ที่สวยงาม เน้นการแสดงผล Status
-*   **Manual Sync Button:** ปุ่ม "Scout Report" เพื่อดึงข้อมูลล่าสุดจาก Sheet ทันที (แก้ปัญหา Delay)
-*   **Basic World Map:** แสดง System -> Epic -> Task ในรูปแบบแผนที่ (ใช้ CSS Grid/Flex)
+*   **Auto-Sync (No Manual Button):** ระบบดึงข้อมูลจาก Sheets อัตโนมัติทุก 1 นาที — **ไม่มีปุ่ม Sync** เพราะต้องการให้ระบบทำงานเองโดยไม่ต้องกังวล
+*   **Basic World Map:** แสดง System (City) → Flow (Commander with 6 HP Bars) → Task (Minion) ในรูปแบบแผนที่
 *   **Shop & Inventory:** ระบบซื้อของแต่งตัว (Avatar/Theme) โดยใช้ Local Currency (XP/Gold) ที่ได้จากงาน
-*   **Fog Visualization:** แสดงพื้นที่สีเทาทับ Epic ที่ Requirement ไม่ครบ
+*   **Fog Visualization:** แสดงพื้นที่สีเทาทับ Flow ที่ Requirement ไม่ครบ (AC HP Bar ยังไม่เต็ม)
 
 ### Post-MVP Features
 
@@ -260,20 +265,25 @@ classification:
 *   **FR-SYNC-03:** (Entity Mapping)
     *   Project $\rightarrow$ Demon King (ราชาปีศาจ)
     *   System $\rightarrow$ City (เมือง)
-    *   Flow $\rightarrow$ Unit Commander (หัวหน้าหน่วย)
-    *   Task $\rightarrow$ Minion (ลูกสมุน)
+    *   Flow $\rightarrow$ Commander (หัวหน้าหน่วย) — **มี 6 HP Bars: Design, AC, API, FE/App, Testing, UAT**
+    *   Task $\rightarrow$ Minion (สมุน) — **แยก 3 ประเภทตาม Sheet: UI-tasks, API-tasks, FE-tasks**
+    *   Bug $\rightarrow$ **Demon Reinforcements (กองหนุนจากราชาปีศาจ)** — มาจากประตูมิติ, ไม่รู้จำนวน/เวลาที่จะปรากฏ
 
-### Battle Visualization & Feedback Loop
+### Battle Visualization & Feedback Loop (6 HP Bars System)
 *   **FR-BATTLE-01:** แสดง Animation **ถูก Minion รุมโจมตี** ตามจำนวน Task สถานะ "Doing" ของผู้ใช้
-*   **FR-BATTLE-02:** เมื่อ Task (BE/FE) เสร็จ $\rightarrow$ Minion ตาย + **HP Unit Commander ลดลง**
-*   **FR-BATTLE-03:** เมื่อ Flow เสร็จ (All Tasks Done) $\rightarrow$ Unit Commander ตาย (Big Effect) + **HP City Boss ลดลง**
+*   **FR-BATTLE-02:** เมื่อ Task เสร็จ (UI/API/FE) $\rightarrow$ Minion ตาย + **HP Bar ที่เกี่ยวข้องของ Commander เพิ่มขึ้น**
+    *   UI-task Done $\rightarrow$ **Design HP Bar** เพิ่ม
+    *   API-task Done $\rightarrow$ **API HP Bar** เพิ่ม
+    *   FE-task Done $\rightarrow$ **FE/App HP Bar** เพิ่ม
+*   **FR-BATTLE-03:** เมื่อ Flow เสร็จ (6 HP Bars = 100% ทั้งหมด) $\rightarrow$ Commander ตาย (Big Effect) + **HP City Boss ลดลง**
 *   **FR-BATTLE-04:** เมื่อ System เสร็จ $\rightarrow$ City Boss ตาย (Huge Effect) + **HP Demon King ลดลง**
 *   **FR-BATTLE-05:** ผู้ใช้ทุกคนต้องเห็น Global Effect (ข้อ 3, 4) พร้อมกันตามสถานะ Global DB
+*   **FR-BATTLE-06:** **Demon Portal:** เมื่อมี Bug ใหม่ใน Bugs Sheet $\rightarrow$ แสดง "ประตูมิติเปิด" Animation + แจ้ง Telegram "Demon Reinforcements Arrived!"
 
 ### Rewards System (Incentive Logic)
 *   **FR-REWARD-01:** **Gold Reward:** เมื่อ Task (Non-Bug) เสร็จ ผู้ทำได้ Gold เข้าตัว
 *   **FR-REWARD-02:** **Gem Reward (Incentive):** เมื่อ Flow (Boss) ถูกกำจัด ผู้เกี่ยวข้องได้รับ Gem ตามสูตร `Base Gem x Business Value x Time Modifier`
-*   **FR-REWARD-03:** **No Bug Reward:** การเคลียร์ Bug (Fixed) **ไม่ได้รับรางวัลใดๆ** (No XP, No Coin, No Gem)
+*   **FR-REWARD-03:** **No Bug Reward (Demon Reinforcements):** Bug คือ **กองหนุนจากราชาปีศาจ** ที่มาจากประตูมิติ — การเคลียร์ Bug (Fixed) **ไม่ได้รับรางวัลใดๆ** (No XP, No Gold, No Gem) เพราะเป็นการกำจัดสิ่งที่ไม่ควรมีตั้งแต่แรก
 *   **FR-REWARD-04:** Gem Record ต้องถูกบันทึกแบบ **Immutable** (แก้ไขไม่ได้) เพื่อใช้คำนวณ Incentive
 
 ### Shop & Inventory (Cosmetic Only)

@@ -1,0 +1,1457 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MCOP Quest - Design Directions Showcase</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      /* Primary Colors - Cool & Calm */
+      --primary-blue: #3498DB;
+      --success-green: #2ECC71;
+      --teal-accent: #1ABC9C;
+      --charcoal: #2C3E50;
+      --silver: #ECF0F1;
+
+      /* RPG Semantic Colors */
+      --hp-high: #2ECC71;
+      --hp-medium: #F1C40F;
+      --hp-low: #E74C3C;
+      --xp-gold: #F39C12;
+      --gold: #FFD700;
+      --gem-purple: #9B59B6;
+      --fog-gray: #95A5A6;
+      --damage-orange: #E67E22;
+      --support-blue: #3498DB;
+      --blocked-red: #C0392B;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, sans-serif;
+      background: #f5f5f5;
+      color: var(--charcoal);
+      line-height: 1.6;
+    }
+
+    h1, h2, h3 {
+      font-family: 'Cinzel', Georgia, serif;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    header {
+      text-align: center;
+      padding: 40px 20px;
+      background: linear-gradient(135deg, var(--primary-blue), var(--teal-accent));
+      color: white;
+      margin-bottom: 40px;
+      border-radius: 0 0 20px 20px;
+    }
+
+    header h1 {
+      font-size: 48px;
+      margin-bottom: 10px;
+    }
+
+    header p {
+      font-size: 18px;
+      opacity: 0.9;
+    }
+
+    .directions-nav {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-bottom: 40px;
+    }
+
+    .directions-nav button {
+      padding: 12px 24px;
+      border: none;
+      background: white;
+      color: var(--primary-blue);
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .directions-nav button:hover,
+    .directions-nav button.active {
+      background: var(--primary-blue);
+      color: white;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(52, 152, 219, 0.3);
+    }
+
+    .direction-section {
+      background: white;
+      border-radius: 16px;
+      padding: 40px;
+      margin-bottom: 40px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    }
+
+    .direction-section h2 {
+      color: var(--primary-blue);
+      font-size: 32px;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .direction-number {
+      background: var(--primary-blue);
+      color: white;
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      font-weight: bold;
+    }
+
+    .direction-description {
+      font-size: 16px;
+      color: #666;
+      margin-bottom: 30px;
+      padding: 20px;
+      background: var(--silver);
+      border-radius: 8px;
+      border-left: 4px solid var(--primary-blue);
+    }
+
+    .mockup-container {
+      background: #f8f9fa;
+      border-radius: 12px;
+      padding: 20px;
+      position: relative;
+    }
+
+    .mockup-frame {
+      background: white;
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+      position: relative;
+    }
+
+    .mockup-header {
+      background: var(--charcoal);
+      color: white;
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .mockup-dots {
+      display: flex;
+      gap: 6px;
+    }
+
+    .mockup-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: #ff5f56;
+    }
+
+    .mockup-dot:nth-child(2) {
+      background: #ffbd2e;
+    }
+
+    .mockup-dot:nth-child(3) {
+      background: #27ca3f;
+    }
+
+    .mockup-title {
+      margin-left: 16px;
+      font-size: 12px;
+      opacity: 0.8;
+    }
+
+    .mockup-content {
+      min-height: 500px;
+      position: relative;
+    }
+
+    /* Mobile Frame */
+    .mobile-frame {
+      width: 375px;
+      margin: 0 auto;
+      border: 8px solid #1a1a1a;
+      border-radius: 40px;
+      overflow: hidden;
+      background: white;
+    }
+
+    .mobile-notch {
+      background: #1a1a1a;
+      padding: 10px;
+      text-align: center;
+    }
+
+    .mobile-notch::before {
+      content: '';
+      display: inline-block;
+      width: 120px;
+      height: 20px;
+      background: #000;
+      border-radius: 10px;
+    }
+
+    /* Bottom Tab Bar */
+    .bottom-tab-bar {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: white;
+      border-top: 1px solid #e0e0e0;
+      display: flex;
+      justify-content: space-around;
+      padding: 8px 0;
+      box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
+    }
+
+    .tab-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      font-size: 10px;
+      color: #999;
+      cursor: pointer;
+      transition: color 0.3s;
+    }
+
+    .tab-item.active {
+      color: var(--primary-blue);
+    }
+
+    .tab-icon {
+      width: 24px;
+      height: 24px;
+      background: currentColor;
+      mask-size: contain;
+      -webkit-mask-size: contain;
+    }
+
+    /* World Map Styles */
+    .world-map {
+      background: linear-gradient(180deg, #87CEEB 0%, #98D8C8 50%, #27AE60 100%);
+      min-height: 400px;
+      position: relative;
+      padding: 20px;
+    }
+
+    .city {
+      position: absolute;
+      background: white;
+      border-radius: 12px;
+      padding: 12px 16px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+      cursor: pointer;
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+
+    .city:hover {
+      transform: scale(1.05);
+      box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+    }
+
+    .city.completed {
+      background: var(--success-green);
+      color: white;
+    }
+
+    .city.in-progress {
+      background: var(--hp-medium);
+      color: white;
+    }
+
+    .city.locked {
+      background: var(--fog-gray);
+      opacity: 0.7;
+    }
+
+    .city-name {
+      font-family: 'Cinzel', serif;
+      font-weight: bold;
+      font-size: 12px;
+      margin-bottom: 4px;
+    }
+
+    .boss-hp {
+      height: 6px;
+      background: rgba(0,0,0,0.2);
+      border-radius: 3px;
+      overflow: hidden;
+      margin-top: 8px;
+    }
+
+    .boss-hp-fill {
+      height: 100%;
+      background: var(--hp-low);
+      border-radius: 3px;
+      transition: width 0.5s;
+    }
+
+    /* Card Styles */
+    .card {
+      background: white;
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      border: 1px solid #f0f0f0;
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .card-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+    }
+
+    .card-icon.damage {
+      background: rgba(230, 126, 34, 0.1);
+      color: var(--damage-orange);
+    }
+
+    .card-icon.support {
+      background: rgba(52, 152, 219, 0.1);
+      color: var(--support-blue);
+    }
+
+    .card-title {
+      font-weight: 600;
+      font-size: 14px;
+      color: var(--charcoal);
+    }
+
+    .card-meta {
+      font-size: 11px;
+      color: #999;
+    }
+
+    /* HP Bar Component */
+    .hp-bar-container {
+      margin: 16px 0;
+    }
+
+    .hp-bar-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+      margin-bottom: 4px;
+      color: #666;
+    }
+
+    .hp-bar {
+      height: 12px;
+      background: #e0e0e0;
+      border-radius: 6px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .hp-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--hp-high), var(--hp-medium), var(--hp-low));
+      border-radius: 6px;
+      transition: width 0.5s;
+    }
+
+    /* Damage Number Animation */
+    .damage-number {
+      position: absolute;
+      font-family: 'Cinzel', serif;
+      font-weight: bold;
+      font-size: 24px;
+      color: var(--damage-orange);
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+      animation: floatUp 1.5s ease-out forwards;
+      pointer-events: none;
+    }
+
+    @keyframes floatUp {
+      0% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+      100% {
+        opacity: 0;
+        transform: translateY(-50px) scale(1.5);
+      }
+    }
+
+    /* Stats Grid */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      padding: 16px;
+    }
+
+    .stat-box {
+      background: white;
+      border-radius: 12px;
+      padding: 16px;
+      text-align: center;
+      border: 1px solid #f0f0f0;
+    }
+
+    .stat-value {
+      font-family: 'Cinzel', serif;
+      font-size: 24px;
+      font-weight: bold;
+      color: var(--primary-blue);
+    }
+
+    .stat-label {
+      font-size: 11px;
+      color: #999;
+      margin-top: 4px;
+    }
+
+    /* Character Avatar */
+    .character-avatar {
+      width: 80px;
+      height: 80px;
+      border-radius: 16px;
+      background: linear-gradient(135deg, var(--primary-blue), var(--teal-accent));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 12px;
+      font-size: 40px;
+    }
+
+    /* Equipment Grid */
+    .equipment-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      padding: 16px;
+    }
+
+    .equipment-slot {
+      aspect-ratio: 1;
+      background: #f8f9fa;
+      border: 2px dashed #ddd;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+    }
+
+    .equipment-slot.filled {
+      background: linear-gradient(135deg, var(--xp-gold), var(--gold));
+      border-style: solid;
+      border-color: var(--gold);
+    }
+
+    /* Analysis Panel */
+    .analysis-panel {
+      background: #f8f9fa;
+      border-radius: 12px;
+      padding: 20px;
+      margin-top: 20px;
+    }
+
+    .analysis-panel h4 {
+      color: var(--charcoal);
+      font-size: 16px;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .analysis-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+    }
+
+    .analysis-item {
+      background: white;
+      padding: 12px;
+      border-radius: 8px;
+      border-left: 3px solid var(--primary-blue);
+    }
+
+    .analysis-label {
+      font-size: 11px;
+      color: #999;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 4px;
+    }
+
+    .analysis-value {
+      font-weight: 600;
+      color: var(--charcoal);
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      header h1 {
+        font-size: 32px;
+      }
+
+      .direction-section {
+        padding: 20px;
+      }
+
+      .mobile-frame {
+        width: 100%;
+        max-width: 375px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container">
+      <h1>⚔️ MCOP Quest Design Directions</h1>
+      <p>สำรวจ 6 ทิศทางการออกแบบ — เลือกทิศทางที่ตรงกับวิสัยทัศน์ของคุณ</p>
+    </div>
+  </header>
+
+  <div class="container">
+    <!-- Navigation -->
+    <nav class="directions-nav">
+      <button class="active" onclick="showDirection(1)">Direction 1</button>
+      <button onclick="showDirection(2)">Direction 2</button>
+      <button onclick="showDirection(3)">Direction 3</button>
+      <button onclick="showDirection(4)">Direction 4</button>
+      <button onclick="showDirection(5)">Direction 5</button>
+      <button onclick="showDirection(6)">Direction 6</button>
+    </nav>
+
+    <!-- Direction 1: Classic RPG Dashboard -->
+    <section class="direction-section" id="direction-1">
+      <h2>
+        <span class="direction-number">1</span>
+        Classic RPG Dashboard
+      </h2>
+      <div class="direction-description">
+        <strong>โฟกัส:</strong> Game UI เต็มรูปแบบ — HP Bars, Damage Numbers, RPG Elements โดดเด่น<br>
+        <strong>Layout:</strong> Hybrid (Map + Cards + Stats)<br>
+        <strong>Style:</strong> เหมือน RPG เกมโบราณๆ แต่ด้วยกราฟิกสมัยใหม่
+      </div>
+
+      <div class="mockup-container">
+        <div class="mobile-frame">
+          <div class="mobile-notch"></div>
+          <div class="mockup-content">
+            <!-- Status Bar -->
+            <div style="background: var(--charcoal); color: white; padding: 12px 16px; display: flex; justify-content: space-between; font-size: 12px;">
+              <span>🏰 MCOP Quest</span>
+              <span>Lv.12 ⚔️ Warrior</span>
+            </div>
+
+            <!-- World Map -->
+            <div class="world-map">
+              <div style="text-align: center; padding: 10px; font-family: 'Cinzel', serif; font-weight: bold; color: var(--charcoal);">
+                🗺️ World Map
+              </div>
+
+              <!-- City 1 - Completed -->
+              <div class="city completed" style="top: 60px; left: 20px;">
+                <div class="city-name">✓ Starter City</div>
+                <div style="font-size: 10px;">Boss Defeated</div>
+                <div class="boss-hp"><div class="boss-hp-fill" style="width: 0%; background: var(--success-green);"></div></div>
+              </div>
+
+              <!-- City 2 - In Progress -->
+              <div class="city in-progress" style="top: 120px; right: 40px;">
+                <div class="city-name">⚔️ Epic Alpha</div>
+                <div style="font-size: 10px;">HP: 4,550/10,000</div>
+                <div class="boss-hp"><div class="boss-hp-fill" style="width: 45%;"></div></div>
+              </div>
+
+              <!-- City 3 - Locked -->
+              <div class="city locked" style="bottom: 80px; left: 50%; transform: translateX(-50%);">
+                <div class="city-name">🔒 Beta Epic</div>
+                <div style="font-size: 10px;">Locked</div>
+                <div class="boss-hp"><div class="boss-hp-fill" style="width: 0%; background: var(--fog-gray);"></div></div>
+              </div>
+
+              <!-- Damage Number Animation -->
+              <div class="damage-number" style="top: 100px; right: 60px;">+500</div>
+            </div>
+
+            <!-- Character Stats -->
+            <div style="background: white; padding: 16px;">
+              <div class="hp-bar-container">
+                <div class="hp-bar-label">
+                  <span>⭐ Level 12</span>
+                  <span>2,450 / 3,000 XP</span>
+                </div>
+                <div class="hp-bar">
+                  <div class="hp-bar-fill" style="width: 82%; background: linear-gradient(90deg, var(--xp-gold), var(--gold));"></div>
+                </div>
+              </div>
+
+              <div class="stats-grid">
+                <div class="stat-box">
+                  <div class="stat-value">💰 1,250</div>
+                  <div class="stat-label">Gold</div>
+                </div>
+                <div class="stat-box">
+                  <div class="stat-value">💎 45</div>
+                  <div class="stat-label">Gems</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Bottom Tab Bar -->
+            <div style="height: 60px;"></div>
+            <div class="bottom-tab-bar">
+              <div class="tab-item active">
+                <div style="font-size: 20px;">🏠</div>
+                <div>Hero</div>
+              </div>
+              <div class="tab-item">
+                <div style="font-size: 20px;">👥</div>
+                <div>Team</div>
+              </div>
+              <div class="tab-item">
+                <div style="font-size: 20px;">🗺️</div>
+                <div>World</div>
+              </div>
+              <div class="tab-item">
+                <div style="font-size: 20px;">🛒</div>
+                <div>Shop</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Analysis -->
+      <div class="analysis-panel">
+        <h4>📊 การวิเคราะห์ Direction 1</h4>
+        <div class="analysis-grid">
+          <div class="analysis-item">
+            <div class="analysis-label">Layout Type</div>
+            <div class="analysis-value">Hybrid (Map + Stats)</div>
+          </div>
+          <div class="analysis-item">
+            <div class="analysis-label">Visual Weight</div>
+            <div class="analysis-value">Balanced</div>
+          </div>
+          <div class="analysis-item">
+            <div class="analysis-label">RPG Elements</div>
+            <div class="analysis-value">Heavy (Full Game UI)</div>
+          </div>
+          <div class="analysis-item">
+            <div class="analysis-label">Best For</div>
+            <div class="analysis-value">Hardcore Gamers</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Direction 2: Clean Minimal -->
+    <section class="direction-section" id="direction-2" style="display: none;">
+      <h2>
+        <span class="direction-number">2</span>
+        Clean Minimal Game
+      </h2>
+      <div class="direction-description">
+        <strong>โฟกัส:</strong> Minimal UI แต่มี Game Elements เล็กน้อย<br>
+        <strong>Layout:</strong> Card-based สะอาดตา<br>
+        <strong>Style:</strong> Modern + RPG hints (สี + Icon เล็กน้อย)
+      </div>
+
+      <div class="mockup-container">
+        <div class="mobile-frame">
+          <div class="mobile-notch"></div>
+          <div class="mockup-content">
+            <!-- Header -->
+            <div style="background: white; padding: 16px; border-bottom: 1px solid #f0f0f0;">
+              <div style="font-family: 'Cinzel', serif; font-size: 20px; font-weight: bold; color: var(--charcoal);">
+                Your Progress
+              </div>
+            </div>
+
+            <!-- Progress Cards -->
+            <div style="padding: 16px; background: #f8f9fa;">
+              <div class="card">
+                <div class="card-header">
+                  <div class="card-icon damage">⚔️</div>
+                  <div>
+                    <div class="card-title">Epic Alpha - City Boss</div>
+                    <div class="card-meta">Due: Feb 5 • 3 tasks remaining</div>
+                  </div>
+                </div>
+                <div class="hp-bar-container">
+                  <div class="hp-bar">
+                    <div class="hp-bar-fill" style="width: 65%; background: var(--damage-orange);"></div>
+                  </div>
+                  <div class="hp-bar-label">
+                    <span style="font-size: 10px; color: #666;">6,500 / 10,000 HP</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="card">
+                <div class="card-header">
+                  <div class="card-icon support">🛡️</div>
+                  <div>
+                    <div class="card-title">User Authentication Flow</div>
+                    <div class="card-meta">Support Task • UX Design</div>
+                  </div>
+                </div>
+                <div style="display: flex; align-items: center; gap: 8px; margin-top: 8px;">
+                  <span style="background: rgba(52, 152, 219, 0.1); color: var(--support-blue); padding: 4px 8px; border-radius: 4px; font-size: 10px; font-weight: 600;">
+                    SUPPORT
+                  </span>
+                  <span style="font-size: 11px; color: #999;">+200 Buff</span>
+                </div>
+              </div>
+
+              <div class="card" style="opacity: 0.6;">
+                <div class="card-header">
+                  <div class="card-icon">✓</div>
+                  <div>
+                    <div class="card-title" style="text-decoration: line-through; color: #999;">API Integration</div>
+                    <div class="card-meta">Completed yesterday</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Quick Stats -->
+            <div style="background: white; padding: 16px; border-top: 1px solid #f0f0f0;">
+              <div style="display: flex; justify-content: space-around; text-align: center;">
+                <div>
+                  <div style="font-size: 20px; font-weight: bold; color: var(--primary-blue);">Lv.12</div>
+                  <div style="font-size: 10px; color: #999;">Level</div>
+                </div>
+                <div>
+                  <div style="font-size: 20px; font-weight: bold; color: var(--gold);">1,250</div>
+                  <div style="font-size: 10px; color: #999;">Gold</div>
+                </div>
+                <div>
+                  <div style="font-size: 20px; font-weight: bold; color: var(--gem-purple);">45</div>
+                  <div style="font-size: 10px; color: #999;">Gems</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Bottom Tab Bar -->
+            <div style="height: 60px;"></div>
+            <div class="bottom-tab-bar">
+              <div class="tab-item">
+                <div style="font-size: 20px;">📊</div>
+                <div>Progress</div>
+              </div>
+              <div class="tab-item active">
+                <div style="font-size: 20px;">📋</div>
+                <div>Tasks</div>
+              </div>
+              <div class="tab-item">
+                <div style="font-size: 20px;">👥</div>
+                <div>Team</div>
+              </div>
+              <div class="tab-item">
+                <div style="font-size: 20px;">🎁</div>
+                <div>Rewards</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Analysis -->
+      <div class="analysis-panel">
+        <h4>📊 การวิเคราะห์ Direction 2</h4>
+        <div class="analysis-grid">
+          <div class="analysis-item">
+            <div class="analysis-label">Layout Type</div>
+            <div class="analysis-value">Card-based Clean</div>
+          </div>
+          <div class="analysis-item">
+            <div class="analysis-label">Visual Weight</div>
+            <div class="analysis-value">Airy / Minimal</div>
+          </div>
+          <div class="analysis-item">
+            <div class="analysis-label">RPG Elements</div>
+            <div class="analysis-value">Subtle (Hints only)</div>
+          </div>
+          <div class="analysis-item">
+            <div class="analysis-label">Best For</div>
+            <div class="analysis-value">Professional Teams</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Direction 3: Map-First Exploration -->
+    <section class="direction-section" id="direction-3" style="display: none;">
+      <h2>
+        <span class="direction-number">3</span>
+        Map-First Exploration
+      </h2>
+      <div class="direction-description">
+        <strong>โฟกัส:</strong> World Map เป็นหลัก — เหมือนเกม RPG จริงๆ<br>
+        <strong>Layout:</strong> Full-screen Map พร้อม Floating Cards<br>
+        <strong>Style:</strong> Interactive map ที่ Tap แล้วเห็นรายละเอียด
+      </div>
+
+      <div class="mockup-container">
+        <div class="mobile-frame">
+          <div class="mobile-notch"></div>
+          <div class="mockup-content" style="position: relative;">
+            <!-- Full Screen Map -->
+            <div class="world-map" style="min-height: 500px; position: relative;">
+              <!-- Map Background Pattern -->
+              <div style="position: absolute; inset: 0; opacity: 0.1;">
+                <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+                  <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+                    <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#000" stroke-width="1"/>
+                  </pattern>
+                  <rect width="100%" height="100%" fill="url(#grid)"/>
+                </svg>
+              </div>
+
+              <!-- Path Lines -->
+              <svg style="position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none;">
+                <path d="M 80 100 Q 150 150 200 120" stroke="var(--success-green)" stroke-width="3" fill="none" stroke-dasharray="5,5"/>
+                <path d="M 200 120 Q 250 180 180 220" stroke="var(--hp-medium)" stroke-width="3" fill="none" stroke-dasharray="5,5"/>
+              </svg>
+
+              <!-- City Nodes -->
+              <div class="city completed" style="top: 80px; left: 40px; padding: 8px 12px;">
+                <div style="font-size: 16px;">🏰</div>
+                <div class="city-name" style="font-size: 10px;">Starter</div>
+              </div>
+
+              <div class="city in-progress" style="top: 100px; left: 160px; padding: 8px 12px; transform: scale(1.1);">
+                <div style="font-size: 20px;">⚔️</div>
+                <div class="city-name" style="font-size: 10px;">Alpha</div>
+                <div class="boss-hp" style="margin-top: 4px;">
+                  <div class="boss-hp-fill" style="width: 45%;"></div>
+                </div>
+              </div>
+
+              <div class="city locked" style="top: 200px; left: 140px; padding: 8px 12px;">
+                <div style="font-size: 16px;">🔒</div>
+                <div class="city-name" style="font-size: 10px;">Beta</div>
+              </div>
+
+              <!-- Floating Detail Card -->
+              <div style="position: absolute; bottom: 100px; left: 16px; right: 16px; background: white; border-radius: 12px; padding: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.2);">
+                <div style="font-family: 'Cinzel', serif; font-weight: bold; margin-bottom: 8px; font-size: 14px;">
+                  ⚔️ Epic Alpha - City Boss
+                </div>
+                <div class="hp-bar-container">
+                  <div class="hp-bar-label">
+                    <span>HP</span>
+                    <span>4,550 / 10,000</span>
+                  </div>
+                  <div class="hp-bar">
+                    <div class="hp-bar-fill" style="width: 45%; background: linear-gradient(90deg, var(--hp-high), var(--hp-medium), var(--hp-low));"></div>
+                  </div>
+                </div>
+                <div style="display: flex; gap: 8px; margin-top: 12px;">
+                  <div style="flex: 1; background: #f8f9fa; padding: 8px; border-radius: 8px; text-align: center;">
+                    <div style="font-size: 11px; color: #999;">Active</div>
+                    <div style="font-size: 14px; font-weight: bold; color: var(--charcoal);">3</div>
+                  </div>
+                  <div style="flex: 1; background: #f8f9fa; padding: 8px; border-radius: 8px; text-align: center;">
+                    <div style="font-size: 11px; color: #999;">Blocked</div>
+                    <div style="font-size: 14px; font-weight: bold; color: var(--blocked-red);">1</div>
+                  </div>
+                  <div style="flex: 1; background: #f8f9fa; padding: 8px; border-radius: 8px; text-align: center;">
+                    <div style="font-size: 11px; color: #999;">Done</div>
+                    <div style="font-size: 14px; font-weight: bold; color: var(--success-green);">5</div>
+                  </div>
+                </div>
+                <button style="width: 100%; margin-top: 12px; padding: 10px; background: var(--primary-blue); color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer;">
+                  View Tasks →
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Analysis -->
+      <div class="analysis-panel">
+        <h4>📊 การวิเคราะห์ Direction 3</h4>
+        <div class="analysis-grid">
+          <div class="analysis-item">
+            <div class="analysis-label">Layout Type</div>
+            <div class="analysis-value">Map-First</div>
+          </div>
+          <div class="analysis-item">
+            <div class="analysis-label">Visual Weight</div>
+            <div class="analysis-value">Balanced</div>
+          </div>
+          <div class="analysis-item">
+            <div class="analysis-label">RPG Elements</div>
+            <div class="analysis-value">Heavy (Full Map)</div>
+          </div>
+          <div class="analysis-item">
+            <div class="analysis-label">Best For</div>
+            <div class="analysis-value">Visual Thinkers</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Direction 4: Stats-Heavy Dashboard -->
+    <section class="direction-section" id="direction-4" style="display: none;">
+      <h2>
+        <span class="direction-number">4</span>
+        Stats-Heavy Dashboard
+      </h2>
+      <div class="direction-description">
+        <strong>โฟกัส:</strong> Metrics และ Stats เยอะ — เหมือน Analytics Dashboard<br>
+        <strong>Layout:</strong> Grid-based พร้อม Charts และ Numbers<br>
+        <strong>Style:</strong> Professional + Game Elements
+      </div>
+
+      <div class="mockup-container">
+        <div class="mobile-frame">
+          <div class="mobile-notch"></div>
+          <div class="mockup-content">
+            <!-- Header -->
+            <div style="background: var(--charcoal); color: white; padding: 16px;">
+              <div style="font-size: 12px; opacity: 0.8;">Last Sync: Just now</div>
+              <div style="font-family: 'Cinzel', serif; font-size: 18px; font-weight: bold; margin-top: 4px;">
+                Project Overview
+              </div>
+            </div>
+
+            <!-- Stats Grid -->
+            <div style="padding: 16px; background: white;">
+              <div class="stats-grid" style="grid-template-columns: repeat(2, 1fr); gap: 8px; padding: 0;">
+                <div class="stat-box" style="padding: 12px;">
+                  <div style="font-size: 11px; color: #999; margin-bottom: 4px;">Total Progress</div>
+                  <div style="font-size: 20px; font-weight: bold; color: var(--success-green);">68%</div>
+                  <div style="font-size: 10px; color: #999;">+12% this week</div>
+                </div>
+                <div class="stat-box" style="padding: 12px;">
+                  <div style="font-size: 11px; color: #999; margin-bottom: 4px;">Boss HP</div>
+                  <div style="font-size: 20px; font-weight: bold; color: var(--hp-low);">45%</div>
+                  <div style="font-size: 10px; color: #999;">4,550 / 10,000</div>
+                </div>
+                <div class="stat-box" style="padding: 12px;">
+                  <div style="font-size: 11px; color: #999; margin-bottom: 4px;">Tasks Done</div>
+                  <div style="font-size: 20px; font-weight: bold; color: var(--primary-blue);">24</div>
+                  <div style="font-size: 10px; color: #999;">This sprint</div>
+                </div>
+                <div class="stat-box" style="padding: 12px;">
+                  <div style="font-size: 11px; color: #999; margin-bottom: 4px;">Team DPS</div>
+                  <div style="font-size: 20px; font-weight: bold; color: var(--damage-orange);">2.4k</div>
+                  <div style="font-size: 10px; color: #999;">Per day avg</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Progress Bars -->
+            <div style="padding: 16px; background: #f8f9fa;">
+              <div style="font-size: 12px; font-weight: 600; color: var(--charcoal); margin-bottom: 12px;">
+                Epic Progress
+              </div>
+
+              <div style="margin-bottom: 12px;">
+                <div style="display: flex; justify-content: space-between; font-size: 11px; margin-bottom: 4px;">
+                  <span>✓ Starter City</span>
+                  <span style="color: var(--success-green);">100%</span>
+                </div>
+                <div class="hp-bar">
+                  <div class="hp-bar-fill" style="width: 100%; background: var(--success-green);"></div>
+                </div>
+              </div>
+
+              <div style="margin-bottom: 12px;">
+                <div style="display: flex; justify-content: space-between; font-size: 11px; margin-bottom: 4px;">
+                  <span>⚔️ Epic Alpha</span>
+                  <span style="color: var(--hp-medium);">45%</span>
+                </div>
+                <div class="hp-bar">
+                  <div class="hp-bar-fill" style="width: 45%; background: var(--hp-medium);"></div>
+                </div>
+              </div>
+
+              <div>
+                <div style="display: flex; justify-content: space-between; font-size: 11px; margin-bottom: 4px;">
+                  <span>🔒 Beta Epic</span>
+                  <span style="color: var(--fog-gray);">Locked</span>
+                </div>
+                <div class="hp-bar">
+                  <div class="hp-bar-fill" style="width: 0%; background: var(--fog-gray);"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Team Performance -->
+            <div style="padding: 16px; background: white; border-top: 1px solid #f0f0f0;">
+              <div style="font-size: 12px; font-weight: 600; color: var(--charcoal); margin-bottom: 12px;">
+                Team Performance
+              </div>
+              <div style="display: flex; flex-direction: column; gap: 8px;">
+                <div style="display: flex; align-items: center; justify-content: space-between; padding: 8px; background: #f8f9fa; border-radius: 8px;">
+                  <span style="font-size: 11px;">🧙 Backend Team</span>
+                  <span style="font-size: 12px; font-weight: bold; color: var(--damage-orange);">+1,250</span>
+                </div>
+                <div style="display: flex; align-items: center; justify-content: space-between; padding: 8px; background: #f8f9fa; border-radius: 8px;">
+                  <span style="font-size: 11px;">⚔️ Frontend Team</span>
+                  <span style="font-size: 12px; font-weight: bold; color: var(--damage-orange);">+980</span>
+                </div>
+                <div style="display: flex; align-items: center; justify-content: space-between; padding: 8px; background: #f8f9fa; border-radius: 8px;">
+                  <span style="font-size: 11px;">🛡️ UX Team</span>
+                  <span style="font-size: 12px; font-weight: bold; color: var(--support-blue);">+220</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Bottom Tab Bar -->
+            <div style="height: 60px;"></div>
+            <div class="bottom-tab-bar">
+              <div class="tab-item active">
+                <div style="font-size: 20px;">📊</div>
+                <div>Stats</div>
+              </div>
+              <div class="tab-item">
+                <div style="font-size: 20px;">📋</div>
+                <div>Tasks</div>
+              </div>
+              <div class="tab-item">
+                <div style="font-size: 20px;">🗺️</div>
+                <div>Map</div>
+              </div>
+              <div class="tab-item">
+                <div style="font-size: 20px;">👥</div>
+                <div>Team</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Analysis -->
+      <div class="analysis-panel">
+        <h4>📊 การวิเคราะห์ Direction 4</h4>
+        <div class="analysis-grid">
+          <div class="analysis-item">
+            <div class="analysis-label">Layout Type</div>
+            <div class="analysis-value">Stats Grid</div>
+          </div>
+          <div class="analysis-item">
+            <div class="analysis-label">Visual Weight</div>
+            <div class="analysis-value">Dense</div>
+          </div>
+          <div class="analysis-item">
+            <div class="analysis-label">RPG Elements</div>
+            <div class="analysis-value">Moderate</div>
+          </div>
+          <div class="analysis-item">
+            <div class="analysis-label">Best For</div>
+            <div class="analysis-value">Data-Driven Teams</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Direction 5: Character-Centric -->
+    <section class="direction-section" id="direction-5" style="display: none;">
+      <h2>
+        <span class="direction-number">5</span>
+        Character-Centric RPG
+      </h2>
+      <div class="direction-description">
+        <strong>โฟกัส:</strong> Character Avatar เป็นหัวใจ — เหมือน RPG Game<br>
+        <strong>Layout:</strong> Character Dashboard + Equipment + Stats<br>
+        <strong>Style:</strong> เน้น Avatar, Equipment, Level Up
+      </div>
+
+      <div class="mockup-container">
+        <div class="mobile-frame">
+          <div class="mobile-notch"></div>
+          <div class="mockup-content">
+            <!-- Character Header -->
+            <div style="background: linear-gradient(135deg, var(--primary-blue), var(--teal-accent)); padding: 24px 16px; text-align: center; color: white;">
+              <div class="character-avatar" style="width: 80px; height: 80px; margin: 0 auto 12px; background: white; color: var(--primary-blue);">
+                🧙
+              </div>
+              <div style="font-family: 'Cinzel', serif; font-size: 20px; font-weight: bold;">
+                Master Coder
+              </div>
+              <div style="font-size: 12px; opacity: 0.9; margin-top: 4px;">
+                Level 12 ⚔️ Warrior
+              </div>
+            </div>
+
+            <!-- Equipment -->
+            <div style="padding: 16px; background: white;">
+              <div style="font-size: 12px; font-weight: 600; color: var(--charcoal); margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
+                🛡️ Your Equipment
+              </div>
+              <div class="equipment-grid">
+                <div class="equipment-slot filled">⚔️</div>
+                <div class="equipment-slot filled">🛡️</div>
+                <div class="equipment-slot filled">👑</div>
+                <div class="equipment-slot filled">👗</div>
+                <div class="equipment-slot">+</div>
+                <div class="equipment-slot">+</div>
+              </div>
+            </div>
+
+            <!-- Stats -->
+            <div style="padding: 16px; background: #f8f9fa;">
+              <div class="hp-bar-container">
+                <div class="hp-bar-label">
+                  <span>⭐ Level Progress</span>
+                  <span>82%</span>
+                </div>
+                <div class="hp-bar">
+                  <div class="hp-bar-fill" style="width: 82%; background: linear-gradient(90deg, var(--xp-gold), var(--gold));"></div>
+                </div>
+              </div>
+
+              <div class="stats-grid" style="grid-template-columns: repeat(3, 1fr); gap: 8px; padding: 0; margin-top: 12px;">
+                <div class="stat-box" style="padding: 8px;">
+                  <div style="font-size: 16px; font-weight: bold; color: var(--gold);">1,250</div>
+                  <div style="font-size: 9px; color: #999;">Gold</div>
+                </div>
+                <div class="stat-box" style="padding: 8px;">
+                  <div style="font-size: 16px; font-weight: bold; color: var(--gem-purple);">45</div>
+                  <div style="font-size: 9px; color: #999;">Gems</div>
+                </div>
+                <div class="stat-box" style="padding: 8px;">
+                  <div style="font-size: 16px; font-weight: bold; color: var(--primary-blue);">24</div>
+                  <div style="font-size: 9px; color: #999;">Kills</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Active Quests -->
+            <div style="padding: 16px; background: white; border-top: 1px solid #f0f0f0;">
+              <div style="font-size: 12px; font-weight: 600; color: var(--charcoal); margin-bottom: 12px;">
+                ⚔️ Active Quests
+              </div>
+              <div class="card">
+                <div class="card-header">
+                  <div class="card-icon damage">⚔️</div>
+                  <div style="flex: 1;">
+                    <div class="card-title">Defeat City Boss</div>
+                    <div style="display: flex; gap: 8px; margin-top: 4px;">
+                      <span style="background: rgba(230, 126, 34, 0.1); color: var(--damage-orange); padding: 2px 6px; border-radius: 4px; font-size: 9px; font-weight: 600;">
+                        DAMAGE
+                      </span>
+                      <span style="font-size: 10px; color: #999;">+500 reward</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Bottom Tab Bar -->
+            <div style="height: 60px;"></div>
+            <div class="bottom-tab-bar">
+              <div class="tab-item active">
+                <div style="font-size: 20px;">🧙</div>
+                <div>Hero</div>
+              </div>
+              <div class="tab-item">
+                <div style="font-size: 20px;">⚔️</div>
+                <div>Quests</div>
+              </div>
+              <div class="tab-item">
+                <div style="font-size: 20px;">🛒</div>
+                <div>Shop</div>
+              </div>
+              <div class="tab-item">
+                <div style="font-size: 20px;">⚙️</div>
+                <div>Settings</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Analysis -->
+      <div class="analysis-panel">
+        <h4>📊 การวิเคราะห์ Direction 5</h4>
+        <div class="analysis-grid">
+          <div class="analysis-item">
+            <div class="analysis-label">Layout Type</div>
+            <div class="analysis-value">Character Dashboard</div>
+          </div>
+          <div class="analysis-item">
+            <div class="analysis-label">Visual Weight</div>
+            <div class="analysis-value">Balanced</div>
+          </div>
+          <div class="analysis-item">
+            <div class="analysis-label">RPG Elements</div>
+            <div class="analysis-value">Heavy (Avatar Focus)</div>
+          </div>
+          <div class="analysis-item">
+            <div class="analysis-label">Best For</div>
+            <div class="analysis-value">Character Lovers</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Direction 6: Tactical Map -->
+    <section class="direction-section" id="direction-6" style="display: none;">
+      <h2>
+        <span class="direction-number">6</span>
+        Tactical Map Interface
+      </h2>
+      <div class="direction-description">
+        <strong>โฟกัส:</strong> Tactical/Strategy Game UI — เหมือนเกม Strategy<br>
+        <strong>Layout:</strong> Map + Mini-maps + Resource counters<br>
+        <strong>Style:</strong> Military/Tactical RPG style
+      </div>
+
+      <div class="mockup-container">
+        <div class="mobile-frame">
+          <div class="mobile-notch"></div>
+          <div class="mockup-content">
+            <!-- Top Resource Bar -->
+            <div style="background: var(--charcoal); color: white; padding: 8px 12px; display: flex; justify-content: space-between; font-size: 11px;">
+              <div style="display: flex; gap: 16px;">
+                <span>💰 1,250</span>
+                <span>💎 45</span>
+                <span>⚡ 2,450/3,000</span>
+              </div>
+              <span>🔔</span>
+            </div>
+
+            <!-- Tactical Map -->
+            <div class="world-map" style="min-height: 350px; position: relative; background: linear-gradient(180deg, #1a1a2e 0%, #16213e 100%);">
+              <!-- Grid Overlay -->
+              <div style="position: absolute; inset: 0; opacity: 0.1;">
+                <svg width="100%" height="100%">
+                  <pattern id="tacticalGrid" width="30" height="30" patternUnits="userSpaceOnUse">
+                    <path d="M 30 0 L 0 0 0 30" fill="none" stroke="#4fc3f7" stroke-width="0.5"/>
+                  </pattern>
+                  <rect width="100%" height="100%" fill="url(#tacticalGrid)"/>
+                </svg>
+              </div>
+
+              <!-- Tactical Cities -->
+              <div class="city completed" style="top: 40px; left: 30px; background: rgba(46, 204, 113, 0.2); border: 2px solid var(--success-green); color: var(--success-green);">
+                <div style="font-size: 18px;">🏰</div>
+                <div class="city-name" style="font-size: 9px;">Base</div>
+                <div style="font-size: 8px;">✓ Secured</div>
+              </div>
+
+              <div class="city in-progress" style="top: 100px; left: 140px; background: rgba(241, 196, 15, 0.2); border: 2px solid var(--hp-medium); color: var(--hp-medium); transform: scale(1.15);">
+                <div style="font-size: 22px;">⚔️</div>
+                <div class="city-name" style="font-size: 9px;">Alpha</div>
+                <div style="font-size: 8px;">45% HP</div>
+              </div>
+
+              <div class="city locked" style="top: 180px; left: 60px; background: rgba(149, 165, 166, 0.2); border: 2px solid var(--fog-gray); color: var(--fog-gray);">
+                <div style="font-size: 16px;">🔒</div>
+                <div class="city-name" style="font-size: 9px;">Beta</div>
+                <div style="font-size: 8px;">???</div>
+              </div>
+
+              <!-- Tactical Info Panel -->
+              <div style="position: absolute; top: 10px; right: 10px; background: rgba(0,0,0,0.7); color: white; padding: 8px 12px; border-radius: 8px; font-size: 10px;">
+                <div>📍 Alpha Epic</div>
+                <div>⚔️ 3 Active</div>
+                <div>🛡️ 1 Blocked</div>
+              </div>
+            </div>
+
+            <!-- Mission Panel -->
+            <div style="background: white; padding: 16px; border-top: 3px solid var(--charcoal);">
+              <div style="font-family: 'Cinzel', serif; font-size: 14px; font-weight: bold; margin-bottom: 12px; color: var(--charcoal);">
+                📋 Current Mission
+              </div>
+              <div class="card" style="border-left: 4px solid var(--damage-orange);">
+                <div class="card-header">
+                  <div class="card-icon damage">⚔️</div>
+                  <div style="flex: 1;">
+                    <div class="card-title">City Boss - Epic Alpha</div>
+                    <div class="card-meta">Damage Task • Backend</div>
+                  </div>
+                  <div style="background: var(--damage-orange); color: white; padding: 4px 8px; border-radius: 4px; font-size: 10px; font-weight: bold;">
+                    +500
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div style="background: #f8f9fa; padding: 12px; display: flex; gap: 8px;">
+              <button style="flex: 1; padding: 10px; background: var(--primary-blue); color: white; border: none; border-radius: 8px; font-size: 12px; font-weight: 600; cursor: pointer;">
+                🗺️ Map
+              </button>
+              <button style="flex: 1; padding: 10px; background: white; color: var(--charcoal); border: 1px solid #ddd; border-radius: 8px; font-size: 12px; font-weight: 600; cursor: pointer;">
+                👥 Team
+              </button>
+              <button style="flex: 1; padding: 10px; background: white; color: var(--charcoal); border: 1px solid #ddd; border-radius: 8px; font-size: 12px; font-weight: 600; cursor: pointer;">
+                🛒 Shop
+              </button>
+            </div>
+
+            <!-- Bottom Tab Bar -->
+            <div style="height: 60px;"></div>
+            <div class="bottom-tab-bar">
+              <div class="tab-item">
+                <div style="font-size: 20px;">🎯</div>
+                <div>Mission</div>
+              </div>
+              <div class="tab-item active">
+                <div style="font-size: 20px;">🗺️</div>
+                <div>Tactical</div>
+              </div>
+              <div class="tab-item">
+                <div style="font-size: 20px;">📊</div>
+                <div>Intel</div>
+              </div>
+              <div class="tab-item">
+                <div style="font-size: 20px;">⚙️</div>
+                <div>Config</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Analysis -->
+      <div class="analysis-panel">
+        <h4>📊 การวิเคราะห์ Direction 6</h4>
+        <div class="analysis-grid">
+          <div class="analysis-item">
+            <div class="analysis-label">Layout Type</div>
+            <div class="analysis-value">Tactical Map</div>
+          </div>
+          <div class="analysis-item">
+            <div class="analysis-label">Visual Weight</div>
+            <div class="analysis-value">Dense Dark</div>
+          </div>
+          <div class="analysis-item">
+            <div class="analysis-label">RPG Elements</div>
+            <div class="analysis-value">Heavy (Tactical)</div>
+          </div>
+          <div class="analysis-item">
+            <div class="analysis-label">Best For</div>
+            <div class="analysis-value">Strategy Game Fans</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Evaluation Guide -->
+    <section style="background: linear-gradient(135deg, var(--primary-blue), var(--teal-accent)); color: white; border-radius: 16px; padding: 40px; margin-top: 40px;">
+      <h2 style="color: white; font-size: 28px; margin-bottom: 20px; display: flex; align-items: center; gap: 12px;">
+        🎯 การประเมิน Design Directions
+      </h2>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;">
+        <div style="background: rgba(255,255,255,0.1); padding: 16px; border-radius: 8px; backdrop-filter: blur(10px);">
+          <div style="font-size: 24px; margin-bottom: 8px;">✅</div>
+          <div style="font-weight: 600; margin-bottom: 8px;">Layout Intuitiveness</div>
+          <div style="font-size: 13px; opacity: 0.9;">Information hierarchy ตรงกับ priorities ของคุณหรือไม่?</div>
+        </div>
+        <div style="background: rgba(255,255,255,0.1); padding: 16px; border-radius: 8px; backdrop-filter: blur(10px);">
+          <div style="font-size: 24px; margin-bottom: 8px;">✅</div>
+          <div style="font-weight: 600; margin-bottom: 8px;">Interaction Style</div>
+          <div style="font-size: 13px; opacity: 0.9;">Style นี้ support Core Experience ของคุณไหม?</div>
+        </div>
+        <div style="background: rgba(255,255,255,0.1); padding: 16px; border-radius: 8px; backdrop-filter: blur(10px);">
+          <div style="font-size: 24px; margin-bottom: 8px;">✅</div>
+          <div style="font-weight: 600; margin-bottom: 8px;">Visual Weight</div>
+          <div style="font-size: 13px; opacity: 0.9;">Density นี้ match brand personality ของคุณไหม?</div>
+        </div>
+        <div style="background: rgba(255,255,255,0.1); padding: 16px; border-radius: 8px; backdrop-filter: blur(10px);">
+          <div style="font-size: 24px; margin-bottom: 8px;">✅</div>
+          <div style="font-weight: 600; margin-bottom: 8px;">RPG Elements</div>
+          <div style="font-size: 13px; opacity: 0.9;">Game UI เยอะแค่ไหนดีสำหรับ team คุณ?</div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    function showDirection(num) {
+      // Hide all sections
+      document.querySelectorAll('.direction-section').forEach(section => {
+        section.style.display = 'none';
+      });
+
+      // Show selected section
+      document.getElementById('direction-' + num).style.display = 'block';
+
+      // Update nav buttons
+      document.querySelectorAll('.directions-nav button').forEach((btn, index) => {
+        if (index + 1 === num) {
+          btn.classList.add('active');
+        } else {
+          btn.classList.remove('active');
+        }
+      });
+
+      // Scroll to top of container
+      window.scrollTo({ top: 200, behavior: 'smooth' });
+    }
+
+    // Add smooth animations on scroll
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.style.opacity = '1';
+          entry.target.style.transform = 'translateY(0)';
+        }
+      });
+    }, { threshold: 0.1 });
+
+    document.querySelectorAll('.direction-section').forEach(section => {
+      section.style.opacity = '0';
+      section.style.transform = 'translateY(20px)';
+      section.style.transition = 'opacity 0.5s, transform 0.5s';
+      observer.observe(section);
+    });
+
+    // Trigger initial section
+    setTimeout(() => {
+      document.getElementById('direction-1').style.opacity = '1';
+      document.getElementById('direction-1').style.transform = 'translateY(0)';
+    }, 100);
+  </script>
+</body>
+</html>

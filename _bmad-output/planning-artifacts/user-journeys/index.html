@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MCOP Quest - User Journey Flows (6 HP Bars)</title>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: #ecf0f1;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            padding: 40px 20px;
+            margin-bottom: 40px;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            color: #f1c40f;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            color: #95a5a6;
+        }
+
+        .concept-box {
+            background: rgba(52, 152, 219, 0.1);
+            border: 2px solid #3498db;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 40px;
+        }
+
+        .concept-box h2 {
+            color: #3498db;
+            margin-bottom: 16px;
+        }
+
+        .concept-box pre {
+            background: rgba(0,0,0,0.3);
+            padding: 16px;
+            border-radius: 8px;
+            overflow-x: auto;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .hp-bars {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 8px;
+            margin-top: 16px;
+        }
+
+        .hp-bar {
+            text-align: center;
+            padding: 8px;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+
+        .hp-design { background: #9b59b6; }
+        .hp-ac { background: #3498db; }
+        .hp-api { background: #2ecc71; }
+        .hp-fe { background: #e67e22; }
+        .hp-testing { background: #1abc9c; }
+        .hp-uat { background: #27ae60; }
+
+        .tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .tab {
+            padding: 12px 24px;
+            background: rgba(255,255,255,0.1);
+            border: none;
+            border-radius: 8px;
+            color: #ecf0f1;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .tab:hover {
+            background: rgba(255,255,255,0.2);
+        }
+
+        .tab.active {
+            background: #3498db;
+            color: white;
+        }
+
+        .journey-card {
+            background: rgba(255,255,255,0.05);
+            border-radius: 16px;
+            padding: 32px;
+            margin-bottom: 24px;
+            display: none;
+        }
+
+        .journey-card.active {
+            display: block;
+        }
+
+        .journey-header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .journey-icon {
+            font-size: 3rem;
+        }
+
+        .journey-title h2 {
+            color: #f1c40f;
+            margin-bottom: 4px;
+        }
+
+        .journey-title p {
+            color: #95a5a6;
+        }
+
+        .journey-goal {
+            background: rgba(46, 204, 113, 0.1);
+            border-left: 4px solid #2ecc71;
+            padding: 16px;
+            margin-bottom: 24px;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .journey-goal strong {
+            color: #2ecc71;
+        }
+
+        .diagram-container {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            overflow-x: auto;
+            min-height: 500px;
+        }
+
+        .data-model {
+            background: rgba(155, 89, 182, 0.1);
+            border: 2px solid #9b59b6;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 40px;
+        }
+
+        .data-model h2 {
+            color: #9b59b6;
+            margin-bottom: 16px;
+        }
+
+        .sheets-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-top: 16px;
+        }
+
+        .sheet-item {
+            background: rgba(0,0,0,0.2);
+            padding: 16px;
+            border-radius: 8px;
+            border-left: 4px solid #3498db;
+        }
+
+        .sheet-item.flows { border-color: #9b59b6; }
+        .sheet-item.ui { border-color: #e74c3c; }
+        .sheet-item.api { border-color: #2ecc71; }
+        .sheet-item.fe { border-color: #e67e22; }
+        .sheet-item.bugs { border-color: #7f8c8d; }
+
+        .sheet-item h4 {
+            margin-bottom: 8px;
+        }
+
+        .sheet-item ul {
+            font-size: 12px;
+            color: #95a5a6;
+            padding-left: 16px;
+        }
+
+        footer {
+            text-align: center;
+            padding: 40px;
+            color: #7f8c8d;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>MCOP Quest - User Journey Flows</h1>
+            <p class="subtitle">Read-Only Dashboard | Auto-Sync 1 min | 6 HP Bars per Flow</p>
+        </header>
+
+        <!-- Data Model -->
+        <div class="data-model">
+            <h2>Data Model (จาก Google Sheets จริง)</h2>
+            <div class="sheets-list">
+                <div class="sheet-item flows">
+                    <h4>Flows Sheet (Commander Level)</h4>
+                    <ul>
+                        <li>Flow ID, System, Group</li>
+                        <li>6 Status Columns:</li>
+                        <li>Design, AC, API, FE/App, Testing, UAT</li>
+                    </ul>
+                </div>
+                <div class="sheet-item ui">
+                    <h4>UI-tasks (Minion)</h4>
+                    <ul>
+                        <li>UX Designer Tasks</li>
+                        <li>JJ, Rita, Ton, Sun, New</li>
+                    </ul>
+                </div>
+                <div class="sheet-item api">
+                    <h4>API-tasks (Minion)</h4>
+                    <ul>
+                        <li>Backend Dev Tasks</li>
+                        <li>Flow ID → Task → Status</li>
+                    </ul>
+                </div>
+                <div class="sheet-item fe">
+                    <h4>FE-tasks (Minion)</h4>
+                    <ul>
+                        <li>Frontend Dev Tasks</li>
+                        <li>รวม Figma Links</li>
+                    </ul>
+                </div>
+                <div class="sheet-item bugs" style="border-color: #c0392b; background: rgba(192,57,43,0.2);">
+                    <h4>👹 Bugs Sheet (Demon Reinforcements)</h4>
+                    <ul>
+                        <li>กองหนุนจากราชาปีศาจ</li>
+                        <li>มาจากประตูมิติ</li>
+                        <li>ไม่รู้จำนวน ไม่รู้เวลา</li>
+                        <li>ฆ่าแล้วไม่ได้ XP เลย</li>
+                    </ul>
+                </div>
+            </div>
+
+            <h3 style="margin-top: 24px; color: #f1c40f;">6 HP Bars (Pipeline Status)</h3>
+            <div class="hp-bars">
+                <div class="hp-bar hp-design">Design</div>
+                <div class="hp-bar hp-ac">AC</div>
+                <div class="hp-bar hp-api">API</div>
+                <div class="hp-bar hp-fe">FE/App</div>
+                <div class="hp-bar hp-testing">Testing</div>
+                <div class="hp-bar hp-uat">UAT</div>
+            </div>
+        </div>
+
+        <div class="tabs">
+            <button class="tab active" data-journey="ken">Ken (API)</button>
+            <button class="tab" data-journey="sarah">Sarah (BA)</button>
+            <button class="tab" data-journey="ton">Ton (UX)</button>
+            <button class="tab" data-journey="om">Om (PM)</button>
+        </div>
+
+        <!-- Journey 1: Warrior Ken -->
+        <div id="journey-ken" class="journey-card active">
+            <div class="journey-header">
+                <span class="journey-icon">⚔️</span>
+                <div class="journey-title">
+                    <h2>Journey 1: Warrior Ken</h2>
+                    <p>Backend Developer | ทำงานใน API-tasks Sheet</p>
+                </div>
+            </div>
+            <div class="journey-goal">
+                <strong>Goal:</strong> ดูว่า Flow ไหนรอ API | เห็น API HP Bar ขึ้นเมื่อทำ task เสร็จ
+            </div>
+            <div class="diagram-container" id="diagram-ken"></div>
+        </div>
+
+        <!-- Journey 2: Scout Sarah -->
+        <div id="journey-sarah" class="journey-card">
+            <div class="journey-header">
+                <span class="journey-icon">🔍</span>
+                <div class="journey-title">
+                    <h2>Journey 2: Scout Sarah</h2>
+                    <p>Business Analyst | ดูแล AC, Testing, UAT columns</p>
+                </div>
+            </div>
+            <div class="journey-goal">
+                <strong>Goal:</strong> เห็น Pipeline (6 HP Bars) | รู้ว่า Flow ไหนพร้อม Test
+            </div>
+            <div class="diagram-container" id="diagram-sarah"></div>
+        </div>
+
+        <!-- Journey 3: Blacksmith Ton -->
+        <div id="journey-ton" class="journey-card">
+            <div class="journey-header">
+                <span class="journey-icon">⚒️</span>
+                <div class="journey-title">
+                    <h2>Journey 3: Blacksmith Ton</h2>
+                    <p>UX Designer | ทำงานใน UI-tasks Sheet</p>
+                </div>
+            </div>
+            <div class="journey-goal">
+                <strong>Goal:</strong> ดูว่า Flow ไหนรอ Design | เห็น Design HP Bar ขึ้น
+            </div>
+            <div class="diagram-container" id="diagram-ton"></div>
+        </div>
+
+        <!-- Journey 4: Guild Master Om -->
+        <div id="journey-om" class="journey-card">
+            <div class="journey-header">
+                <span class="journey-icon">👑</span>
+                <div class="journey-title">
+                    <h2>Journey 4: Guild Master Om</h2>
+                    <p>Project Manager | ดูภาพรวมทั้งโปรเจค</p>
+                </div>
+            </div>
+            <div class="journey-goal">
+                <strong>Goal:</strong> เห็น Bottleneck ทันที | Present ผู้บริหารได้เลย
+            </div>
+            <div class="diagram-container" id="diagram-om"></div>
+        </div>
+
+        <footer>
+            <p>MCOP Quest User Journey Flows | CORRECTED: 6 HP Bars per Flow</p>
+            <p>Read-Only Dashboard | Auto-Sync Every 1 Minute | Telegram Notifications</p>
+        </footer>
+    </div>
+
+    <script>
+        // Updated Mermaid diagrams with 6 HP Bars concept
+        const diagrams = {
+            ken: `flowchart TD
+    subgraph CONTEXT["Warrior Ken - Backend Developer"]
+        CTX1["บทบาท: Backend Dev"]
+        CTX2["ทำงานใน: API-tasks Sheet"]
+        CTX3["เป้าหมาย: ดูว่า Flow ไหนรอ API"]
+    end
+
+    subgraph SHEETS["Google Sheets - ที่ทำงานจริง"]
+        S1["เปิด MCOP-Dev Sheet"]
+        S2["ไปที่ Tab: API-tasks"]
+        S3["หา Task ที่ Assign ให้ Ken"]
+        S4["เห็น: Flow ID | Task | Status"]
+        S5["เปลี่ยน Status → Doing"]
+        S6["ทำ Coding..."]
+        S7["เปลี่ยน Status → 6 - Done"]
+
+        S1 --> S2 --> S3 --> S4 --> S5 --> S6 --> S7
+    end
+
+    subgraph SYNC["Auto-Sync ทุก 1 นาที"]
+        SY1["MCOP Quest Server"]
+        SY2["Poll Google Sheets API"]
+        SY3["ตรวจพบ API-task Done!"]
+        SY4["อัพเดท Flow.API column"]
+        SY5["คำนวณ API HP Bar"]
+        SY6["Push to Dashboard"]
+
+        SY1 --> SY2 --> SY3 --> SY4 --> SY5 --> SY6
+    end
+
+    subgraph QUEST["MCOP Quest - Read-Only Dashboard"]
+        Q1["เปิด App → World Map"]
+        Q2["เห็น Cities: ระบบสมาชิก, ระบบสินค้า"]
+        Q3["คลิกเข้า City"]
+
+        subgraph COMMANDER["Commander Card = Flow"]
+            CM1["Flow: ระบบ Login"]
+            CM2["6 HP Bars:"]
+            CM3["Design: 60%"]
+            CM4["AC: 100% ✓"]
+            CM5["API: 60% ← Ken กำลังทำ"]
+            CM6["FE/App: 0%"]
+            CM7["Testing: 0%"]
+            CM8["UAT: 0%"]
+        end
+
+        Q4["คลิก Commander → ดู Minions"]
+
+        subgraph MINIONS["Minions View = Tasks"]
+            MN1["UI Tasks - Designer"]
+            MN2["API Tasks - Ken เห็นงาน"]
+            MN3["FE Tasks - Frontend"]
+        end
+
+        Q1 --> Q2 --> Q3 --> COMMANDER --> Q4 --> MINIONS
+    end
+
+    subgraph INSIGHT["Ken ได้อะไร"]
+        I1["เห็น Flow ไหน AC เสร็จ พร้อมทำ API"]
+        I2["เห็น API HP ขึ้นทุกครั้ง"]
+        I3["เห็น XP สะสม + Ranking"]
+        I4["รู้ว่า Flow ไหนรอ FE"]
+    end
+
+    CONTEXT --> SHEETS
+    S7 -.->|"Sheets Updated"| SY1
+    SY6 -.->|"Real-time"| QUEST
+    QUEST --> INSIGHT`,
+
+            sarah: `flowchart TD
+    subgraph CONTEXT["Scout Sarah - Business Analyst"]
+        CTX1["บทบาท: BA / QA"]
+        CTX2["ทำงานใน: Flows Sheet - AC, Testing, UAT"]
+        CTX3["เป้าหมาย: ติดตาม Pipeline"]
+    end
+
+    subgraph SHEETS["Google Sheets - ที่ทำงานจริง"]
+        S1["เปิด MCOP-Dashboard Sheet"]
+        S2["ไปที่ Tab: Flows"]
+        S3["หา Flow ที่รับผิดชอบ"]
+        S4["เห็น: Flow ID | System | Design | AC | API | FE/App | Testing | UAT"]
+        S5["อัพเดท AC column"]
+        S6["อัพเดท Testing column"]
+        S7["อัพเดท UAT column"]
+
+        S1 --> S2 --> S3 --> S4
+        S4 --> S5
+        S4 --> S6
+        S4 --> S7
+    end
+
+    subgraph QUEST["MCOP Quest - Read-Only Dashboard"]
+        Q1["เปิด App → World Map"]
+        Q2["เห็น Cities Overview"]
+        Q3["คลิกเข้า City"]
+
+        subgraph CARDS["Commander Cards = Flows"]
+            C1["Flow: ระบบ Login"]
+            C2["Design 100% ✓"]
+            C3["AC 100% ✓ ← Sarah เขียนเสร็จ"]
+            C4["API 80%"]
+            C5["FE/App 50%"]
+            C6["Testing 0% ← รอ API+FE"]
+            C7["UAT 0%"]
+        end
+
+        Q1 --> Q2 --> Q3 --> CARDS
+    end
+
+    subgraph PIPELINE["Sarah มองเห็น Pipeline"]
+        P1["Design"]
+        P2["AC"]
+        P3["API"]
+        P4["FE/App"]
+        P5["Testing"]
+        P6["UAT"]
+
+        P1 --> P2 --> P3 --> P4 --> P5 --> P6
+    end
+
+    subgraph INSIGHT["Sarah ได้อะไร"]
+        I1["เห็น Flow ไหน Design เสร็จ รอ AC"]
+        I2["เห็น Flow ไหน API+FE เสร็จ พร้อม Test"]
+        I3["เห็น Bottleneck ติดตรงไหน"]
+        I4["ไม่ต้องถาม Dev เห็นภาพเอง"]
+    end
+
+    subgraph NOTIFY["Telegram Notifications"]
+        N1["Flow Login พร้อม Test แล้ว!"]
+        N2["Flow Payment ผ่าน UAT!"]
+    end
+
+    CONTEXT --> SHEETS
+    SHEETS -.->|"Auto-Sync 1 min"| QUEST
+    QUEST --> INSIGHT
+    QUEST -.->|"Events"| NOTIFY
+    CARDS -.-> PIPELINE`,
+
+            ton: `flowchart TD
+    subgraph CONTEXT["Blacksmith Ton - UX Designer"]
+        CTX1["บทบาท: UX Designer"]
+        CTX2["ทำงานใน: UI-tasks Sheet"]
+        CTX3["เป้าหมาย: ดูว่า Flow ไหนรอ Design"]
+    end
+
+    subgraph SHEETS["Google Sheets - ที่ทำงานจริง"]
+        S1["เปิด MCOP-Dev Sheet"]
+        S2["ไปที่ Tab: UI-tasks"]
+        S3["หา Task ที่ Assign ให้ Ton"]
+        S4["เห็น: Flow ID | Task | Assignee | Status"]
+        S5["เปลี่ยน Status → Doing"]
+        S6["ทำงานออกแบบใน Figma..."]
+        S7["เปลี่ยน Status → 6 - Done"]
+        S8["อาจไปอัพเดท Flows Sheet: Design → Done"]
+
+        S1 --> S2 --> S3 --> S4 --> S5 --> S6 --> S7 --> S8
+    end
+
+    subgraph UITASKS["UI-tasks Sheet Structure"]
+        UT1["Flow ID | ID | Type | System"]
+        UT2["Task | Assignee | Status"]
+        UT3["001 | UT-001 | UI | ระบบสมาชิก"]
+        UT4["Wireframe Login | Ton | Doing"]
+    end
+
+    subgraph QUEST["MCOP Quest - Read-Only Dashboard"]
+        Q1["เปิด App → World Map"]
+        Q2["มองหา Cities ที่ Design HP ยังไม่เต็ม"]
+        Q3["คลิกเข้า City"]
+
+        subgraph COMMANDER["Commander Card"]
+            CM1["Flow: ระบบ Login"]
+            CM2["Design 50% ← Ton ทำอยู่"]
+            CM3["AC 0%"]
+            CM4["API 0%"]
+            CM5["FE/App 0%"]
+            CM6["Testing 0%"]
+            CM7["UAT 0%"]
+        end
+
+        Q4["คลิก Commander → ดู Minions"]
+
+        subgraph MINIONS["UI Minions = Tasks"]
+            MN1["Wireframe Login - Ton - Doing"]
+            MN2["Error States - Rita - Done ✓"]
+            MN3["Responsive View - Pending"]
+        end
+
+        Q1 --> Q2 --> Q3 --> COMMANDER --> Q4 --> MINIONS
+    end
+
+    subgraph RANKING["Designer Leaderboard"]
+        R1["1. JJ - 450 XP"]
+        R2["2. Rita - 380 XP"]
+        R3["3. Ton - 350 XP"]
+        R4["4. Sun - 320 XP"]
+        R5["5. New - 280 XP"]
+    end
+
+    subgraph INSIGHT["Ton ได้อะไร"]
+        I1["เห็น Flow ไหนรอ Design"]
+        I2["รู้ Priority จาก Flow ที่ Block"]
+        I3["เห็น XP สะสม แข่งกับคนอื่น"]
+        I4["เห็น Contribution ต่อ Flow"]
+    end
+
+    CONTEXT --> SHEETS
+    SHEETS -.-> UITASKS
+    SHEETS -.->|"Auto-Sync 1 min"| QUEST
+    QUEST --> INSIGHT
+    I3 -.-> RANKING`,
+
+            om: `flowchart TD
+    subgraph CONTEXT["Guild Master Om - Project Manager"]
+        CTX1["บทบาท: Project Manager"]
+        CTX2["ดูแล: ภาพรวมทั้งโปรเจค"]
+        CTX3["เป้าหมาย: รู้ว่าอยู่ตรงไหน มี Bottleneck"]
+    end
+
+    subgraph DATASOURCE["Google Sheets - Data Sources"]
+        DS1["Flows Sheet - 6 status columns"]
+
+        subgraph MINIONS["Minions = Tasks ปกติ"]
+            DS2["UI-tasks"]
+            DS3["API-tasks"]
+            DS4["FE-tasks"]
+        end
+
+        subgraph DEMONS["Demon Reinforcements"]
+            DS5["Bugs Sheet<br/>กองหนุนจากราชาปีศาจ<br/>มาจากประตูมิติ<br/>ฆ่าแล้วไม่ได้ XP"]
+        end
+
+        DS1 --- MINIONS
+        DS1 --- DEMONS
+    end
+
+    subgraph QUEST["MCOP Quest - PM Dashboard"]
+        subgraph WORLDMAP["World Map Level"]
+            WM1["เห็น Cities ทั้งหมด"]
+            WM2["สี: On Track / At Risk / Blocked"]
+            WM3["Portal Alert เมื่อมี Bug ใหม่"]
+        end
+
+        subgraph CITYVIEW["City View"]
+            CV1["คลิกเข้า City"]
+            CV2["เห็น Commanders"]
+            CV3["Demon Portal Icon ถ้ามี Bug"]
+        end
+
+        subgraph COMMANDER["Commander View"]
+            CM1["Flow: ระบบ Login"]
+            CM2["Design 100%"]
+            CM3["AC 100%"]
+            CM4["API 80%"]
+            CM5["FE/App 50% ← Bottleneck"]
+            CM6["Testing 0%"]
+            CM7["UAT 0%"]
+        end
+
+        subgraph TASKVIEW["Task Views"]
+            MN1["Minions: UI/API/FE Tasks"]
+            MN2["Demon Portal: Bugs<br/>ไม่รู้จำนวน ไม่รู้เวลา<br/>ฆ่าแล้วไม่ได้อะไร"]
+        end
+
+        WORLDMAP --> CITYVIEW --> COMMANDER --> TASKVIEW
+    end
+
+    subgraph INSIGHT["Om ได้อะไร"]
+        I1["เห็น Pipeline ชัด - 6 HP Bars"]
+        I2["รู้ Bottleneck ทันที"]
+        I3["Present ได้เลย ไม่ต้องทำ Report"]
+        I4["เห็น Demon Portal รู้ว่ามี Bug"]
+    end
+
+    subgraph TELEGRAM["Telegram Notifications"]
+        T1["Flow Login ผ่าน UAT!"]
+        T2["Flow Payment ติด Testing"]
+        T3["Demon Portal Opened! Bug ใหม่"]
+    end
+
+    CONTEXT --> DATASOURCE
+    DATASOURCE -.->|"Auto-Sync 1 min"| QUEST
+    QUEST --> INSIGHT
+    QUEST -.->|"Events"| TELEGRAM`
+        };
+
+        // Track which diagrams have been rendered
+        const rendered = {};
+
+        // Initialize Mermaid
+        mermaid.initialize({
+            startOnLoad: false,
+            theme: 'default',
+            flowchart: {
+                useMaxWidth: true,
+                htmlLabels: true,
+                curve: 'basis'
+            }
+        });
+
+        // Render a specific diagram
+        async function renderDiagram(id) {
+            if (rendered[id]) return;
+
+            const container = document.getElementById('diagram-' + id);
+            const diagramDef = diagrams[id];
+
+            try {
+                const { svg } = await mermaid.render('mermaid-' + id, diagramDef);
+                container.innerHTML = svg;
+                rendered[id] = true;
+            } catch (error) {
+                console.error('Error rendering diagram:', error);
+                container.innerHTML = '<p style="color: red;">Error rendering diagram: ' + error.message + '</p>';
+            }
+        }
+
+        // Show journey and render diagram
+        function showJourney(id) {
+            // Hide all journeys
+            document.querySelectorAll('.journey-card').forEach(card => {
+                card.classList.remove('active');
+            });
+
+            // Remove active from all tabs
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+
+            // Show selected journey
+            document.getElementById('journey-' + id).classList.add('active');
+
+            // Activate clicked tab
+            document.querySelector(`[data-journey="${id}"]`).classList.add('active');
+
+            // Render diagram if not already rendered
+            renderDiagram(id);
+        }
+
+        // Add click handlers to tabs
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', function() {
+                const journeyId = this.getAttribute('data-journey');
+                showJourney(journeyId);
+            });
+        });
+
+        // Render first diagram on load
+        document.addEventListener('DOMContentLoaded', function() {
+            renderDiagram('ken');
+        });
+    </script>
+</body>
+</html>

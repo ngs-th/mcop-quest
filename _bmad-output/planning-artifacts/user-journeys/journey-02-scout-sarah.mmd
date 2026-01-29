@@ -1,0 +1,77 @@
+%% Journey 2: Scout Sarah (Business Analyst / QA)
+%% CORRECTED: Flow มี 6 HP Bars - Sarah ดูแล AC, Testing, UAT
+%% MCOP Quest = Read-Only, Auto-Sync ทุก 1 นาที
+
+flowchart TD
+    subgraph CONTEXT["🎮 Scout Sarah - Business Analyst"]
+        CTX1["<b>บทบาท:</b> BA / QA"]
+        CTX2["<b>ทำงานใน:</b> Flows Sheet (AC, Testing, UAT columns)"]
+        CTX3["<b>เป้าหมาย:</b> ติดตาม Pipeline<br/>รู้ว่า Flow ไหนพร้อม Test"]
+    end
+
+    subgraph SHEETS["📊 Google Sheets - ที่ทำงานจริง"]
+        direction TB
+        S1["เปิด MCOP-Dashboard Sheet"]
+        S2["ไปที่ Tab: Flows"]
+        S3["หา Flow ที่รับผิดชอบ"]
+        S4["เห็น Row:<br/>Flow ID | System | Flow Name | Design | AC | API | FE/App | Testing | UAT"]
+        S5["อัพเดท AC column<br/>เมื่อเขียน AC เสร็จ"]
+        S6["อัพเดท Testing column<br/>เมื่อ test เสร็จ"]
+        S7["อัพเดท UAT column<br/>เมื่อ UAT ผ่าน"]
+
+        S1 --> S2 --> S3 --> S4
+        S4 --> S5
+        S4 --> S6
+        S4 --> S7
+    end
+
+    subgraph QUEST["🗺️ MCOP Quest - Read-Only Dashboard"]
+        direction TB
+        Q1["🌍 เปิด App → World Map"]
+        Q2["เห็น Cities Overview<br/>สี HP รวมของแต่ละ City"]
+        Q3["คลิกเข้า City"]
+
+        subgraph CARDS["⚔️ Commander Cards (= Flows)"]
+            direction TB
+            C1["<b>Flow: ระบบ Login</b>"]
+            C2["📐 Design ████████ 100% ✓"]
+            C3["📋 AC ████████ 100% ✓ ← Sarah เขียนเสร็จ"]
+            C4["⚙️ API ██████░░ 80%"]
+            C5["💻 FE/App ████░░░░ 50%"]
+            C6["🧪 Testing ░░░░░░░░ 0% ← รอ API+FE"]
+            C7["✅ UAT ░░░░░░░░ 0%"]
+        end
+
+        Q1 --> Q2 --> Q3 --> CARDS
+    end
+
+    subgraph PIPELINE["📊 Sarah มองเห็น Pipeline"]
+        direction LR
+        P1["🔴 Design"]
+        P2["🟡 AC"]
+        P3["🟡 API"]
+        P4["🟡 FE/App"]
+        P5["⬜ Testing"]
+        P6["⬜ UAT"]
+
+        P1 --> P2 --> P3 --> P4 --> P5 --> P6
+    end
+
+    subgraph INSIGHT["💡 Sarah ได้อะไรจาก Dashboard"]
+        I1["✅ เห็น Flow ไหน<br/>Design เสร็จ รอ AC"]
+        I2["✅ เห็น Flow ไหน<br/>API+FE เสร็จ พร้อม Test"]
+        I3["✅ เห็น Bottleneck<br/>ติดตรงไหน"]
+        I4["✅ ไม่ต้องถาม Dev<br/>เห็นภาพเอง"]
+    end
+
+    subgraph NOTIFY["🔔 Telegram Notifications"]
+        N1["'Flow Login พร้อม Test แล้ว!'<br/>เมื่อ API+FE = 100%"]
+        N2["'Flow Payment ผ่าน UAT!'<br/>เมื่อ UAT = 100%"]
+    end
+
+    %% Connections
+    CONTEXT --> SHEETS
+    SHEETS -.->|"Auto-Sync 1 min"| QUEST
+    QUEST --> INSIGHT
+    QUEST -.->|"Events"| NOTIFY
+    CARDS -.-> PIPELINE

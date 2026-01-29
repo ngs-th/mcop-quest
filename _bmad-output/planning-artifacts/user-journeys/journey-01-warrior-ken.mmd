@@ -1,0 +1,76 @@
+%% Journey 1: Warrior Ken (Backend Developer)
+%% CORRECTED: Flow มี 6 HP Bars (Design, AC, API, FE/App, Testing, UAT)
+%% Tasks แยก 3 Sheets: UI-tasks, API-tasks, FE-tasks
+%% MCOP Quest = Read-Only, Auto-Sync ทุก 1 นาที
+
+flowchart TD
+    subgraph CONTEXT["🎮 Warrior Ken - Backend Developer"]
+        CTX1["<b>บทบาท:</b> Backend Developer"]
+        CTX2["<b>ทำงานใน:</b> API-tasks Sheet"]
+        CTX3["<b>เป้าหมาย:</b> ดูว่า Flow ไหนรอ API"]
+    end
+
+    subgraph SHEETS["📊 Google Sheets - ที่ทำงานจริง"]
+        direction TB
+        S1["เปิด MCOP-Dev Sheet"]
+        S2["ไปที่ Tab: API-tasks"]
+        S3["หา Task ที่ Assign ให้ Ken"]
+        S4["เห็น Task Row:<br/>Flow ID | Task | Status"]
+        S5["เปลี่ยน Status → 'Doing'"]
+        S6["ทำ Coding..."]
+        S7["เปลี่ยน Status → '6 - Done'"]
+
+        S1 --> S2 --> S3 --> S4 --> S5 --> S6 --> S7
+    end
+
+    subgraph SYNC["🔄 Auto-Sync ทุก 1 นาที"]
+        SY1["MCOP Quest Server"]
+        SY2["Poll Google Sheets API"]
+        SY3["ตรวจพบ API-task Done!"]
+        SY4["อัพเดท Flow.API column"]
+        SY5["คำนวณ API HP Bar"]
+        SY6["Push to Dashboard"]
+
+        SY1 --> SY2 --> SY3 --> SY4 --> SY5 --> SY6
+    end
+
+    subgraph QUEST["🗺️ MCOP Quest - Read-Only Dashboard"]
+        direction TB
+        Q1["🌍 เปิด App → World Map"]
+        Q2["เห็น Cities (Systems)<br/>เช่น ระบบสมาชิก, ระบบสินค้า"]
+        Q3["คลิกเข้า City"]
+
+        subgraph COMMANDER["⚔️ Commander Card (= Flow)"]
+            CM1["Flow Name: ระบบ Login"]
+            CM2["📊 6 HP Bars:"]
+            CM3["📐 Design: ████░░ 60%"]
+            CM4["📋 AC: ██████ 100% ✓"]
+            CM5["⚙️ API: ████░░ 60% ← Ken กำลังทำ"]
+            CM6["💻 FE/App: ░░░░░░ 0%"]
+            CM7["🧪 Testing: ░░░░░░ 0%"]
+            CM8["✅ UAT: ░░░░░░ 0%"]
+        end
+
+        Q4["คลิก Commander → ดู Minions"]
+
+        subgraph MINIONS["👾 Minions View (Tasks)"]
+            MN1["🔷 UI Tasks - Designer ทำ"]
+            MN2["🟢 API Tasks - Ken เห็นงานตัวเอง"]
+            MN3["🟠 FE Tasks - Frontend ทำ"]
+        end
+
+        Q1 --> Q2 --> Q3 --> COMMANDER --> Q4 --> MINIONS
+    end
+
+    subgraph INSIGHT["💡 Ken ได้อะไรจาก Dashboard"]
+        I1["✅ เห็น Flow ไหน AC เสร็จแล้ว<br/>(พร้อมให้ทำ API)"]
+        I2["✅ เห็น API HP ของตัวเอง<br/>ขึ้นทุกครั้งที่ทำ task เสร็จ"]
+        I3["✅ เห็น XP สะสม + Ranking"]
+        I4["✅ รู้ว่า Flow ไหนรอ FE<br/>(API เสร็จแล้ว)"]
+    end
+
+    %% Connections
+    CONTEXT --> SHEETS
+    S7 -.->|"Sheets Updated"| SY1
+    SY6 -.->|"Real-time"| QUEST
+    QUEST --> INSIGHT

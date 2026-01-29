@@ -24,12 +24,21 @@ _This document builds collaboratively through step-by-step discovery. Sections a
 ### Requirements Overview
 
 **Functional Requirements:**
-- **Gamification Engine:** Transforms project management entities into game entities (System->City, Epic->Boss, Task->Minion) with complex interaction rules.
-- **Sync Mechanism:** One-way synchronization from Google Sheets to Local Database (MySQL) with a 1-minute interval requirement.
+- **Gamification Engine:** Transforms project management entities into game entities:
+    - System → City
+    - Flow → Commander (มี **6 HP Bars**: Design, AC, API, FE/App, Testing, UAT)
+    - Task → Minion (แยก 3 ประเภท: UI-tasks, API-tasks, FE-tasks)
+    - Bug → **Demon Reinforcements** (กองหนุนจากราชาปีศาจ - มาจากประตูมิติ)
+- **Sync Mechanism:** One-way synchronization from Google Sheets to Local Database (MySQL) with a **1-minute interval** (Auto-Sync, No Manual Button).
 - **Role-Based Views:** Strict separation between Personal View (Self-focus), Team View (Squad status), and World Map (Global status).
 - **Economic System:** Dual currency system (Gold for cosmetics, Gem for real incentives) with immutable recording requirements.
-- **Battle Logic:** Specific rules for HP reduction (Dev tasks only) vs Support Buffs (Business/UX tasks).
-- **Bug System:** Event-driven bug spawning from sheet data with penalty logic (No rewards policy).
+- **Battle Logic:**
+    - **6 HP Bars per Commander:** Each HP Bar corresponds to a pipeline stage (Design, AC, API, FE/App, Testing, UAT)
+    - UI-task Done → Design HP Bar increases
+    - API-task Done → API HP Bar increases
+    - FE-task Done → FE/App HP Bar increases
+    - BA/QA updates AC/Testing/UAT columns directly in Flows Sheet
+- **Bug System (Demon Reinforcements):** Event-driven bug spawning from Bugs Sheet with penalty logic (No rewards policy) — Bugs มาจากประตูมิติ ไม่รู้จำนวน/เวลา ฆ่าแล้วไม่ได้ XP/Gold/Gem
 
 **Non-Functional Requirements:**
 - **Performance:** Mobile-first dashboard loading < 2 seconds; Sync completion < 30 seconds.
@@ -133,7 +142,12 @@ php artisan breeze:install livewire --dark --pest
 - Integration Library: revolution/laravel-google-sheets
 
 **Important Decisions (Shape Architecture):**
-- Domain Entity Mapping: Project(Demon King) -> System(City) -> Flow(Boss) -> Task(Minion)
+- Domain Entity Mapping:
+    - Project → Demon King (ราชาปีศาจ)
+    - System → City (เมือง)
+    - Flow → Commander (หัวหน้าหน่วย) — **6 HP Bars: Design, AC, API, FE/App, Testing, UAT**
+    - Task → Minion (สมุน) — **3 Types: UI-tasks, API-tasks, FE-tasks**
+    - Bug → Demon Reinforcements (กองหนุนจากราชาปีศาจ)
 - Audit Logging Strategy for Gem Currency
 - Frontend State Management (Alpine.js Stores vs Livewire Properties)
 
@@ -146,14 +160,18 @@ php artisan breeze:install livewire --dark --pest
 **Database Schema Strategy: Loose Coupling (Selected)**
 - **Decision:** Separate `game_entities` tables from `project_management` tables.
 - **Rationale:** We chose **Loose Coupling (Option B)** to maintain clean architecture.
-    - `projects`, `epics` (mapped from system), `flows` (mapped from flow), `tasks` store the raw management data.
-    - `game_cities`, `game_bosses`, `game_minions` store the RPG stats (HP, Level, etc.).
+    - `projects`, `systems`, `flows`, `tasks`, `bugs` store the raw management data (from Google Sheets).
+    - `game_cities`, `game_commanders`, `game_minions`, `game_demon_portals` store the RPG stats.
     - Use Polymorphic Relationships or direct Foreign Keys to link them.
-    - **Entity Mapping Correction (Standard Agile -> MCOP Context -> Game Entity):**
-        - **Project Data Table:** `projects` -> **Game Entity:** Demon King (Global Threat)
-        - **Project Data Table:** `epics` (derived from Sheet 'System') -> **Game Entity:** City AND City Boss (The main boss of the system)
-        - **Project Data Table:** `stories` (derived from Sheet 'Flow') -> **Game Entity:** Unit Commander / Lieutenant (Sub-boss governing a flow)
-        - **Project Data Table:** `tasks` (derived from Sheet 'Task') -> **Game Entity:** Minion (The enemies to defeat)
+    - **Entity Mapping (Google Sheets -> DB Table -> Game Entity):**
+        - **Flows Sheet (row)** → `flows` table → **Game: Commander** with **6 HP Bars columns:**
+            - `hp_design`, `hp_ac`, `hp_api`, `hp_fe_app`, `hp_testing`, `hp_uat`
+        - **UI-tasks Sheet** → `tasks` table (type='UI') → **Game: Minion (UI)**
+        - **API-tasks Sheet** → `tasks` table (type='API') → **Game: Minion (API)**
+        - **FE-tasks Sheet** → `tasks` table (type='FE') → **Game: Minion (FE)**
+        - **Bugs Sheet** → `bugs` table → **Game: Demon Reinforcements** (ไม่ใช่ Minion, มาจากประตูมิติ)
+        - **Systems (column in Flows)** → `systems` table → **Game: City**
+        - **Project (global)** → `projects` table → **Game: Demon King**
 - **Affects:** Database Schema, Eloquent Models.
 
 ### Authentication & Security
@@ -177,18 +195,26 @@ php artisan breeze:install livewire --dark --pest
 - **Decision:** **Domain Events (Option A)**.
 - **Rationale:** Decouples the "Sync" logic from the "Game" logic.
     - When Sync updates a Task -> Fire `events.task_updated`.
-    - Listener `CalculateBossDamage` runs -> Updates Unit Commander & City Boss HP.
+    - Listener `CalculateHPBar` runs -> Updates **specific HP Bar** of Commander:
+        - UI-task Done → `hp_design` increases
+        - API-task Done → `hp_api` increases
+        - FE-task Done → `hp_fe_app` increases
     - Listener `DistributeGold` runs -> Updates User Wallet.
+    - When Bug created -> Fire `events.demon_portal_opened` -> No rewards, just visual alert
 - **Testing:** This makes testing game formulas much easier (Unit Test the Listeners).
 
 ### Logic Mapping Clarification
-**Standard Agile vs. MCOP Context:**
-To ensure code maintainability and standard naming conventions while respecting the specific data source structure:
-- **Standard DB Naming:** We will use standard Agile terms (`epics`, `stories`, `tasks`) in the database schema.
-- **Data Source Mapping:**
-  - Sheet `System` column -> maps to DB `epics` table -> represents **City & City Boss** in Game.
-  - Sheet `Flow` column -> maps to DB `stories` table -> represents **Unit Commander (Lieutenant)** in Game.
-  - Sheet `Task` column -> maps to DB `tasks` table -> represents **Minion** in Game.
+**Google Sheets Structure vs. DB vs. Game Entity:**
+To ensure code maintainability while respecting the actual data source structure from MCOP Google Sheets:
+
+- **Flows Sheet** → DB `flows` table → Game **Commander** (6 HP Bars)
+    - Columns: Flow ID, System, Group, User, Flow name, **Design, AC, API, FE/App, Testing, UAT**
+    - Each status column maps to an HP Bar
+- **UI-tasks Sheet** → DB `tasks` (type='UI') → Game **Minion (UI)** — affects `hp_design`
+- **API-tasks Sheet** → DB `tasks` (type='API') → Game **Minion (API)** — affects `hp_api`
+- **FE-tasks Sheet** → DB `tasks` (type='FE') → Game **Minion (FE)** — affects `hp_fe_app`
+- **Bugs Sheet** → DB `bugs` table → Game **Demon Reinforcements** — NO HP impact, NO rewards
+    - มาจากประตูมิติ, ไม่รู้จำนวน, ไม่รู้เวลาที่จะปรากฏ, ฆ่าแล้วไม่ได้อะไร
 
 ### Decision Impact Analysis
 
@@ -220,19 +246,28 @@ To ensure robust Game Logic and prevent "magic array" bugs, all agents MUST foll
     - *Example:* `Game\DTOs\DamageResult` instead of `array`.
 - **Return Types:** All methods MUST declare return types. Use `void` if nothing returns.
 
-**DTO Example:**
+**DTO Example (6 HP Bars):**
 
 ```php
 namespace App\Game\DTOs;
 
-final readonly class BossDamageResult
+final readonly class CommanderHPStatus
 {
     public function __construct(
-        public int $damageDealt,
-        public int $remainingHp,
-        public bool $isDefeated,
-        public array $droppedLoots = []
+        public int $hp_design,      // 0-100%
+        public int $hp_ac,          // 0-100%
+        public int $hp_api,         // 0-100%
+        public int $hp_fe_app,      // 0-100%
+        public int $hp_testing,     // 0-100%
+        public int $hp_uat,         // 0-100%
+        public bool $isDefeated,    // true when ALL 6 bars = 100%
     ) {}
+
+    public function overallProgress(): int
+    {
+        return (int) round(($this->hp_design + $this->hp_ac + $this->hp_api
+            + $this->hp_fe_app + $this->hp_testing + $this->hp_uat) / 6);
+    }
 }
 ```
 
@@ -268,7 +303,7 @@ final readonly class BossDamageResult
 **Event System:**
 - **Trigger:** Service Layer triggers events (NOT Controllers).
 - **Naming:** `VerbObject` or `ObjectVerb`? -> **ObjectVerbPastTense**
-    - *Good:* `TaskCompleted`, `BossDefeated`, `GemRewarded`.
+    - *Good:* `TaskCompleted`, `CommanderDefeated`, `GemRewarded`, `HPBarUpdated`, `DemonPortalOpened`.
     - *Bad:* `CompleteTask`, `UserGetGem`.
 
 **State Management:**
@@ -336,7 +371,7 @@ mcop-quest/
 ├── app/
 │   ├── Actions/Game/           # Single Action Classes (Optional optimization)
 │   ├── Console/Commands/       # Cron Commands (SyncSheets)
-│   ├── Events/Game/            # Domain Events (BossDamaged, TaskCompleted)
+│   ├── Events/Game/            # Domain Events (HPBarUpdated, TaskCompleted, CommanderDefeated, DemonPortalOpened)
 │   ├── Exceptions/Game/        # Custom Exceptions (InsufficientFunds)
 │   ├── Game/DTOs/              # Data Transfer Objects (Strict Typed)
 │   │   ├── DamageResult.php
@@ -346,8 +381,8 @@ mcop-quest/
 │   │   ├── Components/         # Dumb Components (HealthBar, TaskCard)
 │   │   └── Pages/              # Smart Components (Dashboard, WorldMap)
 │   ├── Models/
-│   │   ├── Core/               # Project, Epic, Story, Task (Management Data)
-│   │   └── Game/               # GameCity, GameBoss, GameMinion (RPG Data)
+│   │   ├── Core/               # Project, System, Flow, Task, Bug (Management Data from Sheets)
+│   │   └── Game/               # GameCity, GameCommander (6 HP Bars), GameMinion, GameDemonPortal (RPG Data)
 │   ├── Services/
 │   │   ├── Game/               # Game Mechanics (Calculator, Rules)
 │   │   └── Sync/               # Google Sheets Logic
@@ -466,8 +501,10 @@ mcop-quest/
 - **Economics:** Covered by `GemTransaction` and Immutable Ledger pattern.
 
 **Functional Requirements Coverage:**
-- **Mappings:** The explicit `System->City`, `Flow->Boss` mapping is architecturally supported via the Schema Strategy.
-- **Feedback/Animation:** While not fully detailed in code yet, the `Livewire Events` pattern provides the necessary triggers for frontend animations.
+- **Mappings:** The explicit `System->City`, `Flow->Commander (6 HP Bars)`, `Task->Minion (3 types)`, `Bug->Demon Reinforcements` mapping is architecturally supported via the Schema Strategy.
+- **6 HP Bars System:** Each Commander has 6 independent HP calculations linked to their respective task types.
+- **Demon Reinforcements:** Bug spawning from Bugs Sheet triggers `DemonPortalOpened` event (No rewards).
+- **Feedback/Animation:** `Livewire Events` pattern provides triggers for HP Bar updates and Demon Portal alerts.
 
 **Non-Functional Requirements Coverage:**
 - **Performance:** Addressed via `Islands` implementation proposal for heavy widgets.
