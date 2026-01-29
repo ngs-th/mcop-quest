@@ -1950,3 +1950,112 @@ MCOP Quest ใช้ Mobile-First Strategy เพราะ Use Case หลัก
 ```
 
 ---
+
+## Page-Specific UI Requirements (Updated: 2026-01-29)
+
+### Hero Dashboard Requirements
+
+**1. Task Management**
+
+| Feature | Description | Priority |
+|---------|-------------|----------|
+| **Pending Tasks** | แสดง todo list งานที่ได้รับมอบหมายแล้ว แต่ยังไม่ได้เริ่มทำ | High |
+| **Task Status** | แยกระหว่าง Doing (กำลังทำ) vs Pending (รอทำ) | High |
+
+**2. Inventory System**
+
+| Feature | Description | Priority |
+|---------|-------------|----------|
+| **Inventory View** | แสดงไอเท็มทั้งหมดที่มีในกระเป๋า | High |
+| **Item Details** | กดดูรายละเอียด stats ของแต่ละไอเท็ม | Medium |
+| **Item Categories** | แยกหมวดหมู่ (Weapon, Armor, Accessory) | Medium |
+
+**3. Equipment System**
+
+| Feature | Description | Priority |
+|---------|-------------|----------|
+| **Equip/Unequip** | สามารถถอด/สวมใส่อุปกรณ์ได้ | High |
+| **Equipment Slots** | 6 slots: Head, Body, Weapon, Offhand, Legs, Feet | High |
+| **Visual Update** | ตัวละครเปลี่ยนรูปตาม equipment ที่สวมใส่ | Medium |
+
+---
+
+### Team View Requirements
+
+**1. Multi-Team Support**
+
+| Feature | Description | Priority |
+|---------|-------------|----------|
+| **Team Selector** | Dropdown/Tab เลือกดูข้อมูลทีมอื่นได้ | High |
+| **Cross-Team View** | เห็นสถานะของทีมอื่นในโปรเจกต์ | Medium |
+
+**2. Member Battle Scene**
+
+| Feature | Description | Priority |
+|---------|-------------|----------|
+| **Individual Battle** | แสดงกราฟฟิกแต่ละคนกำลังต่อสู้กับ monsters | High |
+| **Monster Count** | จำนวน monsters = จำนวน active tasks ของคนนั้น | High |
+| **Battle Layout** | Player ฝั่งซ้าย, Monsters ฝั่งขวา (เหมือน Hero page) | High |
+
+**3. Task Summary on Card**
+
+| Feature | Description | Priority |
+|---------|-------------|----------|
+| **Task Counter** | แสดงตัวเลข "X tasks" บนการ์ดของแต่ละคน | High |
+| **Task Breakdown** | แยก Doing / Pending / Done | Medium |
+
+---
+
+### World Map Requirements
+
+**1. Map Navigation**
+
+| Feature | Description | Priority |
+|---------|-------------|----------|
+| **Pan/Scroll** | Drag เพื่อเลื่อนดูแผนที่ทั้งหมด | High |
+| **Mini-Map** | แผนที่ย่อมุมจอแสดงตำแหน่งปัจจุบัน | Medium |
+| **Zoom Controls** | ปุ่ม +/- สำหรับ zoom in/out | Medium |
+| **Reset View** | ปุ่มกลับไปตำแหน่งเริ่มต้น | Low |
+
+**2. Fog of War**
+
+| Feature | Description | Priority |
+|---------|-------------|----------|
+| **Fog Overlay** | หมอกปกคลุมพื้นที่ที่ยังไม่ได้ explore | High |
+| **Progressive Reveal** | Fog หายเมื่อ requirement เสร็จ | High |
+| **Visual Distinction** | พื้นที่ fogged จางลงและมี particle effect | Medium |
+
+**3. City Boss Display**
+
+| Feature | Description | Priority |
+|---------|-------------|----------|
+| **Full Character** | แสดงตัวละคร Boss เต็มตัว (ไม่ใช่แค่ icon) | High |
+| **Boss Animation** | Idle animation สำหรับ Boss ที่ยังไม่ถูกกำจัด | Medium |
+| **Defeated State** | Boss ที่ถูกกำจัดแล้วแสดงเป็น grayscale + ✗ eyes | High |
+
+**4. Commander Display**
+
+| Feature | Description | Priority |
+|---------|-------------|----------|
+| **Full Character** | แสดงตัวละคร Commander เต็มตัว | High |
+| **Silhouette Mode** | ตัวละครเงาดำ ถ้า Requirement ยังไม่ครบ (AC ไม่เสร็จ) | High |
+| **Blocked Icon** | แสดง 🔒 blocked icon ถ้า UI/Design ยังไม่เสร็จ | High |
+| **Minion Count** | แสดงจำนวนลูกสมุน (tasks) ของแต่ละ Commander | High |
+
+**5. Commander Grouping**
+
+| Feature | Description | Priority |
+|---------|-------------|----------|
+| **Clear Separation** | แยกกลุ่มชัดเจน: กำจัดแล้ว vs ยังไม่กำจัด | High |
+| **Visual Styling** | Defeated = grayscale, dim; Active = colorful, animated | High |
+| **Status Badge** | Badge แสดง "✓ Cleared" หรือ "⚔️ Active" | Medium |
+
+**6. Dependency Paths**
+
+| Feature | Description | Priority |
+|---------|-------------|----------|
+| **Path Lines** | เส้นเชื่อมระหว่าง City/Commander แสดง dependency | High |
+| **Path Status** | สี/style ต่างกันตาม status (active, completed, locked) | High |
+| **Path Labels** | Label บอกความสัมพันธ์ (e.g., "requires login") | Medium |
+
+---

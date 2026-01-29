@@ -1,0 +1,258 @@
+<!doctype html>
+<html lang="th" class="dark">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>MCOP Quest - Interactive Prototype</title>
+        <script src="https://cdn.tailwindcss.com"></script>
+        <script
+            defer
+            src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"
+        ></script>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Inter:wght@400;500;600;700&display=swap"
+            rel="stylesheet"
+        />
+        <script>
+            tailwind.config = {
+                darkMode: "class",
+                theme: {
+                    extend: {
+                        fontFamily: {
+                            cinzel: ["Cinzel", "serif"],
+                            inter: ["Inter", "sans-serif"],
+                        },
+                        colors: {
+                            // RPG Color Palette
+                            rpg: {
+                                bg: "#1a1a2e",
+                                card: "#16213e",
+                                border: "#0f3460",
+                                gold: "#f1c40f",
+                                "gold-dark": "#d4a906",
+                            },
+                            // HP Bar Colors
+                            hp: {
+                                design: "#E67E22",
+                                ac: "#3498DB",
+                                api: "#9B59B6",
+                                fe: "#1ABC9C",
+                                testing: "#F1C40F",
+                                uat: "#2ECC71",
+                            },
+                            // Status Colors
+                            status: {
+                                success: "#2ECC71",
+                                warning: "#F1C40F",
+                                danger: "#E74C3C",
+                                info: "#3498DB",
+                            },
+                        },
+                    },
+                },
+            };
+        </script>
+        <style>
+            /* Custom RPG Animations */
+            @keyframes pulse-gold {
+                0%,
+                100% {
+                    box-shadow: 0 0 0 0 rgba(241, 196, 15, 0.4);
+                }
+                50% {
+                    box-shadow: 0 0 0 8px rgba(241, 196, 15, 0);
+                }
+            }
+
+            @keyframes float-damage {
+                0% {
+                    opacity: 0;
+                    transform: translateY(0) scale(0.5);
+                }
+                20% {
+                    opacity: 1;
+                    transform: translateY(-10px) scale(1.2);
+                }
+                100% {
+                    opacity: 0;
+                    transform: translateY(-40px) scale(1);
+                }
+            }
+
+            @keyframes hp-fill {
+                from {
+                    width: 0;
+                }
+            }
+
+            .animate-pulse-gold {
+                animation: pulse-gold 2s infinite;
+            }
+
+            .animate-damage {
+                animation: float-damage 0.8s ease-out forwards;
+            }
+
+            .hp-bar-fill {
+                animation: hp-fill 0.5s ease-out;
+            }
+
+            /* Fog of War Effect */
+            .fog-overlay {
+                background: linear-gradient(
+                    135deg,
+                    rgba(26, 26, 46, 0.9) 0%,
+                    rgba(22, 33, 62, 0.8) 50%,
+                    rgba(26, 26, 46, 0.9) 100%
+                );
+                backdrop-filter: blur(2px);
+            }
+
+            /* Card Hover Effect */
+            .card-hover {
+                transition:
+                    transform 0.2s ease,
+                    box-shadow 0.2s ease;
+            }
+            .card-hover:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 4px 20px rgba(241, 196, 15, 0.2);
+            }
+
+            /* Bottom Tab Active Indicator */
+            .tab-active {
+                border-bottom: 3px solid #f1c40f;
+            }
+        </style>
+    </head>
+    <body class="bg-rpg-bg text-white font-inter min-h-screen">
+        <div class="flex flex-col items-center justify-center min-h-screen p-6">
+            <!-- Logo/Title -->
+            <div class="text-center mb-12">
+                <h1 class="font-cinzel text-4xl md:text-5xl text-rpg-gold mb-4">
+                    MCOP Quest
+                </h1>
+                <p class="text-gray-400 text-lg">Interactive Prototype</p>
+            </div>
+
+            <!-- Entry Point -->
+            <div class="mb-8">
+                <a
+                    href="login.html"
+                    class="inline-flex items-center gap-2 bg-rpg-gold text-rpg-bg font-bold px-6 py-3 rounded-xl hover:bg-rpg-gold-dark transition-colors"
+                >
+                    <span>🔐</span>
+                    <span>Login to Begin</span>
+                </a>
+            </div>
+
+            <!-- Navigation Cards -->
+            <div
+                class="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl w-full mb-12"
+            >
+                <!-- World Map -->
+                <a
+                    href="world-map.html"
+                    class="card-hover bg-rpg-card border border-rpg-border rounded-xl p-6 text-center"
+                >
+                    <div class="text-4xl mb-3">🗺️</div>
+                    <h2 class="font-cinzel text-lg text-rpg-gold">World Map</h2>
+                    <p class="text-gray-400 text-sm mt-1">ภาพรวมโปรเจค</p>
+                </a>
+
+                <!-- Hero Dashboard -->
+                <a
+                    href="hero.html"
+                    class="card-hover bg-rpg-card border border-rpg-border rounded-xl p-6 text-center"
+                >
+                    <div class="text-4xl mb-3">⚔️</div>
+                    <h2 class="font-cinzel text-lg text-rpg-gold">Hero</h2>
+                    <p class="text-gray-400 text-sm mt-1">ตัวละครของฉัน</p>
+                </a>
+
+                <!-- Team View -->
+                <a
+                    href="team.html"
+                    class="card-hover bg-rpg-card border border-rpg-border rounded-xl p-6 text-center"
+                >
+                    <div class="text-4xl mb-3">👥</div>
+                    <h2 class="font-cinzel text-lg text-rpg-gold">Team</h2>
+                    <p class="text-gray-400 text-sm mt-1">ปาร์ตี้ของฉัน</p>
+                </a>
+
+                <!-- Shop -->
+                <a
+                    href="shop.html"
+                    class="card-hover bg-rpg-card border border-rpg-border rounded-xl p-6 text-center"
+                >
+                    <div class="text-4xl mb-3">🛒</div>
+                    <h2 class="font-cinzel text-lg text-rpg-gold">Shop</h2>
+                    <p class="text-gray-400 text-sm mt-1">ร้านค้า</p>
+                </a>
+            </div>
+
+            <!-- Secondary Pages -->
+            <div class="text-center mb-8">
+                <h3 class="text-gray-500 text-sm uppercase tracking-wider mb-4">
+                    Secondary Pages
+                </h3>
+                <div class="flex gap-4 justify-center flex-wrap">
+                    <a
+                        href="activity-log.html"
+                        class="text-rpg-gold hover:underline"
+                        >📜 Activity Log
+                        <span class="text-xs bg-rpg-gold/20 px-1 rounded"
+                            >NEW</span
+                        ></a
+                    >
+                </div>
+            </div>
+
+            <!-- Drill-down Pages -->
+            <div class="text-center mb-8">
+                <h3 class="text-gray-500 text-sm uppercase tracking-wider mb-4">
+                    Drill-down Pages
+                </h3>
+                <div class="flex gap-4 justify-center flex-wrap">
+                    <a href="city.html" class="text-rpg-gold hover:underline"
+                        >🏰 City Detail</a
+                    >
+                    <a
+                        href="commander.html"
+                        class="text-rpg-gold hover:underline"
+                        >⚔️ Commander Detail</a
+                    >
+                </div>
+            </div>
+
+            <!-- Utility Pages -->
+            <div class="text-center">
+                <h3 class="text-gray-500 text-sm uppercase tracking-wider mb-4">
+                    Utility Pages
+                </h3>
+                <div class="flex gap-4 justify-center flex-wrap">
+                    <a
+                        href="sitemap.html"
+                        class="text-status-success hover:text-white"
+                        >🗺️ Sitemap</a
+                    >
+                    <a
+                        href="components.html"
+                        class="text-gray-400 hover:text-white"
+                        >Components</a
+                    >
+                    <a href="states.html" class="text-gray-400 hover:text-white"
+                        >States Demo</a
+                    >
+                </div>
+            </div>
+
+            <!-- Version Info -->
+            <div class="mt-12 text-gray-600 text-sm">
+                <p>Prototype v0.1 | HTML + Tailwind + Alpine.js</p>
+            </div>
+        </div>
+    </body>
+</html>

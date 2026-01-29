@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="th" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Components - MCOP Quest</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'cinzel': ['Cinzel', 'serif'],
+                        'inter': ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        'rpg': {
+                            'bg': '#1a1a2e',
+                            'card': '#16213e',
+                            'border': '#0f3460',
+                            'gold': '#f1c40f',
+                            'gold-dark': '#d4a906',
+                        },
+                        'hp': {
+                            'design': '#E67E22',
+                            'ac': '#3498DB',
+                            'api': '#9B59B6',
+                            'fe': '#1ABC9C',
+                            'testing': '#F1C40F',
+                            'uat': '#2ECC71',
+                        },
+                        'status': {
+                            'success': '#2ECC71',
+                            'warning': '#F1C40F',
+                            'danger': '#E74C3C',
+                            'info': '#3498DB',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @keyframes float-damage {
+            0% { opacity: 0; transform: translateY(0) scale(0.5); }
+            20% { opacity: 1; transform: translateY(-10px) scale(1.2); }
+            100% { opacity: 0; transform: translateY(-40px) scale(1); }
+        }
+        .animate-damage { animation: float-damage 0.8s ease-out forwards; }
+
+        @keyframes pulse-gold {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(241, 196, 15, 0.4); }
+            50% { box-shadow: 0 0 0 8px rgba(241, 196, 15, 0); }
+        }
+        .animate-pulse-gold { animation: pulse-gold 2s infinite; }
+    </style>
+</head>
+<body class="bg-rpg-bg text-white font-inter min-h-screen pb-8">
+
+    <!-- Header -->
+    <header class="sticky top-0 z-40 bg-rpg-bg/95 backdrop-blur border-b border-rpg-border">
+        <div class="flex items-center gap-3 px-4 py-3">
+            <a href="index.html" class="text-gray-400 hover:text-white">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+                </svg>
+            </a>
+            <div>
+                <h1 class="font-cinzel text-xl text-rpg-gold">Component Showcase</h1>
+                <p class="text-gray-500 text-xs">Reusable UI Components</p>
+            </div>
+        </div>
+    </header>
+
+    <main class="p-4 space-y-8">
+
+        <!-- HP Bars Section -->
+        <section class="bg-rpg-card border border-rpg-border rounded-xl p-4">
+            <h2 class="font-cinzel text-lg text-rpg-gold mb-4">HP Bars (6 Types)</h2>
+
+            <div class="space-y-4">
+                <!-- Design HP Bar -->
+                <div>
+                    <div class="flex items-center justify-between mb-1">
+                        <span class="text-sm flex items-center gap-2">
+                            <span style="color: #E67E22">📐</span>
+                            <span>Design</span>
+                        </span>
+                        <span class="text-sm text-status-success">100%</span>
+                    </div>
+                    <div class="h-3 bg-rpg-border rounded-full overflow-hidden">
+                        <div class="h-full rounded-full transition-all duration-500" style="width: 100%; background: #E67E22"></div>
+                    </div>
+                </div>
+
+                <!-- AC HP Bar -->
+                <div>
+                    <div class="flex items-center justify-between mb-1">
+                        <span class="text-sm flex items-center gap-2">
+                            <span style="color: #3498DB">📋</span>
+                            <span>AC (Acceptance Criteria)</span>
+                        </span>
+                        <span class="text-sm text-status-success">100%</span>
+                    </div>
+                    <div class="h-3 bg-rpg-border rounded-full overflow-hidden">
+                        <div class="h-full rounded-full transition-all duration-500" style="width: 100%; background: #3498DB"></div>
+                    </div>
+                </div>
+
+                <!-- API HP Bar -->
+                <div>
+                    <div class="flex items-center justify-between mb-1">
+                        <span class="text-sm flex items-center gap-2">
+                            <span style="color: #9B59B6">⚙️</span>
+                            <span>API</span>
+                        </span>
+                        <span class="text-sm text-status-warning">80%</span>
+                    </div>
+                    <div class="h-3 bg-rpg-border rounded-full overflow-hidden">
+                        <div class="h-full rounded-full transition-all duration-500" style="width: 80%; background: #9B59B6"></div>
+                    </div>
+                </div>
+
+                <!-- FE/App HP Bar -->
+                <div>
+                    <div class="flex items-center justify-between mb-1">
+                        <span class="text-sm flex items-center gap-2">
+                            <span style="color: #1ABC9C">💻</span>
+                            <span>FE/App</span>
+                        </span>
+                        <span class="text-sm text-status-warning">50%</span>
+                    </div>
+                    <div class="h-3 bg-rpg-border rounded-full overflow-hidden">
+                        <div class="h-full rounded-full transition-all duration-500" style="width: 50%; background: #1ABC9C"></div>
+                    </div>
+                </div>
+
+                <!-- Testing HP Bar -->
+                <div>
+                    <div class="flex items-center justify-between mb-1">
+                        <span class="text-sm flex items-center gap-2">
+                            <span style="color: #F1C40F">🧪</span>
+                            <span>Testing</span>
+                        </span>
+                        <span class="text-sm text-gray-500">0%</span>
+                    </div>
+                    <div class="h-3 bg-rpg-border rounded-full overflow-hidden">
+                        <div class="h-full rounded-full transition-all duration-500" style="width: 0%; background: #F1C40F"></div>
+                    </div>
+                </div>
+
+                <!-- UAT HP Bar -->
+                <div>
+                    <div class="flex items-center justify-between mb-1">
+                        <span class="text-sm flex items-center gap-2">
+                            <span style="color: #2ECC71">✅</span>
+                            <span>UAT</span>
+                        </span>
+                        <span class="text-sm text-gray-500">0%</span>
+                    </div>
+                    <div class="h-3 bg-rpg-border rounded-full overflow-hidden">
+                        <div class="h-full rounded-full transition-all duration-500" style="width: 0%; background: #2ECC71"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Damage Numbers Section -->
+        <section class="bg-rpg-card border border-rpg-border rounded-xl p-4">
+            <h2 class="font-cinzel text-lg text-rpg-gold mb-4">Damage Numbers</h2>
+
+            <div class="flex justify-around items-end h-20" x-data="{ show: false }">
+                <!-- Normal Damage -->
+                <div class="text-center">
+                    <div class="relative h-12">
+                        <span x-show="show" x-transition class="absolute inset-0 flex items-center justify-center text-2xl font-bold text-status-warning animate-damage">+50</span>
+                    </div>
+                    <p class="text-xs text-gray-500">Normal</p>
+                </div>
+
+                <!-- Critical Damage -->
+                <div class="text-center">
+                    <div class="relative h-12">
+                        <span x-show="show" x-transition class="absolute inset-0 flex items-center justify-center text-3xl font-bold text-status-danger animate-damage">CRIT! +100</span>
+                    </div>
+                    <p class="text-xs text-gray-500">Critical</p>
+                </div>
+
+                <!-- Support Buff -->
+                <div class="text-center">
+                    <div class="relative h-12">
+                        <span x-show="show" x-transition class="absolute inset-0 flex items-center justify-center text-xl font-medium text-status-info animate-damage">BUFF ✨</span>
+                    </div>
+                    <p class="text-xs text-gray-500">Support</p>
+                </div>
+            </div>
+
+            <button @click="show = !show" class="mt-4 w-full py-2 bg-rpg-gold text-rpg-bg font-medium rounded-lg">
+                Toggle Animation
+            </button>
+        </section>
+
+        <!-- Status Badges Section -->
+        <section class="bg-rpg-card border border-rpg-border rounded-xl p-4">
+            <h2 class="font-cinzel text-lg text-rpg-gold mb-4">Status Badges</h2>
+
+            <div class="flex flex-wrap gap-3">
+                <span class="inline-flex items-center gap-1 px-2 py-0.5 bg-status-warning/20 text-status-warning text-xs rounded-full">
+                    ⚔️ In Battle
+                </span>
+                <span class="inline-flex items-center gap-1 px-2 py-0.5 bg-status-success/20 text-status-success text-xs rounded-full">
+                    ✓ Defeated
+                </span>
+                <span class="inline-flex items-center gap-1 px-2 py-0.5 bg-status-danger/20 text-status-danger text-xs rounded-full">
+                    🔒 Blocked
+                </span>
+                <span class="inline-flex items-center gap-1 px-2 py-0.5 bg-gray-600/20 text-gray-400 text-xs rounded-full">
+                    ⏳ Pending
+                </span>
+                <span class="inline-flex items-center gap-1 px-2 py-0.5 bg-status-info/20 text-status-info text-xs rounded-full">
+                    📋 Ready
+                </span>
+            </div>
+        </section>
+
+        <!-- Minion Cards Section -->
+        <section class="bg-rpg-card border border-rpg-border rounded-xl p-4">
+            <h2 class="font-cinzel text-lg text-rpg-gold mb-4">Minion Cards (3 Types)</h2>
+
+            <div class="space-y-2">
+                <!-- UI Task -->
+                <div class="bg-rpg-border/30 border-l-4 border-hp-design rounded-r-lg p-3 flex items-center gap-3">
+                    <span class="text-xl">🎨</span>
+                    <div class="flex-1">
+                        <p class="text-sm text-white">Example UI Task</p>
+                        <div class="flex items-center gap-2 mt-1">
+                            <span class="px-1.5 py-0.5 bg-hp-design/20 text-hp-design text-xs rounded">UI</span>
+                            <span class="text-xs text-gray-500">Ton</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- API Task -->
+                <div class="bg-rpg-border/30 border-l-4 border-hp-api rounded-r-lg p-3 flex items-center gap-3">
+                    <span class="text-xl">⚙️</span>
+                    <div class="flex-1">
+                        <p class="text-sm text-white">Example API Task</p>
+                        <div class="flex items-center gap-2 mt-1">
+                            <span class="px-1.5 py-0.5 bg-hp-api/20 text-hp-api text-xs rounded">API</span>
+                            <span class="text-xs text-gray-500">Ken</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- FE Task -->
+                <div class="bg-rpg-border/30 border-l-4 border-hp-fe rounded-r-lg p-3 flex items-center gap-3">
+                    <span class="text-xl">💻</span>
+                    <div class="flex-1">
+                        <p class="text-sm text-white">Example FE Task</p>
+                        <div class="flex items-center gap-2 mt-1">
+                            <span class="px-1.5 py-0.5 bg-hp-fe/20 text-hp-fe text-xs rounded">FE</span>
+                            <span class="text-xs text-gray-500">May</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Button Styles Section -->
+        <section class="bg-rpg-card border border-rpg-border rounded-xl p-4">
+            <h2 class="font-cinzel text-lg text-rpg-gold mb-4">Buttons</h2>
+
+            <div class="space-y-3">
+                <button class="w-full py-2 bg-rpg-gold text-rpg-bg font-medium rounded-lg hover:brightness-110 active:scale-[0.98] transition">
+                    Primary Button
+                </button>
+                <button class="w-full py-2 bg-transparent border-2 border-rpg-gold text-rpg-gold font-medium rounded-lg hover:bg-rpg-gold/10 transition">
+                    Secondary Button
+                </button>
+                <button class="w-full py-2 bg-status-danger text-white font-medium rounded-lg hover:brightness-110 transition">
+                    Danger Button
+                </button>
+                <button disabled class="w-full py-2 bg-gray-700 text-gray-500 font-medium rounded-lg cursor-not-allowed opacity-50">
+                    Disabled Button
+                </button>
+            </div>
+        </section>
+
+        <!-- Toast Notifications Section -->
+        <section class="bg-rpg-card border border-rpg-border rounded-xl p-4">
+            <h2 class="font-cinzel text-lg text-rpg-gold mb-4">Toast Notifications</h2>
+
+            <div class="space-y-3">
+                <!-- Success Toast -->
+                <div class="flex items-center gap-3 p-3 bg-status-success/10 border border-status-success/30 rounded-lg">
+                    <span class="text-xl">✅</span>
+                    <div class="flex-1">
+                        <p class="text-sm text-white">Task completed successfully!</p>
+                        <p class="text-xs text-gray-400">+50 Gold, +100 XP</p>
+                    </div>
+                    <button class="text-gray-400 hover:text-white">✕</button>
+                </div>
+
+                <!-- Warning Toast -->
+                <div class="flex items-center gap-3 p-3 bg-status-warning/10 border border-status-warning/30 rounded-lg">
+                    <span class="text-xl">⚠️</span>
+                    <div class="flex-1">
+                        <p class="text-sm text-white">Data is stale</p>
+                        <p class="text-xs text-gray-400">Last sync: 5 minutes ago</p>
+                    </div>
+                    <button class="text-gray-400 hover:text-white">✕</button>
+                </div>
+
+                <!-- Error Toast -->
+                <div class="flex items-center gap-3 p-3 bg-status-danger/10 border border-status-danger/30 rounded-lg">
+                    <span class="text-xl">❌</span>
+                    <div class="flex-1">
+                        <p class="text-sm text-white">Sync failed</p>
+                        <p class="text-xs text-gray-400">Please try again</p>
+                    </div>
+                    <button class="text-gray-400 hover:text-white">✕</button>
+                </div>
+
+                <!-- Info Toast -->
+                <div class="flex items-center gap-3 p-3 bg-status-info/10 border border-status-info/30 rounded-lg">
+                    <span class="text-xl">ℹ️</span>
+                    <div class="flex-1">
+                        <p class="text-sm text-white">New Commander available</p>
+                        <p class="text-xs text-gray-400">Flow: Payment has been added</p>
+                    </div>
+                    <button class="text-gray-400 hover:text-white">✕</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Currency Display Section -->
+        <section class="bg-rpg-card border border-rpg-border rounded-xl p-4">
+            <h2 class="font-cinzel text-lg text-rpg-gold mb-4">Currency Display</h2>
+
+            <div class="flex gap-4">
+                <div class="flex items-center gap-2 bg-rpg-border/50 px-4 py-2 rounded-lg">
+                    <span class="text-xl">🪙</span>
+                    <span class="text-rpg-gold font-bold">2,450</span>
+                    <span class="text-xs text-gray-500">Gold</span>
+                </div>
+                <div class="flex items-center gap-2 bg-rpg-border/50 px-4 py-2 rounded-lg">
+                    <span class="text-xl">💎</span>
+                    <span class="text-status-info font-bold">15</span>
+                    <span class="text-xs text-gray-500">Gems</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- XP Bar Section -->
+        <section class="bg-rpg-card border border-rpg-border rounded-xl p-4">
+            <h2 class="font-cinzel text-lg text-rpg-gold mb-4">XP Bar</h2>
+
+            <div class="flex items-center gap-4">
+                <span class="bg-rpg-gold text-rpg-bg text-sm font-bold px-2 py-1 rounded">Lv.15</span>
+                <div class="flex-1">
+                    <div class="flex justify-between text-xs mb-1">
+                        <span class="text-gray-400">Experience</span>
+                        <span class="text-rpg-gold">850 / 1,000 XP</span>
+                    </div>
+                    <div class="h-3 bg-rpg-border rounded-full overflow-hidden">
+                        <div class="h-full bg-gradient-to-r from-rpg-gold to-status-warning rounded-full" style="width: 85%"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Character Classes Section -->
+        <section class="bg-rpg-card border border-rpg-border rounded-xl p-4">
+            <h2 class="font-cinzel text-lg text-rpg-gold mb-4">Character Classes</h2>
+
+            <div class="grid grid-cols-2 gap-3">
+                <div class="flex items-center gap-3 p-3 bg-rpg-border/30 rounded-lg">
+                    <span class="text-2xl">⚔️</span>
+                    <div>
+                        <p class="text-sm text-white">Warrior</p>
+                        <p class="text-xs text-hp-api">Backend Dev</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-3 p-3 bg-rpg-border/30 rounded-lg">
+                    <span class="text-2xl">🧙</span>
+                    <div>
+                        <p class="text-sm text-white">Mage</p>
+                        <p class="text-xs text-hp-fe">Frontend Dev</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-3 p-3 bg-rpg-border/30 rounded-lg">
+                    <span class="text-2xl">🔨</span>
+                    <div>
+                        <p class="text-sm text-white">Blacksmith</p>
+                        <p class="text-xs text-hp-design">UX Designer</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-3 p-3 bg-rpg-border/30 rounded-lg">
+                    <span class="text-2xl">🔍</span>
+                    <div>
+                        <p class="text-sm text-white">Scout</p>
+                        <p class="text-xs text-hp-ac">BA / QA</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-3 p-3 bg-rpg-border/30 rounded-lg">
+                    <span class="text-2xl">💊</span>
+                    <div>
+                        <p class="text-sm text-white">Healer</p>
+                        <p class="text-xs text-hp-testing">QA Tester</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-3 p-3 bg-rpg-border/30 rounded-lg">
+                    <span class="text-2xl">👑</span>
+                    <div>
+                        <p class="text-sm text-white">Guild Master</p>
+                        <p class="text-xs text-rpg-gold">PM</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+</body>
+</html>

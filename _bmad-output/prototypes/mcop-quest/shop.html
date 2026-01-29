@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="th" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shop - MCOP Quest</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'cinzel': ['Cinzel', 'serif'],
+                        'inter': ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        'rpg': {
+                            'bg': '#1a1a2e',
+                            'card': '#16213e',
+                            'border': '#0f3460',
+                            'gold': '#f1c40f',
+                            'gold-dark': '#d4a906',
+                        },
+                        'hp': {
+                            'design': '#E67E22',
+                            'ac': '#3498DB',
+                            'api': '#9B59B6',
+                            'fe': '#1ABC9C',
+                            'testing': '#F1C40F',
+                            'uat': '#2ECC71',
+                        },
+                        'status': {
+                            'success': '#2ECC71',
+                            'warning': '#F1C40F',
+                            'danger': '#E74C3C',
+                            'info': '#3498DB',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .tab-active { border-bottom: 3px solid #f1c40f; }
+        .item-card {
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .item-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px rgba(241, 196, 15, 0.2);
+        }
+        .item-card.locked {
+            opacity: 0.5;
+            filter: grayscale(0.5);
+        }
+    </style>
+</head>
+<body class="bg-rpg-bg text-white font-inter min-h-screen pb-20">
+
+    <!-- Header -->
+    <header class="sticky top-0 z-40 bg-rpg-bg/95 backdrop-blur border-b border-rpg-border">
+        <div class="flex items-center justify-between px-4 py-3">
+            <div>
+                <h1 class="font-cinzel text-xl text-rpg-gold">🛒 Shop</h1>
+                <p class="text-gray-500 text-xs">Buy cosmetics with Gold</p>
+            </div>
+            <!-- Currency Display -->
+            <div class="flex items-center gap-4">
+                <div class="flex items-center gap-1 text-sm bg-rpg-card px-3 py-1.5 rounded-lg border border-rpg-border">
+                    <span>🪙</span>
+                    <span class="text-rpg-gold font-medium">2,450</span>
+                </div>
+                <div class="flex items-center gap-1 text-sm bg-rpg-card px-3 py-1.5 rounded-lg border border-rpg-border">
+                    <span>💎</span>
+                    <span class="text-status-info font-medium">15</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="p-4 space-y-6">
+
+        <!-- Info Banner -->
+        <div class="bg-rpg-gold/10 border border-rpg-gold/30 rounded-xl p-4">
+            <div class="flex items-start gap-3">
+                <span class="text-2xl">💡</span>
+                <div>
+                    <p class="text-sm text-rpg-gold font-medium">Cosmetic Only</p>
+                    <p class="text-xs text-gray-400 mt-1">Items ทุกชิ้นมีผลเพียงความสวยงาม ไม่มีผลต่อค่าพลัง</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Gem Redemption Notice -->
+        <div class="bg-status-info/10 border border-status-info/30 rounded-xl p-4">
+            <div class="flex items-start gap-3">
+                <span class="text-2xl">💎</span>
+                <div>
+                    <p class="text-sm text-status-info font-medium">Gem = Real Incentive</p>
+                    <p class="text-xs text-gray-400 mt-1">Gem สะสมได้จากการ Defeat Commander — แลกเป็นรางวัลจริงได้ที่ HR</p>
+                    <p class="text-xs text-gray-500 mt-1">Your Gems: <span class="text-status-info font-medium">15 💎</span></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Category: Helmets -->
+        <div>
+            <h2 class="font-cinzel text-lg text-rpg-gold mb-3 flex items-center gap-2">
+                <span>🎩</span>
+                <span>Helmets</span>
+            </h2>
+
+            <div class="grid grid-cols-2 gap-3">
+                <!-- Item: Basic Helmet (Owned) -->
+                <div class="item-card bg-rpg-card border border-status-success rounded-xl p-3 text-center">
+                    <div class="text-4xl mb-2">🪖</div>
+                    <h3 class="text-sm text-white">Basic Helmet</h3>
+                    <p class="text-xs text-gray-500">Lv.1 Required</p>
+                    <div class="mt-2">
+                        <span class="text-xs bg-status-success/20 text-status-success px-2 py-1 rounded">✓ Owned</span>
+                    </div>
+                </div>
+
+                <!-- Item: Warrior Helm -->
+                <div class="item-card bg-rpg-card border border-rpg-border rounded-xl p-3 text-center">
+                    <div class="text-4xl mb-2">⛑️</div>
+                    <h3 class="text-sm text-white">Warrior Helm</h3>
+                    <p class="text-xs text-gray-500">Lv.5 Required</p>
+                    <div class="mt-2 flex items-center justify-center gap-1">
+                        <span>🪙</span>
+                        <span class="text-rpg-gold font-medium">500</span>
+                    </div>
+                    <button class="mt-2 w-full py-1.5 bg-rpg-gold text-rpg-bg text-sm font-medium rounded-lg hover:bg-rpg-gold-dark">
+                        Buy
+                    </button>
+                </div>
+
+                <!-- Item: Crown (Locked) -->
+                <div class="item-card locked bg-rpg-card border border-gray-700 rounded-xl p-3 text-center">
+                    <div class="text-4xl mb-2">👑</div>
+                    <h3 class="text-sm text-gray-400">Royal Crown</h3>
+                    <p class="text-xs text-gray-600">Lv.20 Required</p>
+                    <div class="mt-2 flex items-center justify-center gap-1">
+                        <span>🪙</span>
+                        <span class="text-gray-500">5,000</span>
+                    </div>
+                    <button disabled class="mt-2 w-full py-1.5 bg-gray-700 text-gray-500 text-sm rounded-lg cursor-not-allowed">
+                        🔒 Lv.20
+                    </button>
+                </div>
+
+                <!-- Item: Wizard Hat -->
+                <div class="item-card bg-rpg-card border border-rpg-border rounded-xl p-3 text-center">
+                    <div class="text-4xl mb-2">🎩</div>
+                    <h3 class="text-sm text-white">Wizard Hat</h3>
+                    <p class="text-xs text-gray-500">Lv.10 Required</p>
+                    <div class="mt-2 flex items-center justify-center gap-1">
+                        <span>🪙</span>
+                        <span class="text-rpg-gold font-medium">1,200</span>
+                    </div>
+                    <button class="mt-2 w-full py-1.5 bg-rpg-gold text-rpg-bg text-sm font-medium rounded-lg hover:bg-rpg-gold-dark">
+                        Buy
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Category: Weapons -->
+        <div>
+            <h2 class="font-cinzel text-lg text-rpg-gold mb-3 flex items-center gap-2">
+                <span>⚔️</span>
+                <span>Weapons</span>
+            </h2>
+
+            <div class="grid grid-cols-2 gap-3">
+                <!-- Item: Basic Sword (Owned) -->
+                <div class="item-card bg-rpg-card border border-status-success rounded-xl p-3 text-center">
+                    <div class="text-4xl mb-2">🗡️</div>
+                    <h3 class="text-sm text-white">Basic Sword</h3>
+                    <p class="text-xs text-gray-500">Lv.1 Required</p>
+                    <div class="mt-2">
+                        <span class="text-xs bg-status-success/20 text-status-success px-2 py-1 rounded">✓ Equipped</span>
+                    </div>
+                </div>
+
+                <!-- Item: Fire Sword -->
+                <div class="item-card bg-rpg-card border border-rpg-border rounded-xl p-3 text-center">
+                    <div class="text-4xl mb-2">🔥</div>
+                    <h3 class="text-sm text-white">Fire Sword</h3>
+                    <p class="text-xs text-gray-500">Lv.8 Required</p>
+                    <div class="mt-2 flex items-center justify-center gap-1">
+                        <span>🪙</span>
+                        <span class="text-rpg-gold font-medium">800</span>
+                    </div>
+                    <button class="mt-2 w-full py-1.5 bg-rpg-gold text-rpg-bg text-sm font-medium rounded-lg hover:bg-rpg-gold-dark">
+                        Buy
+                    </button>
+                </div>
+
+                <!-- Item: Lightning Staff -->
+                <div class="item-card bg-rpg-card border border-rpg-border rounded-xl p-3 text-center">
+                    <div class="text-4xl mb-2">⚡</div>
+                    <h3 class="text-sm text-white">Lightning Staff</h3>
+                    <p class="text-xs text-gray-500">Lv.12 Required</p>
+                    <div class="mt-2 flex items-center justify-center gap-1">
+                        <span>🪙</span>
+                        <span class="text-rpg-gold font-medium">1,500</span>
+                    </div>
+                    <button class="mt-2 w-full py-1.5 bg-rpg-gold text-rpg-bg text-sm font-medium rounded-lg hover:bg-rpg-gold-dark">
+                        Buy
+                    </button>
+                </div>
+
+                <!-- Item: Legendary Axe (Locked) -->
+                <div class="item-card locked bg-rpg-card border border-gray-700 rounded-xl p-3 text-center">
+                    <div class="text-4xl mb-2">🪓</div>
+                    <h3 class="text-sm text-gray-400">Legendary Axe</h3>
+                    <p class="text-xs text-gray-600">Lv.25 Required</p>
+                    <div class="mt-2 flex items-center justify-center gap-1">
+                        <span>🪙</span>
+                        <span class="text-gray-500">10,000</span>
+                    </div>
+                    <button disabled class="mt-2 w-full py-1.5 bg-gray-700 text-gray-500 text-sm rounded-lg cursor-not-allowed">
+                        🔒 Lv.25
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Category: Shields -->
+        <div>
+            <h2 class="font-cinzel text-lg text-rpg-gold mb-3 flex items-center gap-2">
+                <span>🛡️</span>
+                <span>Shields</span>
+            </h2>
+
+            <div class="grid grid-cols-2 gap-3">
+                <!-- Item: Wooden Shield (Owned) -->
+                <div class="item-card bg-rpg-card border border-status-success rounded-xl p-3 text-center">
+                    <div class="text-4xl mb-2">🛡️</div>
+                    <h3 class="text-sm text-white">Wooden Shield</h3>
+                    <p class="text-xs text-gray-500">Lv.1 Required</p>
+                    <div class="mt-2">
+                        <span class="text-xs bg-status-success/20 text-status-success px-2 py-1 rounded">✓ Equipped</span>
+                    </div>
+                </div>
+
+                <!-- Item: Iron Shield -->
+                <div class="item-card bg-rpg-card border border-rpg-border rounded-xl p-3 text-center">
+                    <div class="text-4xl mb-2">🔰</div>
+                    <h3 class="text-sm text-white">Iron Shield</h3>
+                    <p class="text-xs text-gray-500">Lv.7 Required</p>
+                    <div class="mt-2 flex items-center justify-center gap-1">
+                        <span>🪙</span>
+                        <span class="text-rpg-gold font-medium">700</span>
+                    </div>
+                    <button class="mt-2 w-full py-1.5 bg-rpg-gold text-rpg-bg text-sm font-medium rounded-lg hover:bg-rpg-gold-dark">
+                        Buy
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Category: Special -->
+        <div>
+            <h2 class="font-cinzel text-lg text-rpg-gold mb-3 flex items-center gap-2">
+                <span>✨</span>
+                <span>Special Items</span>
+            </h2>
+
+            <div class="grid grid-cols-1 gap-3">
+                <!-- Item: Dark Theme (Already Active) -->
+                <div class="item-card bg-rpg-card border border-status-success rounded-xl p-4">
+                    <div class="flex items-center gap-4">
+                        <div class="text-4xl">🌙</div>
+                        <div class="flex-1">
+                            <h3 class="text-sm text-white">Dark Theme</h3>
+                            <p class="text-xs text-gray-500">Switch to dark mode interface</p>
+                        </div>
+                        <span class="text-xs bg-status-success/20 text-status-success px-2 py-1 rounded">✓ Active</span>
+                    </div>
+                </div>
+
+                <!-- Item: Custom Title -->
+                <div class="item-card bg-rpg-card border border-rpg-border rounded-xl p-4">
+                    <div class="flex items-center gap-4">
+                        <div class="text-4xl">📛</div>
+                        <div class="flex-1">
+                            <h3 class="text-sm text-white">Custom Title: "The Debugger"</h3>
+                            <p class="text-xs text-gray-500">Show a special title on your profile</p>
+                            <p class="text-xs text-gray-600 mt-1">Lv.15 Required</p>
+                        </div>
+                        <div class="text-right">
+                            <div class="flex items-center justify-end gap-1">
+                                <span>🪙</span>
+                                <span class="text-rpg-gold font-medium">2,000</span>
+                            </div>
+                            <button class="mt-2 py-1.5 px-4 bg-rpg-gold text-rpg-bg text-sm font-medium rounded-lg hover:bg-rpg-gold-dark">
+                                Buy
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Item: Animated Avatar Frame (Locked) -->
+                <div class="item-card locked bg-rpg-card border border-gray-700 rounded-xl p-4">
+                    <div class="flex items-center gap-4">
+                        <div class="text-4xl">🖼️</div>
+                        <div class="flex-1">
+                            <h3 class="text-sm text-gray-400">Animated Avatar Frame</h3>
+                            <p class="text-xs text-gray-600">Add a glowing frame around your avatar</p>
+                            <p class="text-xs text-gray-600 mt-1">Lv.30 Required</p>
+                        </div>
+                        <div class="text-right">
+                            <div class="flex items-center justify-end gap-1">
+                                <span>🪙</span>
+                                <span class="text-gray-500">15,000</span>
+                            </div>
+                            <button disabled class="mt-2 py-1.5 px-4 bg-gray-700 text-gray-500 text-sm rounded-lg cursor-not-allowed">
+                                🔒 Lv.30
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Purchase History -->
+        <div class="bg-rpg-card border border-rpg-border rounded-xl p-4">
+            <h3 class="font-cinzel text-sm text-rpg-gold mb-3">Recent Purchases</h3>
+            <div class="space-y-2">
+                <div class="flex items-center justify-between text-sm">
+                    <span class="text-gray-400">🪖 Basic Helmet</span>
+                    <span class="text-gray-500">Free (Starter)</span>
+                </div>
+                <div class="flex items-center justify-between text-sm">
+                    <span class="text-gray-400">🗡️ Basic Sword</span>
+                    <span class="text-gray-500">Free (Starter)</span>
+                </div>
+                <div class="flex items-center justify-between text-sm">
+                    <span class="text-gray-400">🛡️ Wooden Shield</span>
+                    <span class="text-gray-500">Free (Starter)</span>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Bottom Tab Bar -->
+    <nav class="fixed bottom-0 left-0 right-0 bg-rpg-card border-t border-rpg-border z-50">
+        <div class="flex justify-around">
+            <a href="hero.html" class="flex-1 py-3 text-center text-gray-400 hover:text-rpg-gold">
+                <div class="text-xl">⚔️</div>
+                <div class="text-xs mt-1">Hero</div>
+            </a>
+            <a href="team.html" class="flex-1 py-3 text-center text-gray-400 hover:text-rpg-gold">
+                <div class="text-xl">👥</div>
+                <div class="text-xs mt-1">Team</div>
+            </a>
+            <a href="world-map.html" class="flex-1 py-3 text-center text-gray-400 hover:text-rpg-gold">
+                <div class="text-xl">🗺️</div>
+                <div class="text-xs mt-1">World</div>
+            </a>
+            <a href="shop.html" class="flex-1 py-3 text-center text-rpg-gold tab-active">
+                <div class="text-xl">🛒</div>
+                <div class="text-xs mt-1">Shop</div>
+            </a>
+        </div>
+    </nav>
+
+</body>
+</html>

@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="th" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>City Detail - MCOP Quest</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'cinzel': ['Cinzel', 'serif'],
+                        'inter': ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        'rpg': {
+                            'bg': '#1a1a2e',
+                            'card': '#16213e',
+                            'border': '#0f3460',
+                            'gold': '#f1c40f',
+                            'gold-dark': '#d4a906',
+                        },
+                        'hp': {
+                            'design': '#E67E22',
+                            'ac': '#3498DB',
+                            'api': '#9B59B6',
+                            'fe': '#1ABC9C',
+                            'testing': '#F1C40F',
+                            'uat': '#2ECC71',
+                        },
+                        'status': {
+                            'success': '#2ECC71',
+                            'warning': '#F1C40F',
+                            'danger': '#E74C3C',
+                            'info': '#3498DB',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .card-hover {
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .card-hover:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px rgba(241, 196, 15, 0.2);
+        }
+        .tab-active {
+            border-bottom: 3px solid #f1c40f;
+        }
+        @keyframes portal-swirl {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .animate-portal { animation: portal-swirl 10s linear infinite; }
+
+        @keyframes boss-idle {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+        .boss-idle { animation: boss-idle 2s ease-in-out infinite; }
+
+        @keyframes commander-idle {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-3px); }
+        }
+        .commander-idle { animation: commander-idle 2.5s ease-in-out infinite; }
+
+        .character-defeated {
+            filter: grayscale(100%);
+            opacity: 0.6;
+        }
+        .character-silhouette {
+            filter: brightness(0) saturate(100%);
+            opacity: 0.4;
+        }
+    </style>
+</head>
+<body class="bg-rpg-bg text-white font-inter min-h-screen pb-20">
+
+    <!-- Header with Back Button -->
+    <header class="sticky top-0 z-40 bg-rpg-bg/95 backdrop-blur border-b border-rpg-border">
+        <div class="flex items-center gap-3 px-4 py-3">
+            <a href="world-map.html" class="text-gray-400 hover:text-white">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+                </svg>
+            </a>
+            <div class="flex-1">
+                <h1 class="font-cinzel text-xl text-rpg-gold">🏰 ระบบสมาชิก</h1>
+                <!-- Breadcrumb -->
+                <p class="text-gray-500 text-xs">🗺️ World > 🏰 ระบบสมาชิก</p>
+            </div>
+            <!-- Sync Status -->
+            <div class="flex items-center gap-1 text-xs text-gray-400">
+                <span class="w-2 h-2 bg-status-success rounded-full"></span>
+                <span>30s</span>
+            </div>
+        </div>
+    </header>
+
+    <main class="p-4 space-y-4">
+
+        <!-- City Boss Progress -->
+        <div class="bg-rpg-card border border-rpg-border rounded-xl p-4">
+            <div class="flex items-start gap-4">
+                <!-- Boss Character SVG -->
+                <div class="flex-shrink-0">
+                    <svg width="80" height="100" viewBox="0 0 80 100" class="boss-idle">
+                        <!-- Knight King Boss -->
+                        <!-- Body Shadow -->
+                        <ellipse cx="40" cy="95" rx="25" ry="5" fill="#0f3460" opacity="0.5"/>
+                        <!-- Cape -->
+                        <path d="M20 45 Q10 70 25 90" fill="#e74c3c"/>
+                        <path d="M60 45 Q70 70 55 90" fill="#e74c3c"/>
+                        <!-- Body/Armor -->
+                        <rect x="22" y="45" width="36" height="40" rx="5" fill="#718096"/>
+                        <rect x="28" y="50" width="24" height="10" fill="#4a5568"/>
+                        <circle cx="40" cy="62" r="5" fill="#f1c40f"/>
+                        <!-- Legs -->
+                        <rect x="28" y="82" width="10" height="12" rx="2" fill="#4a5568"/>
+                        <rect x="42" y="82" width="10" height="12" rx="2" fill="#4a5568"/>
+                        <!-- Arms -->
+                        <rect x="12" y="48" width="12" height="25" rx="4" fill="#718096"/>
+                        <rect x="56" y="48" width="12" height="25" rx="4" fill="#718096"/>
+                        <!-- Sword -->
+                        <rect x="64" y="35" width="4" height="45" fill="#a0aec0"/>
+                        <rect x="60" y="32" width="12" height="6" rx="2" fill="#f1c40f"/>
+                        <path d="M64 30 L66 22 L68 30 Z" fill="#a0aec0"/>
+                        <!-- Shield -->
+                        <ellipse cx="15" cy="60" rx="10" ry="15" fill="#4a5568"/>
+                        <ellipse cx="15" cy="60" rx="6" ry="10" fill="#f1c40f"/>
+                        <!-- Head -->
+                        <circle cx="40" cy="30" r="20" fill="#ffd5b5"/>
+                        <!-- Crown -->
+                        <path d="M22 20 L28 5 L34 18 L40 0 L46 18 L52 5 L58 20" fill="#f1c40f" stroke="#d4a906" stroke-width="1"/>
+                        <circle cx="40" cy="8" r="4" fill="#e74c3c"/>
+                        <circle cx="28" cy="12" r="2" fill="#3498db"/>
+                        <circle cx="52" cy="12" r="2" fill="#3498db"/>
+                        <!-- Face -->
+                        <circle cx="33" cy="28" r="3" fill="#2d3748"/>
+                        <circle cx="47" cy="28" r="3" fill="#2d3748"/>
+                        <circle cx="34" cy="27" r="1" fill="white"/>
+                        <circle cx="48" cy="27" r="1" fill="white"/>
+                        <path d="M35 38 Q40 42 45 38" stroke="#a0522d" fill="none" stroke-width="2"/>
+                    </svg>
+                </div>
+                <!-- Boss Info -->
+                <div class="flex-1">
+                    <div class="flex items-center justify-between mb-2">
+                        <div>
+                            <h2 class="font-cinzel text-lg text-rpg-gold">👑 King of Members</h2>
+                            <p class="text-xs text-gray-400">City Boss • ระบบสมาชิก</p>
+                        </div>
+                        <span class="text-status-warning font-bold text-xl">75%</span>
+                    </div>
+                    <div class="h-4 bg-rpg-border rounded-full overflow-hidden mb-2">
+                        <div class="h-full bg-gradient-to-r from-status-danger via-status-warning to-status-success rounded-full transition-all duration-500" style="width: 75%"></div>
+                    </div>
+                    <div class="flex items-center justify-between text-xs">
+                        <p class="text-gray-400">2/3 Commanders Defeated</p>
+                        <span class="text-status-warning">⚔️ In Battle</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Commanders List -->
+        <div class="space-y-4">
+            <h2 class="font-cinzel text-lg text-rpg-gold flex items-center gap-2">
+                <span>⚔️</span>
+                <span>Commanders (3)</span>
+            </h2>
+
+            <!-- Commander 1: Flow Login (In Progress) -->
+            <a href="commander.html?id=1" class="block card-hover bg-rpg-card border border-rpg-gold rounded-xl p-4">
+                <div class="flex items-start justify-between mb-3">
+                    <div class="flex items-center gap-3">
+                        <!-- Commander Character SVG - Mage -->
+                        <svg width="50" height="65" viewBox="0 0 50 65" class="commander-idle flex-shrink-0">
+                            <!-- Shadow -->
+                            <ellipse cx="25" cy="62" rx="15" ry="3" fill="#0f3460" opacity="0.5"/>
+                            <!-- Robe -->
+                            <path d="M15 35 L10 60 L40 60 L35 35 Z" fill="#9B59B6"/>
+                            <path d="M15 35 L12 60 L20 60 L18 40 Z" fill="#8E44AD"/>
+                            <!-- Body -->
+                            <ellipse cx="25" cy="35" rx="12" ry="8" fill="#9B59B6"/>
+                            <rect x="18" y="30" width="14" height="10" fill="#8E44AD"/>
+                            <!-- Staff -->
+                            <rect x="38" y="15" width="3" height="45" fill="#8B4513"/>
+                            <circle cx="39.5" cy="12" r="6" fill="#3498DB"/>
+                            <circle cx="39.5" cy="12" r="3" fill="#85C1E9"/>
+                            <!-- Head -->
+                            <circle cx="25" cy="20" r="12" fill="#ffd5b5"/>
+                            <!-- Wizard Hat -->
+                            <path d="M12 22 L25 -5 L38 22 Z" fill="#9B59B6"/>
+                            <ellipse cx="25" cy="22" rx="15" ry="4" fill="#8E44AD"/>
+                            <circle cx="25" cy="2" r="3" fill="#f1c40f"/>
+                            <!-- Face -->
+                            <circle cx="21" cy="18" r="2" fill="#2d3748"/>
+                            <circle cx="29" cy="18" r="2" fill="#2d3748"/>
+                            <path d="M22 25 Q25 27 28 25" stroke="#a0522d" fill="none" stroke-width="1.5"/>
+                            <!-- Spell effect -->
+                            <circle cx="8" cy="45" r="4" fill="#f1c40f" opacity="0.6"/>
+                            <circle cx="10" cy="50" r="3" fill="#f1c40f" opacity="0.4"/>
+                        </svg>
+                        <div>
+                            <h3 class="font-cinzel text-white">Flow: Login</h3>
+                            <span class="inline-flex items-center gap-1 px-2 py-0.5 bg-status-warning/20 text-status-warning text-xs rounded-full">
+                                ⚔️ In Battle
+                            </span>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <div class="text-2xl font-bold text-status-warning">63%</div>
+                        <div class="text-xs text-gray-400">Overall</div>
+                    </div>
+                </div>
+
+                <!-- 6 HP Bars -->
+                <div class="space-y-2">
+                    <!-- Design HP -->
+                    <div class="flex items-center gap-2">
+                        <span class="w-16 text-xs text-gray-400 flex items-center gap-1">
+                            <span style="color: #E67E22">📐</span> Design
+                        </span>
+                        <div class="flex-1 h-2 bg-rpg-border rounded-full overflow-hidden">
+                            <div class="h-full rounded-full" style="width: 100%; background: #E67E22"></div>
+                        </div>
+                        <span class="w-10 text-xs text-right text-status-success">100%</span>
+                    </div>
+                    <!-- AC HP -->
+                    <div class="flex items-center gap-2">
+                        <span class="w-16 text-xs text-gray-400 flex items-center gap-1">
+                            <span style="color: #3498DB">📋</span> AC
+                        </span>
+                        <div class="flex-1 h-2 bg-rpg-border rounded-full overflow-hidden">
+                            <div class="h-full rounded-full" style="width: 100%; background: #3498DB"></div>
+                        </div>
+                        <span class="w-10 text-xs text-right text-status-success">100%</span>
+                    </div>
+                    <!-- API HP -->
+                    <div class="flex items-center gap-2">
+                        <span class="w-16 text-xs text-gray-400 flex items-center gap-1">
+                            <span style="color: #9B59B6">⚙️</span> API
+                        </span>
+                        <div class="flex-1 h-2 bg-rpg-border rounded-full overflow-hidden">
+                            <div class="h-full rounded-full" style="width: 80%; background: #9B59B6"></div>
+                        </div>
+                        <span class="w-10 text-xs text-right text-status-warning">80%</span>
+                    </div>
+                    <!-- FE/App HP -->
+                    <div class="flex items-center gap-2">
+                        <span class="w-16 text-xs text-gray-400 flex items-center gap-1">
+                            <span style="color: #1ABC9C">💻</span> FE
+                        </span>
+                        <div class="flex-1 h-2 bg-rpg-border rounded-full overflow-hidden">
+                            <div class="h-full rounded-full" style="width: 50%; background: #1ABC9C"></div>
+                        </div>
+                        <span class="w-10 text-xs text-right text-status-warning">50%</span>
+                    </div>
+                    <!-- Testing HP -->
+                    <div class="flex items-center gap-2">
+                        <span class="w-16 text-xs text-gray-400 flex items-center gap-1">
+                            <span style="color: #F1C40F">🧪</span> Test
+                        </span>
+                        <div class="flex-1 h-2 bg-rpg-border rounded-full overflow-hidden">
+                            <div class="h-full rounded-full" style="width: 0%; background: #F1C40F"></div>
+                        </div>
+                        <span class="w-10 text-xs text-right text-gray-500">0%</span>
+                    </div>
+                    <!-- UAT HP -->
+                    <div class="flex items-center gap-2">
+                        <span class="w-16 text-xs text-gray-400 flex items-center gap-1">
+                            <span style="color: #2ECC71">✅</span> UAT
+                        </span>
+                        <div class="flex-1 h-2 bg-rpg-border rounded-full overflow-hidden">
+                            <div class="h-full rounded-full" style="width: 0%; background: #2ECC71"></div>
+                        </div>
+                        <span class="w-10 text-xs text-right text-gray-500">0%</span>
+                    </div>
+                </div>
+
+                <!-- Assignees -->
+                <div class="mt-3 flex items-center gap-2 text-xs text-gray-400">
+                    <span>Assignees:</span>
+                    <span class="px-2 py-0.5 bg-rpg-border rounded">Ken</span>
+                    <span class="px-2 py-0.5 bg-rpg-border rounded">Ton</span>
+                    <span class="px-2 py-0.5 bg-rpg-border rounded">May</span>
+                </div>
+            </a>
+
+            <!-- Commander 2: Flow Registration (Defeated) -->
+            <a href="commander.html?id=2" class="block card-hover bg-rpg-card border border-status-success rounded-xl p-4 opacity-80">
+                <div class="flex items-start justify-between mb-3">
+                    <div class="flex items-center gap-3">
+                        <!-- Defeated Commander Character SVG - Warrior -->
+                        <div class="relative flex-shrink-0">
+                            <svg width="50" height="65" viewBox="0 0 50 65" class="character-defeated">
+                                <!-- Shadow -->
+                                <ellipse cx="25" cy="62" rx="15" ry="3" fill="#0f3460" opacity="0.3"/>
+                                <!-- Body/Armor -->
+                                <rect x="15" y="32" width="20" height="25" rx="3" fill="#718096"/>
+                                <rect x="18" y="35" width="14" height="8" fill="#4a5568"/>
+                                <!-- Legs -->
+                                <rect x="17" y="55" width="7" height="8" rx="2" fill="#4a5568"/>
+                                <rect x="26" y="55" width="7" height="8" rx="2" fill="#4a5568"/>
+                                <!-- Arms -->
+                                <rect x="8" y="35" width="8" height="18" rx="3" fill="#718096"/>
+                                <rect x="34" y="35" width="8" height="18" rx="3" fill="#718096"/>
+                                <!-- Sword (dropped) -->
+                                <rect x="5" y="50" width="3" height="15" fill="#a0aec0" transform="rotate(-45 5 50)"/>
+                                <!-- Head -->
+                                <circle cx="25" cy="22" r="12" fill="#4a5568"/>
+                                <!-- Helmet -->
+                                <path d="M13 18 Q25 5 37 18" fill="#718096"/>
+                                <rect x="13" y="18" width="24" height="8" fill="#718096"/>
+                                <!-- X eyes (defeated) -->
+                                <text x="20" y="24" fill="#e74c3c" font-size="8" font-weight="bold">✗</text>
+                                <text x="28" y="24" fill="#e74c3c" font-size="8" font-weight="bold">✗</text>
+                            </svg>
+                            <!-- Skull overlay -->
+                            <div class="absolute inset-0 flex items-center justify-center">
+                                <span class="text-2xl">💀</span>
+                            </div>
+                        </div>
+                        <div>
+                            <h3 class="font-cinzel text-gray-300 line-through">Flow: Registration</h3>
+                            <span class="inline-flex items-center gap-1 px-2 py-0.5 bg-status-success/20 text-status-success text-xs rounded-full">
+                                ✓ Defeated
+                            </span>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <div class="text-2xl font-bold text-status-success">100%</div>
+                        <div class="text-xs text-gray-400">Complete</div>
+                    </div>
+                </div>
+
+                <!-- 6 HP Bars (All 100%) -->
+                <div class="space-y-1">
+                    <div class="flex items-center gap-2">
+                        <span class="w-16 text-xs text-gray-500">📐 Design</span>
+                        <div class="flex-1 h-1.5 bg-rpg-border rounded-full overflow-hidden">
+                            <div class="h-full rounded-full bg-status-success" style="width: 100%"></div>
+                        </div>
+                        <span class="w-8 text-xs text-right text-status-success">✓</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="w-16 text-xs text-gray-500">📋 AC</span>
+                        <div class="flex-1 h-1.5 bg-rpg-border rounded-full overflow-hidden">
+                            <div class="h-full rounded-full bg-status-success" style="width: 100%"></div>
+                        </div>
+                        <span class="w-8 text-xs text-right text-status-success">✓</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="w-16 text-xs text-gray-500">⚙️ API</span>
+                        <div class="flex-1 h-1.5 bg-rpg-border rounded-full overflow-hidden">
+                            <div class="h-full rounded-full bg-status-success" style="width: 100%"></div>
+                        </div>
+                        <span class="w-8 text-xs text-right text-status-success">✓</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="w-16 text-xs text-gray-500">💻 FE</span>
+                        <div class="flex-1 h-1.5 bg-rpg-border rounded-full overflow-hidden">
+                            <div class="h-full rounded-full bg-status-success" style="width: 100%"></div>
+                        </div>
+                        <span class="w-8 text-xs text-right text-status-success">✓</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="w-16 text-xs text-gray-500">🧪 Test</span>
+                        <div class="flex-1 h-1.5 bg-rpg-border rounded-full overflow-hidden">
+                            <div class="h-full rounded-full bg-status-success" style="width: 100%"></div>
+                        </div>
+                        <span class="w-8 text-xs text-right text-status-success">✓</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="w-16 text-xs text-gray-500">✅ UAT</span>
+                        <div class="flex-1 h-1.5 bg-rpg-border rounded-full overflow-hidden">
+                            <div class="h-full rounded-full bg-status-success" style="width: 100%"></div>
+                        </div>
+                        <span class="w-8 text-xs text-right text-status-success">✓</span>
+                    </div>
+                </div>
+            </a>
+
+            <!-- Commander 3: Flow Password Reset (Blocked) -->
+            <a href="commander.html?id=3" class="block card-hover bg-rpg-card border border-status-danger rounded-xl p-4">
+                <div class="flex items-start justify-between mb-3">
+                    <div class="flex items-center gap-3">
+                        <!-- Blocked Commander Character SVG - Silhouette -->
+                        <div class="relative flex-shrink-0">
+                            <svg width="50" height="65" viewBox="0 0 50 65" class="character-silhouette">
+                                <!-- Shadow -->
+                                <ellipse cx="25" cy="62" rx="15" ry="3" fill="#000"/>
+                                <!-- Cloak/Robe -->
+                                <path d="M12 30 L8 62 L42 62 L38 30 Z" fill="#000"/>
+                                <!-- Body -->
+                                <ellipse cx="25" cy="32" rx="14" ry="10" fill="#000"/>
+                                <!-- Head -->
+                                <circle cx="25" cy="18" r="13" fill="#000"/>
+                                <!-- Hood -->
+                                <path d="M10 22 Q25 0 40 22 Q35 30 25 32 Q15 30 10 22 Z" fill="#000"/>
+                                <!-- Staff silhouette -->
+                                <rect x="40" y="10" width="3" height="50" fill="#000"/>
+                                <circle cx="41.5" cy="8" r="5" fill="#000"/>
+                            </svg>
+                            <!-- Lock overlay -->
+                            <div class="absolute inset-0 flex items-center justify-center">
+                                <span class="text-2xl">🔒</span>
+                            </div>
+                            <!-- Question mark -->
+                            <div class="absolute top-0 right-0 bg-rpg-border rounded-full w-5 h-5 flex items-center justify-center">
+                                <span class="text-xs text-gray-400">❓</span>
+                            </div>
+                        </div>
+                        <div>
+                            <h3 class="font-cinzel text-white">Flow: Password Reset</h3>
+                            <span class="inline-flex items-center gap-1 px-2 py-0.5 bg-status-danger/20 text-status-danger text-xs rounded-full">
+                                🔒 Blocked
+                            </span>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <div class="text-2xl font-bold text-status-danger">17%</div>
+                        <div class="text-xs text-gray-400">Overall</div>
+                    </div>
+                </div>
+
+                <!-- 6 HP Bars -->
+                <div class="space-y-2">
+                    <div class="flex items-center gap-2">
+                        <span class="w-16 text-xs text-gray-400">📐 Design</span>
+                        <div class="flex-1 h-2 bg-rpg-border rounded-full overflow-hidden">
+                            <div class="h-full rounded-full" style="width: 0%; background: #E67E22"></div>
+                        </div>
+                        <span class="w-10 text-xs text-right text-status-danger">0% ⚠️</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="w-16 text-xs text-gray-400">📋 AC</span>
+                        <div class="flex-1 h-2 bg-rpg-border rounded-full overflow-hidden">
+                            <div class="h-full rounded-full" style="width: 100%; background: #3498DB"></div>
+                        </div>
+                        <span class="w-10 text-xs text-right text-status-success">100%</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="w-16 text-xs text-gray-400">⚙️ API</span>
+                        <div class="flex-1 h-2 bg-rpg-border rounded-full overflow-hidden">
+                            <div class="h-full rounded-full" style="width: 0%; background: #9B59B6"></div>
+                        </div>
+                        <span class="w-10 text-xs text-right text-gray-500">0%</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="w-16 text-xs text-gray-400">💻 FE</span>
+                        <div class="flex-1 h-2 bg-rpg-border rounded-full overflow-hidden">
+                            <div class="h-full rounded-full" style="width: 0%; background: #1ABC9C"></div>
+                        </div>
+                        <span class="w-10 text-xs text-right text-gray-500">0%</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="w-16 text-xs text-gray-400">🧪 Test</span>
+                        <div class="flex-1 h-2 bg-rpg-border rounded-full overflow-hidden">
+                            <div class="h-full rounded-full" style="width: 0%; background: #F1C40F"></div>
+                        </div>
+                        <span class="w-10 text-xs text-right text-gray-500">0%</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="w-16 text-xs text-gray-400">✅ UAT</span>
+                        <div class="flex-1 h-2 bg-rpg-border rounded-full overflow-hidden">
+                            <div class="h-full rounded-full" style="width: 0%; background: #2ECC71"></div>
+                        </div>
+                        <span class="w-10 text-xs text-right text-gray-500">0%</span>
+                    </div>
+                </div>
+
+                <!-- Block Reason -->
+                <div class="mt-3 p-2 bg-status-danger/10 border border-status-danger/30 rounded-lg">
+                    <p class="text-xs text-status-danger">⚠️ Blocked: รอ Design (Equipment ยังไม่พร้อม)</p>
+                </div>
+            </a>
+        </div>
+
+        <!-- Demon Portal Section -->
+        <div class="mt-6">
+            <h2 class="font-cinzel text-lg text-status-danger flex items-center gap-2 mb-4">
+                <span>👹</span>
+                <span>Demon Portal</span>
+                <span class="text-xs bg-status-danger/20 px-2 py-0.5 rounded-full">2 Active</span>
+            </h2>
+
+            <div class="bg-gradient-to-br from-status-danger/20 to-rpg-card border border-status-danger/50 rounded-xl p-4">
+                <!-- Portal Animation -->
+                <div class="text-center mb-4">
+                    <div class="inline-block animate-portal text-5xl">🌀</div>
+                    <p class="text-status-danger text-sm mt-2">ประตูมิติเปิดอยู่!</p>
+                </div>
+
+                <!-- Warning -->
+                <div class="bg-status-danger/10 border border-status-danger/30 rounded-lg p-3 mb-4 text-center">
+                    <p class="text-xs text-status-danger">⚠️ กองหนุนจากราชาปีศาจ</p>
+                    <p class="text-xs text-gray-400">ฆ่าแล้วไม่ได้ XP/Gold/Gem</p>
+                </div>
+
+                <!-- Bug Cards -->
+                <div class="space-y-2">
+                    <div class="bg-rpg-card border border-status-danger/30 rounded-lg p-3 flex items-center gap-3">
+                        <span class="text-xl">👹</span>
+                        <div class="flex-1">
+                            <p class="text-sm text-white">Login หน้าขาวเมื่อ token หมดอายุ</p>
+                            <p class="text-xs text-gray-400">Reported by: QA Team</p>
+                        </div>
+                        <span class="px-2 py-1 bg-status-danger/20 text-status-danger text-xs rounded">Critical</span>
+                    </div>
+                    <div class="bg-rpg-card border border-status-danger/30 rounded-lg p-3 flex items-center gap-3">
+                        <span class="text-xl">👹</span>
+                        <div class="flex-1">
+                            <p class="text-sm text-white">Email validation ไม่ทำงานบน Safari</p>
+                            <p class="text-xs text-gray-400">Reported by: User</p>
+                        </div>
+                        <span class="px-2 py-1 bg-status-warning/20 text-status-warning text-xs rounded">Major</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Bottom Tab Bar -->
+    <nav class="fixed bottom-0 left-0 right-0 bg-rpg-card border-t border-rpg-border z-50">
+        <div class="flex justify-around">
+            <a href="hero.html" class="flex-1 py-3 text-center text-gray-400 hover:text-rpg-gold">
+                <div class="text-xl">⚔️</div>
+                <div class="text-xs mt-1">Hero</div>
+            </a>
+            <a href="team.html" class="flex-1 py-3 text-center text-gray-400 hover:text-rpg-gold">
+                <div class="text-xl">👥</div>
+                <div class="text-xs mt-1">Team</div>
+            </a>
+            <a href="world-map.html" class="flex-1 py-3 text-center text-rpg-gold tab-active">
+                <div class="text-xl">🗺️</div>
+                <div class="text-xs mt-1">World</div>
+            </a>
+            <a href="shop.html" class="flex-1 py-3 text-center text-gray-400 hover:text-rpg-gold">
+                <div class="text-xl">🛒</div>
+                <div class="text-xs mt-1">Shop</div>
+            </a>
+        </div>
+    </nav>
+
+</body>
+</html>

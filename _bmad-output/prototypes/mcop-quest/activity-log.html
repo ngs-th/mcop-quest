@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="th" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Activity Log - MCOP Quest</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'cinzel': ['Cinzel', 'serif'],
+                        'inter': ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        'rpg': {
+                            'bg': '#1a1a2e',
+                            'card': '#16213e',
+                            'border': '#0f3460',
+                            'gold': '#f1c40f',
+                            'gold-dark': '#d4a906',
+                        },
+                        'hp': {
+                            'design': '#E67E22',
+                            'ac': '#3498DB',
+                            'api': '#9B59B6',
+                            'fe': '#1ABC9C',
+                            'testing': '#F1C40F',
+                            'uat': '#2ECC71',
+                        },
+                        'status': {
+                            'success': '#2ECC71',
+                            'warning': '#F1C40F',
+                            'danger': '#E74C3C',
+                            'info': '#3498DB',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .tab-active { border-bottom: 3px solid #f1c40f; }
+        .log-card {
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .log-card:hover {
+            transform: translateX(4px);
+            box-shadow: -4px 0 15px rgba(241, 196, 15, 0.1);
+        }
+        @keyframes pulse-gold {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(241, 196, 15, 0.4); }
+            50% { box-shadow: 0 0 0 4px rgba(241, 196, 15, 0); }
+        }
+        .animate-pulse-gold {
+            animation: pulse-gold 2s infinite;
+        }
+        .timeline-line {
+            background: linear-gradient(to bottom, #f1c40f 0%, #0f3460 100%);
+        }
+    </style>
+</head>
+<body class="bg-rpg-bg text-white font-inter min-h-screen pb-20" x-data="activityLogData()">
+
+    <!-- Header -->
+    <header class="sticky top-0 z-40 bg-rpg-bg/95 backdrop-blur border-b border-rpg-border">
+        <div class="flex items-center justify-between px-4 py-3">
+            <div>
+                <h1 class="font-cinzel text-xl text-rpg-gold">📜 Activity Log</h1>
+                <p class="text-gray-500 text-xs">Project Timeline & Events</p>
+            </div>
+            <!-- Live Indicator -->
+            <div class="flex items-center gap-2">
+                <span class="w-2 h-2 bg-status-success rounded-full animate-pulse"></span>
+                <span class="text-xs text-gray-400">Live</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Filter Section -->
+    <div class="sticky top-14 z-30 bg-rpg-bg/95 backdrop-blur border-b border-rpg-border px-4 py-3">
+        <!-- Search -->
+        <div class="relative mb-3">
+            <input
+                type="text"
+                x-model="searchQuery"
+                placeholder="Search activities..."
+                class="w-full bg-rpg-card border border-rpg-border rounded-lg px-4 py-2 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-rpg-gold"
+            >
+            <span class="absolute right-3 top-2 text-gray-500">🔍</span>
+        </div>
+
+        <!-- Filter Tabs -->
+        <div class="flex gap-2 overflow-x-auto pb-2">
+            <button
+                @click="activeFilter = 'all'"
+                :class="activeFilter === 'all' ? 'bg-rpg-gold text-rpg-bg' : 'bg-rpg-card border border-rpg-border text-gray-400'"
+                class="px-3 py-1.5 text-sm rounded-lg whitespace-nowrap font-medium">
+                All
+            </button>
+            <button
+                @click="activeFilter = 'task'"
+                :class="activeFilter === 'task' ? 'bg-status-info text-white' : 'bg-rpg-card border border-rpg-border text-gray-400'"
+                class="px-3 py-1.5 text-sm rounded-lg whitespace-nowrap">
+                ⚔️ Tasks
+            </button>
+            <button
+                @click="activeFilter = 'boss'"
+                :class="activeFilter === 'boss' ? 'bg-status-warning text-rpg-bg' : 'bg-rpg-card border border-rpg-border text-gray-400'"
+                class="px-3 py-1.5 text-sm rounded-lg whitespace-nowrap">
+                👑 Bosses
+            </button>
+            <button
+                @click="activeFilter = 'bug'"
+                :class="activeFilter === 'bug' ? 'bg-status-danger text-white' : 'bg-rpg-card border border-rpg-border text-gray-400'"
+                class="px-3 py-1.5 text-sm rounded-lg whitespace-nowrap">
+                👹 Bugs
+            </button>
+            <button
+                @click="activeFilter = 'reward'"
+                :class="activeFilter === 'reward' ? 'bg-status-success text-white' : 'bg-rpg-card border border-rpg-border text-gray-400'"
+                class="px-3 py-1.5 text-sm rounded-lg whitespace-nowrap">
+                🎁 Rewards
+            </button>
+        </div>
+
+        <!-- Date Filter -->
+        <div class="flex items-center gap-2 mt-2">
+            <select x-model="dateFilter" class="bg-rpg-card border border-rpg-border rounded-lg px-3 py-1.5 text-sm text-gray-400">
+                <option value="all">All Time</option>
+                <option value="today">Today</option>
+                <option value="week">This Week</option>
+                <option value="month">This Month</option>
+            </select>
+            <span class="text-xs text-gray-500" x-text="filteredLogs.length + ' events'"></span>
+        </div>
+    </div>
+
+    <main class="p-4">
+        <!-- Timeline -->
+        <div class="relative">
+            <!-- Timeline Line -->
+            <div class="absolute left-4 top-0 bottom-0 w-0.5 timeline-line"></div>
+
+            <!-- Activity Items -->
+            <div class="space-y-4">
+                <template x-for="(log, index) in filteredLogs" :key="log.id">
+                    <div class="log-card relative pl-12">
+                        <!-- Timeline Dot -->
+                        <div class="absolute left-2 top-4 w-5 h-5 rounded-full border-2 border-rpg-bg flex items-center justify-center"
+                             :class="getDotColor(log.type)">
+                            <span class="text-xs" x-text="getDotIcon(log.type)"></span>
+                        </div>
+
+                        <!-- Log Card -->
+                        <div class="bg-rpg-card border border-rpg-border rounded-xl p-4"
+                             :class="{
+                                 'border-status-success/50': log.type === 'task_complete',
+                                 'border-status-warning/50': log.type === 'boss_damage',
+                                 'border-status-danger/50': log.type === 'bug_spawn',
+                                 'border-status-info/50': log.type === 'buff_applied'
+                             }">
+                            <!-- Header -->
+                            <div class="flex items-start justify-between mb-2">
+                                <div class="flex items-center gap-2">
+                                    <span class="text-2xl" x-text="log.icon"></span>
+                                    <div>
+                                        <p class="text-sm font-medium text-white" x-text="log.title"></p>
+                                        <p class="text-xs text-gray-500" x-text="log.subtitle"></p>
+                                    </div>
+                                </div>
+                                <span class="text-xs text-gray-500" x-text="log.time"></span>
+                            </div>
+
+                            <!-- Description -->
+                            <p class="text-sm text-gray-400 mb-3" x-text="log.description"></p>
+
+                            <!-- Rewards (if any) -->
+                            <div x-show="log.rewards && log.rewards.length > 0" class="flex flex-wrap gap-2 mb-3">
+                                <template x-for="reward in log.rewards" :key="reward.type">
+                                    <span class="inline-flex items-center gap-1 px-2 py-1 rounded-lg text-xs"
+                                          :class="reward.class">
+                                        <span x-text="reward.icon"></span>
+                                        <span x-text="reward.value"></span>
+                                    </span>
+                                </template>
+                            </div>
+
+                            <!-- Actor Info -->
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-2">
+                                    <div class="w-6 h-6 rounded-full flex items-center justify-center text-xs"
+                                         :style="'background: ' + log.actorColor + '30; color: ' + log.actorColor">
+                                        <span x-text="log.actorIcon"></span>
+                                    </div>
+                                    <span class="text-xs text-gray-400" x-text="log.actorName"></span>
+                                </div>
+
+                                <!-- Team Tag -->
+                                <span class="px-2 py-0.5 rounded text-xs"
+                                      :class="'bg-' + log.teamColor + '/20 text-' + log.teamColor"
+                                      x-text="log.team"></span>
+                            </div>
+                        </div>
+                    </div>
+                </template>
+            </div>
+
+            <!-- Empty State -->
+            <div x-show="filteredLogs.length === 0" class="text-center py-12">
+                <div class="text-4xl mb-3">📭</div>
+                <p class="text-gray-500">No activities found</p>
+                <p class="text-xs text-gray-600 mt-1">Try adjusting your filters</p>
+            </div>
+
+            <!-- Load More -->
+            <div x-show="filteredLogs.length > 0" class="text-center mt-6">
+                <button class="px-4 py-2 bg-rpg-card border border-rpg-border rounded-lg text-sm text-gray-400 hover:text-rpg-gold hover:border-rpg-gold">
+                    Load More
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <!-- Bottom Tab Bar -->
+    <nav class="fixed bottom-0 left-0 right-0 bg-rpg-card border-t border-rpg-border z-50">
+        <div class="flex justify-around">
+            <a href="hero.html" class="flex-1 py-3 text-center text-gray-400 hover:text-rpg-gold">
+                <div class="text-xl">⚔️</div>
+                <div class="text-xs mt-1">Hero</div>
+            </a>
+            <a href="team.html" class="flex-1 py-3 text-center text-gray-400 hover:text-rpg-gold">
+                <div class="text-xl">👥</div>
+                <div class="text-xs mt-1">Team</div>
+            </a>
+            <a href="world-map.html" class="flex-1 py-3 text-center text-gray-400 hover:text-rpg-gold">
+                <div class="text-xl">🗺️</div>
+                <div class="text-xs mt-1">World</div>
+            </a>
+            <a href="shop.html" class="flex-1 py-3 text-center text-gray-400 hover:text-rpg-gold">
+                <div class="text-xl">🛒</div>
+                <div class="text-xs mt-1">Shop</div>
+            </a>
+        </div>
+    </nav>
+
+    <script>
+        function activityLogData() {
+            return {
+                activeFilter: 'all',
+                searchQuery: '',
+                dateFilter: 'all',
+
+                logs: [
+                    {
+                        id: 1,
+                        type: 'task_complete',
+                        icon: '⚔️',
+                        title: 'Task Completed',
+                        subtitle: 'JWT Token refresh mechanism',
+                        description: 'Ken defeated the API Minion in Flow: Login',
+                        time: '2 min ago',
+                        actorName: 'Ken',
+                        actorIcon: '⚔️',
+                        actorColor: '#9B59B6',
+                        team: 'BE Team',
+                        teamColor: 'hp-api',
+                        rewards: [
+                            { type: 'xp', icon: '⭐', value: '+100 XP', class: 'bg-status-warning/20 text-status-warning' },
+                            { type: 'gold', icon: '🪙', value: '+50 Gold', class: 'bg-rpg-gold/20 text-rpg-gold' }
+                        ]
+                    },
+                    {
+                        id: 2,
+                        type: 'boss_damage',
+                        icon: '👑',
+                        title: 'Boss HP Decreased',
+                        subtitle: 'Flow: Login',
+                        description: 'Boss HP dropped from 68% to 63% after task completion',
+                        time: '5 min ago',
+                        actorName: 'System',
+                        actorIcon: '⚙️',
+                        actorColor: '#718096',
+                        team: 'Auto',
+                        teamColor: 'gray',
+                        rewards: []
+                    },
+                    {
+                        id: 3,
+                        type: 'bug_spawn',
+                        icon: '👹',
+                        title: 'Demon Spawned!',
+                        subtitle: 'Critical Bug Reported',
+                        description: 'New bug discovered: Login หน้าขาวเมื่อ token หมดอายุ',
+                        time: '15 min ago',
+                        actorName: 'Nat (QA)',
+                        actorIcon: '💊',
+                        actorColor: '#F1C40F',
+                        team: 'QA Team',
+                        teamColor: 'hp-testing',
+                        rewards: [
+                            { type: 'gem', icon: '💎', value: '+1 Gem (Bug Hunter)', class: 'bg-status-info/20 text-status-info' }
+                        ]
+                    },
+                    {
+                        id: 4,
+                        type: 'task_complete',
+                        icon: '💻',
+                        title: 'Task Completed',
+                        subtitle: 'Login form component',
+                        description: 'May finished the FE implementation with animations',
+                        time: '32 min ago',
+                        actorName: 'May',
+                        actorIcon: '🧙',
+                        actorColor: '#1ABC9C',
+                        team: 'FE Team',
+                        teamColor: 'hp-fe',
+                        rewards: [
+                            { type: 'xp', icon: '⭐', value: '+80 XP', class: 'bg-status-warning/20 text-status-warning' },
+                            { type: 'gold', icon: '🪙', value: '+40 Gold', class: 'bg-rpg-gold/20 text-rpg-gold' }
+                        ]
+                    },
+                    {
+                        id: 5,
+                        type: 'buff_applied',
+                        icon: '🛡️',
+                        title: 'Support Buff Applied',
+                        subtitle: 'Flow: Registration',
+                        description: 'Sarah completed AC review - Damage +10% for FE tasks',
+                        time: '1 hour ago',
+                        actorName: 'Sarah',
+                        actorIcon: '🔍',
+                        actorColor: '#3498DB',
+                        team: 'BA Team',
+                        teamColor: 'hp-ac',
+                        rewards: [
+                            { type: 'buff', icon: '⚡', value: 'Damage Boost Active', class: 'bg-status-success/20 text-status-success' }
+                        ]
+                    },
+                    {
+                        id: 6,
+                        type: 'boss_defeated',
+                        icon: '💀',
+                        title: 'Commander Defeated!',
+                        subtitle: 'Flow: Registration',
+                        description: 'All minions defeated! City Boss ระบบสมาชิก is 75% complete.',
+                        time: '2 hours ago',
+                        actorName: 'Team',
+                        actorIcon: '👥',
+                        actorColor: '#f1c40f',
+                        team: 'MCOP Guild',
+                        teamColor: 'rpg-gold',
+                        rewards: [
+                            { type: 'xp', icon: '⭐', value: '+500 XP (Team)', class: 'bg-status-warning/20 text-status-warning' },
+                            { type: 'gem', icon: '💎', value: '+5 Gems', class: 'bg-status-info/20 text-status-info' }
+                        ]
+                    },
+                    {
+                        id: 7,
+                        type: 'task_complete',
+                        icon: '🎨',
+                        title: 'Task Completed',
+                        subtitle: 'Wireframe Password Reset',
+                        description: 'Ton delivered the UI design with all edge cases covered',
+                        time: '3 hours ago',
+                        actorName: 'Ton',
+                        actorIcon: '🔨',
+                        actorColor: '#E67E22',
+                        team: 'UX Team',
+                        teamColor: 'hp-design',
+                        rewards: [
+                            { type: 'xp', icon: '⭐', value: '+60 XP', class: 'bg-status-warning/20 text-status-warning' },
+                            { type: 'gold', icon: '🪙', value: '+30 Gold', class: 'bg-rpg-gold/20 text-rpg-gold' }
+                        ]
+                    },
+                    {
+                        id: 8,
+                        type: 'bug_cleared',
+                        icon: '✅',
+                        title: 'Demon Cleared!',
+                        subtitle: 'Bug Fixed',
+                        description: 'Email validation bug on Safari has been resolved',
+                        time: '4 hours ago',
+                        actorName: 'May',
+                        actorIcon: '🧙',
+                        actorColor: '#1ABC9C',
+                        team: 'FE Team',
+                        teamColor: 'hp-fe',
+                        rewards: [
+                            { type: 'xp', icon: '⭐', value: '+50 XP', class: 'bg-status-warning/20 text-status-warning' }
+                        ]
+                    },
+                    {
+                        id: 9,
+                        type: 'level_up',
+                        icon: '🎉',
+                        title: 'Level Up!',
+                        subtitle: 'Ken reached Level 15',
+                        description: 'Congratulations! New skills and equipment slots unlocked',
+                        time: 'Yesterday',
+                        actorName: 'Ken',
+                        actorIcon: '⚔️',
+                        actorColor: '#9B59B6',
+                        team: 'BE Team',
+                        teamColor: 'hp-api',
+                        rewards: [
+                            { type: 'level', icon: '🆙', value: 'Lv.14 → Lv.15', class: 'bg-rpg-gold/20 text-rpg-gold' }
+                        ]
+                    },
+                    {
+                        id: 10,
+                        type: 'equipment',
+                        icon: '🛡️',
+                        title: 'New Equipment Equipped',
+                        subtitle: 'Knight Armor',
+                        description: 'Ken equipped the rare armor from shop',
+                        time: 'Yesterday',
+                        actorName: 'Ken',
+                        actorIcon: '⚔️',
+                        actorColor: '#9B59B6',
+                        team: 'BE Team',
+                        teamColor: 'hp-api',
+                        rewards: [
+                            { type: 'stat', icon: '🛡️', value: 'DEF +25', class: 'bg-status-success/20 text-status-success' }
+                        ]
+                    },
+                    {
+                        id: 11,
+                        type: 'boss_damage',
+                        icon: '👑',
+                        title: 'Boss HP Decreased',
+                        subtitle: 'Flow: Product List',
+                        description: 'Multiple tasks completed - Boss HP dropped to 45%',
+                        time: '2 days ago',
+                        actorName: 'System',
+                        actorIcon: '⚙️',
+                        actorColor: '#718096',
+                        team: 'Auto',
+                        teamColor: 'gray',
+                        rewards: []
+                    },
+                    {
+                        id: 12,
+                        type: 'task_complete',
+                        icon: '🧪',
+                        title: 'Task Completed',
+                        subtitle: 'Unit tests for auth module',
+                        description: 'Nat completed comprehensive test coverage',
+                        time: '2 days ago',
+                        actorName: 'Nat',
+                        actorIcon: '💊',
+                        actorColor: '#F1C40F',
+                        team: 'QA Team',
+                        teamColor: 'hp-testing',
+                        rewards: [
+                            { type: 'xp', icon: '⭐', value: '+70 XP', class: 'bg-status-warning/20 text-status-warning' },
+                            { type: 'gold', icon: '🪙', value: '+35 Gold', class: 'bg-rpg-gold/20 text-rpg-gold' }
+                        ]
+                    }
+                ],
+
+                get filteredLogs() {
+                    let logs = this.logs;
+
+                    // Filter by type
+                    if (this.activeFilter !== 'all') {
+                        const typeMap = {
+                            'task': ['task_complete'],
+                            'boss': ['boss_damage', 'boss_defeated'],
+                            'bug': ['bug_spawn', 'bug_cleared'],
+                            'reward': ['level_up', 'equipment', 'buff_applied']
+                        };
+                        const allowedTypes = typeMap[this.activeFilter] || [];
+                        logs = logs.filter(log => allowedTypes.includes(log.type));
+                    }
+
+                    // Filter by search
+                    if (this.searchQuery) {
+                        const query = this.searchQuery.toLowerCase();
+                        logs = logs.filter(log =>
+                            log.title.toLowerCase().includes(query) ||
+                            log.subtitle.toLowerCase().includes(query) ||
+                            log.description.toLowerCase().includes(query) ||
+                            log.actorName.toLowerCase().includes(query)
+                        );
+                    }
+
+                    return logs;
+                },
+
+                getDotColor(type) {
+                    const colors = {
+                        'task_complete': 'bg-status-success',
+                        'boss_damage': 'bg-status-warning',
+                        'boss_defeated': 'bg-status-success',
+                        'bug_spawn': 'bg-status-danger',
+                        'bug_cleared': 'bg-status-success',
+                        'buff_applied': 'bg-status-info',
+                        'level_up': 'bg-rpg-gold',
+                        'equipment': 'bg-hp-api'
+                    };
+                    return colors[type] || 'bg-gray-500';
+                },
+
+                getDotIcon(type) {
+                    const icons = {
+                        'task_complete': '✓',
+                        'boss_damage': '⚔️',
+                        'boss_defeated': '💀',
+                        'bug_spawn': '!',
+                        'bug_cleared': '✓',
+                        'buff_applied': '⚡',
+                        'level_up': '🆙',
+                        'equipment': '🛡️'
+                    };
+                    return icons[type] || '•';
+                }
+            }
+        }
+    </script>
+
+</body>
+</html>

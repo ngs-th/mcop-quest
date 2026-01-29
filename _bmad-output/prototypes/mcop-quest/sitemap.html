@@ -1,0 +1,450 @@
+<!doctype html>
+<html lang="th" class="dark">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Sitemap - MCOP Quest Prototype</title>
+        <script src="https://cdn.tailwindcss.com"></script>
+        <script
+            defer
+            src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"
+        ></script>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Inter:wght@400;500;600;700&display=swap"
+            rel="stylesheet"
+        />
+        <script>
+            tailwind.config = {
+                darkMode: "class",
+                theme: {
+                    extend: {
+                        fontFamily: {
+                            cinzel: ["Cinzel", "serif"],
+                            inter: ["Inter", "sans-serif"],
+                        },
+                        colors: {
+                            rpg: {
+                                bg: "#1a1a2e",
+                                card: "#16213e",
+                                border: "#0f3460",
+                                gold: "#f1c40f",
+                                "gold-dark": "#d4a906",
+                            },
+                            hp: {
+                                design: "#E67E22",
+                                ac: "#3498DB",
+                                api: "#9B59B6",
+                                fe: "#1ABC9C",
+                                testing: "#F1C40F",
+                                uat: "#2ECC71",
+                            },
+                            status: {
+                                success: "#2ECC71",
+                                warning: "#F1C40F",
+                                danger: "#E74C3C",
+                                info: "#3498DB",
+                            },
+                        },
+                    },
+                },
+            };
+        </script>
+        <style>
+            .card-hover {
+                transition:
+                    transform 0.2s ease,
+                    box-shadow 0.2s ease;
+            }
+            .card-hover:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 4px 20px rgba(241, 196, 15, 0.2);
+            }
+            .category-card {
+                border-left: 4px solid transparent;
+            }
+            .category-personal {
+                border-left-color: #9b59b6;
+            }
+            .category-team {
+                border-left-color: #1abc9c;
+            }
+            .category-world {
+                border-left-color: #f1c40f;
+            }
+            .category-utility {
+                border-left-color: #718096;
+            }
+        </style>
+    </head>
+    <body class="bg-rpg-bg text-white font-inter min-h-screen">
+        <!-- Header -->
+        <header
+            class="sticky top-0 z-40 bg-rpg-bg/95 backdrop-blur border-b border-rpg-border"
+        >
+            <div class="px-4 py-4">
+                <h1 class="font-cinzel text-2xl text-rpg-gold text-center">
+                    🗺️ Prototype Sitemap
+                </h1>
+                <p class="text-gray-500 text-sm text-center mt-1">
+                    MCOP Quest - Complete Page Index
+                </p>
+            </div>
+        </header>
+
+        <main class="p-4 max-w-4xl mx-auto pb-20">
+            <!-- Quick Stats -->
+            <div class="grid grid-cols-4 gap-3 mb-6">
+                <div
+                    class="bg-rpg-card border border-rpg-border rounded-xl p-3 text-center"
+                >
+                    <div class="text-2xl font-bold text-status-success">12</div>
+                    <p class="text-xs text-gray-400">Total Pages</p>
+                </div>
+                <div
+                    class="bg-rpg-card border border-rpg-border rounded-xl p-3 text-center"
+                >
+                    <div class="text-2xl font-bold text-status-info">7</div>
+                    <p class="text-xs text-gray-400">Main Views</p>
+                </div>
+                <div
+                    class="bg-rpg-card border border-rpg-border rounded-xl p-3 text-center"
+                >
+                    <div class="text-2xl font-bold text-status-warning">3</div>
+                    <p class="text-xs text-gray-400">Drill-down</p>
+                </div>
+                <div
+                    class="bg-rpg-card border border-rpg-border rounded-xl p-3 text-center"
+                >
+                    <div class="text-2xl font-bold text-gray-500">2</div>
+                    <p class="text-xs text-gray-400">Utility</p>
+                </div>
+            </div>
+
+            <!-- Main Navigation Pages -->
+            <div class="mb-6">
+                <h2
+                    class="font-cinzel text-lg text-rpg-gold mb-3 flex items-center gap-2"
+                >
+                    <span>⚔️</span>
+                    <span>Main Navigation (Bottom Tab)</span>
+                </h2>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                    <a
+                        href="hero.html"
+                        class="card-hover bg-rpg-card category-personal border border-rpg-border rounded-xl p-4 text-center"
+                    >
+                        <div class="text-3xl mb-2">⚔️</div>
+                        <h3 class="font-cinzel text-sm text-white">Hero</h3>
+                        <p class="text-xs text-gray-500 mt-1">
+                            Personal Dashboard
+                        </p>
+                        <span
+                            class="inline-block mt-2 px-2 py-0.5 bg-hp-api/20 text-hp-api text-xs rounded"
+                            >Personal View</span
+                        >
+                    </a>
+                    <a
+                        href="team.html"
+                        class="card-hover bg-rpg-card category-team border border-rpg-border rounded-xl p-4 text-center"
+                    >
+                        <div class="text-3xl mb-2">👥</div>
+                        <h3 class="font-cinzel text-sm text-white">Team</h3>
+                        <p class="text-xs text-gray-500 mt-1">Team Camp View</p>
+                        <span
+                            class="inline-block mt-2 px-2 py-0.5 bg-hp-fe/20 text-hp-fe text-xs rounded"
+                            >Team View</span
+                        >
+                    </a>
+                    <a
+                        href="world-map.html"
+                        class="card-hover bg-rpg-card category-world border border-rpg-border rounded-xl p-4 text-center"
+                    >
+                        <div class="text-3xl mb-2">🗺️</div>
+                        <h3 class="font-cinzel text-sm text-white">
+                            World Map
+                        </h3>
+                        <p class="text-xs text-gray-500 mt-1">
+                            Project Overview
+                        </p>
+                        <span
+                            class="inline-block mt-2 px-2 py-0.5 bg-rpg-gold/20 text-rpg-gold text-xs rounded"
+                            >World View</span
+                        >
+                    </a>
+                    <a
+                        href="shop.html"
+                        class="card-hover bg-rpg-card category-personal border border-rpg-border rounded-xl p-4 text-center"
+                    >
+                        <div class="text-3xl mb-2">🛒</div>
+                        <h3 class="font-cinzel text-sm text-white">Shop</h3>
+                        <p class="text-xs text-gray-500 mt-1">Reward Store</p>
+                        <span
+                            class="inline-block mt-2 px-2 py-0.5 bg-hp-api/20 text-hp-api text-xs rounded"
+                            >Personal</span
+                        >
+                    </a>
+                </div>
+            </div>
+
+            <!-- Secondary Pages -->
+            <div class="mb-6">
+                <h2
+                    class="font-cinzel text-lg text-rpg-gold mb-3 flex items-center gap-2"
+                >
+                    <span>📄</span>
+                    <span>Secondary Pages</span>
+                </h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <a
+                        href="activity-log.html"
+                        class="card-hover bg-rpg-card category-world border border-rpg-border rounded-xl p-4 flex items-center gap-4"
+                    >
+                        <div class="text-3xl">📜</div>
+                        <div class="flex-1">
+                            <h3 class="font-cinzel text-sm text-white">
+                                Activity Log
+                            </h3>
+                            <p class="text-xs text-gray-500">
+                                Timeline & Events
+                            </p>
+                        </div>
+                        <span
+                            class="px-2 py-0.5 bg-rpg-gold/20 text-rpg-gold text-xs rounded"
+                            >NEW</span
+                        >
+                    </a>
+                    <a
+                        href="city.html"
+                        class="card-hover bg-rpg-card category-world border border-rpg-border rounded-xl p-4 flex items-center gap-4"
+                    >
+                        <div class="text-3xl">🏰</div>
+                        <div class="flex-1">
+                            <h3 class="font-cinzel text-sm text-white">
+                                City Detail
+                            </h3>
+                            <p class="text-xs text-gray-500">
+                                System/Boss View
+                            </p>
+                        </div>
+                        <span
+                            class="px-2 py-0.5 bg-status-warning/20 text-status-warning text-xs rounded"
+                            >Drill-down</span
+                        >
+                    </a>
+                    <a
+                        href="commander.html"
+                        class="card-hover bg-rpg-card category-world border border-rpg-border rounded-xl p-4 flex items-center gap-4"
+                    >
+                        <div class="text-3xl">⚔️</div>
+                        <div class="flex-1">
+                            <h3 class="font-cinzel text-sm text-white">
+                                Commander Detail
+                            </h3>
+                            <p class="text-xs text-gray-500">Flow/Epic View</p>
+                        </div>
+                        <span
+                            class="px-2 py-0.5 bg-status-warning/20 text-status-warning text-xs rounded"
+                            >Drill-down</span
+                        >
+                    </a>
+                </div>
+            </div>
+
+            <!-- Utility Pages -->
+            <div class="mb-6">
+                <h2
+                    class="font-cinzel text-lg text-rpg-gold mb-3 flex items-center gap-2"
+                >
+                    <span>🛠️</span>
+                    <span>Utility Pages</span>
+                </h2>
+                <div class="grid grid-cols-2 gap-3">
+                    <a
+                        href="components.html"
+                        class="card-hover bg-rpg-card category-utility border border-rpg-border rounded-xl p-4 text-center"
+                    >
+                        <div class="text-3xl mb-2">🧩</div>
+                        <h3 class="font-cinzel text-sm text-white">
+                            Components
+                        </h3>
+                        <p class="text-xs text-gray-500">UI Reference</p>
+                    </a>
+                    <a
+                        href="states.html"
+                        class="card-hover bg-rpg-card category-utility border border-rpg-border rounded-xl p-4 text-center"
+                    >
+                        <div class="text-3xl mb-2">🎨</div>
+                        <h3 class="font-cinzel text-sm text-white">States</h3>
+                        <p class="text-xs text-gray-500">State Demos</p>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Authentication Pages -->
+            <div class="mb-6">
+                <h2
+                    class="font-cinzel text-lg text-rpg-gold mb-3 flex items-center gap-2"
+                >
+                    <span>🔐</span>
+                    <span>Authentication</span>
+                </h2>
+                <div
+                    class="bg-rpg-card border border-rpg-border rounded-xl p-4"
+                >
+                    <a href="login.html" class="flex items-center gap-4">
+                        <div class="text-3xl">🔐</div>
+                        <div class="flex-1">
+                            <h3 class="font-cinzel text-sm text-white">
+                                Login / Entry
+                            </h3>
+                            <p class="text-xs text-gray-500">
+                                Google OAuth + Hero creation
+                            </p>
+                        </div>
+                        <span
+                            class="px-2 py-0.5 bg-status-success/20 text-status-success text-xs rounded"
+                            >NEW</span
+                        >
+                    </a>
+                </div>
+            </div>
+
+            <!-- Navigation Hub -->
+            <div class="mb-6">
+                <h2
+                    class="font-cinzel text-lg text-rpg-gold mb-3 flex items-center gap-2"
+                >
+                    <span>🏠</span>
+                    <span>Navigation Hub</span>
+                </h2>
+                <div
+                    class="bg-rpg-card border border-rpg-border rounded-xl p-4"
+                >
+                    <a href="index.html" class="flex items-center gap-4">
+                        <div class="text-3xl">🎯</div>
+                        <div class="flex-1">
+                            <h3 class="font-cinzel text-sm text-white">
+                                Index / Landing Page
+                            </h3>
+                            <p class="text-xs text-gray-500">
+                                Main entry point with all page links
+                            </p>
+                        </div>
+                        <span class="text-rpg-gold">→</span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- View Model Legend -->
+            <div
+                class="bg-rpg-card border border-rpg-border rounded-xl p-4 mb-6"
+            >
+                <h3 class="font-cinzel text-sm text-rpg-gold mb-3">
+                    View Model Legend
+                </h3>
+                <div class="grid grid-cols-3 gap-3 text-sm">
+                    <div class="flex items-center gap-2">
+                        <span class="w-3 h-3 rounded-full bg-hp-api"></span>
+                        <span class="text-gray-400">Personal View</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="w-3 h-3 rounded-full bg-hp-fe"></span>
+                        <span class="text-gray-400">Team View</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="w-3 h-3 rounded-full bg-rpg-gold"></span>
+                        <span class="text-gray-400">World View</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Page Checklist -->
+            <div class="bg-rpg-card border border-rpg-border rounded-xl p-4">
+                <h3 class="font-cinzel text-sm text-rpg-gold mb-3">
+                    📋 PRD Requirements Checklist
+                </h3>
+                <div class="space-y-2 text-sm">
+                    <div
+                        class="flex items-center justify-between py-2 border-b border-rpg-border/50"
+                    >
+                        <span class="text-gray-300">1. Login / Profile</span>
+                        <span class="text-status-success text-xs"
+                            >✅ login.html</span
+                        >
+                    </div>
+                    <div
+                        class="flex items-center justify-between py-2 border-b border-rpg-border/50"
+                    >
+                        <span class="text-gray-300"
+                            >2. Hero Dashboard (Personal)</span
+                        >
+                        <span class="text-status-success text-xs"
+                            >✅ hero.html</span
+                        >
+                    </div>
+                    <div
+                        class="flex items-center justify-between py-2 border-b border-rpg-border/50"
+                    >
+                        <span class="text-gray-300">3. Team Camp (Team)</span>
+                        <span class="text-status-success text-xs"
+                            >✅ team.html</span
+                        >
+                    </div>
+                    <div
+                        class="flex items-center justify-between py-2 border-b border-rpg-border/50"
+                    >
+                        <span class="text-gray-300"
+                            >4. World Map (Project)</span
+                        >
+                        <span class="text-status-success text-xs"
+                            >✅ world-map.html</span
+                        >
+                    </div>
+                    <div
+                        class="flex items-center justify-between py-2 border-b border-rpg-border/50"
+                    >
+                        <span class="text-gray-300"
+                            >5. City View (Epic/Boss)</span
+                        >
+                        <span class="text-status-success text-xs"
+                            >✅ city.html</span
+                        >
+                    </div>
+                    <div
+                        class="flex items-center justify-between py-2 border-b border-rpg-border/50"
+                    >
+                        <span class="text-gray-300">6. Reward Shop</span>
+                        <span class="text-status-success text-xs"
+                            >✅ shop.html</span
+                        >
+                    </div>
+                    <div class="flex items-center justify-between py-2">
+                        <span class="text-gray-300"
+                            >7. Activity Log (Shared)</span
+                        >
+                        <span class="text-status-success text-xs"
+                            >✅ activity-log.html</span
+                        >
+                    </div>
+                </div>
+                <div
+                    class="mt-4 p-3 bg-status-success/10 border border-status-success/30 rounded-lg"
+                >
+                    <p
+                        class="text-status-success text-sm text-center font-medium"
+                    >
+                        ✅ All 7 required pages completed (100%)
+                    </p>
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <div class="mt-8 text-center text-gray-600 text-sm">
+                <p>MCOP Quest Prototype v0.1</p>
+                <p class="mt-1">HTML + Tailwind CSS + Alpine.js</p>
+            </div>
+        </main>
+    </body>
+</html>

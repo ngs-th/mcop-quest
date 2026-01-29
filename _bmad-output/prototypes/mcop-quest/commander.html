@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="th" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Commander Detail - MCOP Quest</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'cinzel': ['Cinzel', 'serif'],
+                        'inter': ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        'rpg': {
+                            'bg': '#1a1a2e',
+                            'card': '#16213e',
+                            'border': '#0f3460',
+                            'gold': '#f1c40f',
+                            'gold-dark': '#d4a906',
+                        },
+                        'hp': {
+                            'design': '#E67E22',
+                            'ac': '#3498DB',
+                            'api': '#9B59B6',
+                            'fe': '#1ABC9C',
+                            'testing': '#F1C40F',
+                            'uat': '#2ECC71',
+                        },
+                        'status': {
+                            'success': '#2ECC71',
+                            'warning': '#F1C40F',
+                            'danger': '#E74C3C',
+                            'info': '#3498DB',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .tab-active { border-bottom: 3px solid #f1c40f; }
+        .minion-card {
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .minion-card:hover {
+            transform: translateX(4px);
+        }
+    </style>
+</head>
+<body class="bg-rpg-bg text-white font-inter min-h-screen pb-20">
+
+    <!-- Header with Back Button -->
+    <header class="sticky top-0 z-40 bg-rpg-bg/95 backdrop-blur border-b border-rpg-border">
+        <div class="flex items-center gap-3 px-4 py-3">
+            <a href="city.html" class="text-gray-400 hover:text-white">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+                </svg>
+            </a>
+            <div class="flex-1">
+                <h1 class="font-cinzel text-xl text-rpg-gold">⚔️ Flow: Login</h1>
+                <!-- Breadcrumb -->
+                <p class="text-gray-500 text-xs">🗺️ World > 🏰 ระบบสมาชิก > ⚔️ Login</p>
+            </div>
+            <!-- Sync Status -->
+            <div class="flex items-center gap-1 text-xs text-gray-400">
+                <span class="w-2 h-2 bg-status-success rounded-full"></span>
+                <span>30s</span>
+            </div>
+        </div>
+    </header>
+
+    <main class="p-4 space-y-4">
+
+        <!-- Commander Summary Card -->
+        <div class="bg-rpg-card border border-rpg-gold rounded-xl p-4">
+            <div class="flex items-center gap-4 mb-4">
+                <div class="text-5xl">⚔️</div>
+                <div class="flex-1">
+                    <h2 class="font-cinzel text-xl text-white">Flow: Login</h2>
+                    <span class="inline-flex items-center gap-1 px-2 py-0.5 bg-status-warning/20 text-status-warning text-xs rounded-full">
+                        ⚔️ In Battle
+                    </span>
+                </div>
+                <div class="text-center">
+                    <div class="text-3xl font-bold text-status-warning">63%</div>
+                    <div class="text-xs text-gray-400">Overall</div>
+                </div>
+            </div>
+
+            <!-- 6 HP Bars (Expanded) -->
+            <div class="space-y-3">
+                <!-- Design HP -->
+                <div>
+                    <div class="flex items-center justify-between mb-1">
+                        <span class="text-sm flex items-center gap-2">
+                            <span style="color: #E67E22">📐</span>
+                            <span>Design</span>
+                        </span>
+                        <span class="text-sm text-status-success font-medium">100% ✓</span>
+                    </div>
+                    <div class="h-3 bg-rpg-border rounded-full overflow-hidden">
+                        <div class="h-full rounded-full transition-all duration-500" style="width: 100%; background: #E67E22"></div>
+                    </div>
+                    <p class="text-xs text-gray-500 mt-1">2/2 UI Tasks Done</p>
+                </div>
+
+                <!-- AC HP -->
+                <div>
+                    <div class="flex items-center justify-between mb-1">
+                        <span class="text-sm flex items-center gap-2">
+                            <span style="color: #3498DB">📋</span>
+                            <span>AC (Acceptance Criteria)</span>
+                        </span>
+                        <span class="text-sm text-status-success font-medium">100% ✓</span>
+                    </div>
+                    <div class="h-3 bg-rpg-border rounded-full overflow-hidden">
+                        <div class="h-full rounded-full transition-all duration-500" style="width: 100%; background: #3498DB"></div>
+                    </div>
+                    <p class="text-xs text-gray-500 mt-1">Updated by BA directly in Flows Sheet</p>
+                </div>
+
+                <!-- API HP -->
+                <div>
+                    <div class="flex items-center justify-between mb-1">
+                        <span class="text-sm flex items-center gap-2">
+                            <span style="color: #9B59B6">⚙️</span>
+                            <span>API</span>
+                        </span>
+                        <span class="text-sm text-status-warning font-medium">80%</span>
+                    </div>
+                    <div class="h-3 bg-rpg-border rounded-full overflow-hidden">
+                        <div class="h-full rounded-full transition-all duration-500" style="width: 80%; background: #9B59B6"></div>
+                    </div>
+                    <p class="text-xs text-gray-500 mt-1">4/5 API Tasks Done</p>
+                </div>
+
+                <!-- FE/App HP -->
+                <div>
+                    <div class="flex items-center justify-between mb-1">
+                        <span class="text-sm flex items-center gap-2">
+                            <span style="color: #1ABC9C">💻</span>
+                            <span>FE/App</span>
+                        </span>
+                        <span class="text-sm text-status-warning font-medium">50%</span>
+                    </div>
+                    <div class="h-3 bg-rpg-border rounded-full overflow-hidden">
+                        <div class="h-full rounded-full transition-all duration-500" style="width: 50%; background: #1ABC9C"></div>
+                    </div>
+                    <p class="text-xs text-gray-500 mt-1">2/4 FE Tasks Done</p>
+                </div>
+
+                <!-- Testing HP -->
+                <div>
+                    <div class="flex items-center justify-between mb-1">
+                        <span class="text-sm flex items-center gap-2">
+                            <span style="color: #F1C40F">🧪</span>
+                            <span>Testing</span>
+                        </span>
+                        <span class="text-sm text-gray-500 font-medium">0%</span>
+                    </div>
+                    <div class="h-3 bg-rpg-border rounded-full overflow-hidden">
+                        <div class="h-full rounded-full transition-all duration-500" style="width: 0%; background: #F1C40F"></div>
+                    </div>
+                    <p class="text-xs text-gray-500 mt-1">Waiting for FE completion</p>
+                </div>
+
+                <!-- UAT HP -->
+                <div>
+                    <div class="flex items-center justify-between mb-1">
+                        <span class="text-sm flex items-center gap-2">
+                            <span style="color: #2ECC71">✅</span>
+                            <span>UAT</span>
+                        </span>
+                        <span class="text-sm text-gray-500 font-medium">0%</span>
+                    </div>
+                    <div class="h-3 bg-rpg-border rounded-full overflow-hidden">
+                        <div class="h-full rounded-full transition-all duration-500" style="width: 0%; background: #2ECC71"></div>
+                    </div>
+                    <p class="text-xs text-gray-500 mt-1">Waiting for Testing completion</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Minions (Tasks) Section -->
+        <div class="space-y-4">
+            <h2 class="font-cinzel text-lg text-rpg-gold flex items-center gap-2">
+                <span>👾</span>
+                <span>Minions (11 Tasks)</span>
+            </h2>
+
+            <!-- Filter Tabs -->
+            <div class="flex gap-2 overflow-x-auto pb-2">
+                <button class="px-3 py-1.5 bg-rpg-gold text-rpg-bg text-sm rounded-lg whitespace-nowrap">All (11)</button>
+                <button class="px-3 py-1.5 bg-rpg-card border border-rpg-border text-gray-400 text-sm rounded-lg whitespace-nowrap hover:text-white">🎨 UI (2)</button>
+                <button class="px-3 py-1.5 bg-rpg-card border border-rpg-border text-gray-400 text-sm rounded-lg whitespace-nowrap hover:text-white">⚙️ API (5)</button>
+                <button class="px-3 py-1.5 bg-rpg-card border border-rpg-border text-gray-400 text-sm rounded-lg whitespace-nowrap hover:text-white">💻 FE (4)</button>
+            </div>
+
+            <!-- Minion Cards -->
+            <div class="space-y-2">
+
+                <!-- UI Tasks Section -->
+                <div class="text-xs text-gray-500 uppercase tracking-wider mt-4 mb-2 flex items-center gap-2">
+                    <span style="color: #E67E22">📐</span> Design / UI Tasks (2/2 Done)
+                </div>
+
+                <!-- Minion: UI Task Done -->
+                <div class="minion-card bg-rpg-card border-l-4 border-status-success rounded-r-lg p-3 flex items-center gap-3 opacity-70">
+                    <span class="text-xl">🎨</span>
+                    <div class="flex-1">
+                        <p class="text-sm text-gray-400 line-through">Wireframe Login Screen</p>
+                        <div class="flex items-center gap-2 mt-1">
+                            <span class="px-1.5 py-0.5 bg-hp-design/20 text-hp-design text-xs rounded">UI</span>
+                            <span class="text-xs text-gray-500">Ton</span>
+                            <span class="text-xs text-status-success">✓ Done</span>
+                        </div>
+                    </div>
+                    <a href="#" class="text-xs text-rpg-gold hover:underline">Figma</a>
+                </div>
+
+                <!-- Minion: UI Task Done -->
+                <div class="minion-card bg-rpg-card border-l-4 border-status-success rounded-r-lg p-3 flex items-center gap-3 opacity-70">
+                    <span class="text-xl">🎨</span>
+                    <div class="flex-1">
+                        <p class="text-sm text-gray-400 line-through">Design System Login Components</p>
+                        <div class="flex items-center gap-2 mt-1">
+                            <span class="px-1.5 py-0.5 bg-hp-design/20 text-hp-design text-xs rounded">UI</span>
+                            <span class="text-xs text-gray-500">Ton</span>
+                            <span class="text-xs text-status-success">✓ Done</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- API Tasks Section -->
+                <div class="text-xs text-gray-500 uppercase tracking-wider mt-6 mb-2 flex items-center gap-2">
+                    <span style="color: #9B59B6">⚙️</span> API Tasks (4/5 Done)
+                </div>
+
+                <!-- Minion: API Task Done -->
+                <div class="minion-card bg-rpg-card border-l-4 border-status-success rounded-r-lg p-3 flex items-center gap-3 opacity-70">
+                    <span class="text-xl">⚙️</span>
+                    <div class="flex-1">
+                        <p class="text-sm text-gray-400 line-through">POST /api/auth/login endpoint</p>
+                        <div class="flex items-center gap-2 mt-1">
+                            <span class="px-1.5 py-0.5 bg-hp-api/20 text-hp-api text-xs rounded">API</span>
+                            <span class="text-xs text-gray-500">Ken</span>
+                            <span class="text-xs text-status-success">✓ Done</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Minion: API Task Doing -->
+                <div class="minion-card bg-rpg-card border-l-4 border-status-warning rounded-r-lg p-3 flex items-center gap-3">
+                    <span class="text-xl">⚙️</span>
+                    <div class="flex-1">
+                        <p class="text-sm text-white">JWT Token refresh mechanism</p>
+                        <div class="flex items-center gap-2 mt-1">
+                            <span class="px-1.5 py-0.5 bg-hp-api/20 text-hp-api text-xs rounded">API</span>
+                            <span class="text-xs text-gray-500">Ken</span>
+                            <span class="px-1.5 py-0.5 bg-status-warning/20 text-status-warning text-xs rounded">Doing</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- FE Tasks Section -->
+                <div class="text-xs text-gray-500 uppercase tracking-wider mt-6 mb-2 flex items-center gap-2">
+                    <span style="color: #1ABC9C">💻</span> FE/App Tasks (2/4 Done)
+                </div>
+
+                <!-- Minion: FE Task Done -->
+                <div class="minion-card bg-rpg-card border-l-4 border-status-success rounded-r-lg p-3 flex items-center gap-3 opacity-70">
+                    <span class="text-xl">💻</span>
+                    <div class="flex-1">
+                        <p class="text-sm text-gray-400 line-through">Login form component</p>
+                        <div class="flex items-center gap-2 mt-1">
+                            <span class="px-1.5 py-0.5 bg-hp-fe/20 text-hp-fe text-xs rounded">FE</span>
+                            <span class="text-xs text-gray-500">May</span>
+                            <span class="text-xs text-status-success">✓ Done</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Minion: FE Task Done -->
+                <div class="minion-card bg-rpg-card border-l-4 border-status-success rounded-r-lg p-3 flex items-center gap-3 opacity-70">
+                    <span class="text-xl">💻</span>
+                    <div class="flex-1">
+                        <p class="text-sm text-gray-400 line-through">Form validation</p>
+                        <div class="flex items-center gap-2 mt-1">
+                            <span class="px-1.5 py-0.5 bg-hp-fe/20 text-hp-fe text-xs rounded">FE</span>
+                            <span class="text-xs text-gray-500">May</span>
+                            <span class="text-xs text-status-success">✓ Done</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Minion: FE Task Doing -->
+                <div class="minion-card bg-rpg-card border-l-4 border-status-warning rounded-r-lg p-3 flex items-center gap-3">
+                    <span class="text-xl">💻</span>
+                    <div class="flex-1">
+                        <p class="text-sm text-white">Connect to auth API</p>
+                        <div class="flex items-center gap-2 mt-1">
+                            <span class="px-1.5 py-0.5 bg-hp-fe/20 text-hp-fe text-xs rounded">FE</span>
+                            <span class="text-xs text-gray-500">May</span>
+                            <span class="px-1.5 py-0.5 bg-status-warning/20 text-status-warning text-xs rounded">Doing</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Minion: FE Task Pending -->
+                <div class="minion-card bg-rpg-card border-l-4 border-gray-600 rounded-r-lg p-3 flex items-center gap-3">
+                    <span class="text-xl">💻</span>
+                    <div class="flex-1">
+                        <p class="text-sm text-white">Remember me functionality</p>
+                        <div class="flex items-center gap-2 mt-1">
+                            <span class="px-1.5 py-0.5 bg-hp-fe/20 text-hp-fe text-xs rounded">FE</span>
+                            <span class="text-xs text-gray-500">May</span>
+                            <span class="px-1.5 py-0.5 bg-gray-600/20 text-gray-400 text-xs rounded">Pending</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Assignees Summary -->
+        <div class="bg-rpg-card border border-rpg-border rounded-xl p-4 mt-6">
+            <h3 class="font-cinzel text-sm text-rpg-gold mb-3">Team Assigned</h3>
+            <div class="flex flex-wrap gap-3">
+                <div class="flex items-center gap-2 bg-rpg-border/50 rounded-lg px-3 py-2">
+                    <span class="w-8 h-8 bg-hp-api/30 rounded-full flex items-center justify-center text-sm">K</span>
+                    <div>
+                        <p class="text-sm text-white">Ken</p>
+                        <p class="text-xs text-gray-500">⚙️ API</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2 bg-rpg-border/50 rounded-lg px-3 py-2">
+                    <span class="w-8 h-8 bg-hp-design/30 rounded-full flex items-center justify-center text-sm">T</span>
+                    <div>
+                        <p class="text-sm text-white">Ton</p>
+                        <p class="text-xs text-gray-500">🎨 UI</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2 bg-rpg-border/50 rounded-lg px-3 py-2">
+                    <span class="w-8 h-8 bg-hp-fe/30 rounded-full flex items-center justify-center text-sm">M</span>
+                    <div>
+                        <p class="text-sm text-white">May</p>
+                        <p class="text-xs text-gray-500">💻 FE</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Bottom Tab Bar -->
+    <nav class="fixed bottom-0 left-0 right-0 bg-rpg-card border-t border-rpg-border z-50">
+        <div class="flex justify-around">
+            <a href="hero.html" class="flex-1 py-3 text-center text-gray-400 hover:text-rpg-gold">
+                <div class="text-xl">⚔️</div>
+                <div class="text-xs mt-1">Hero</div>
+            </a>
+            <a href="team.html" class="flex-1 py-3 text-center text-gray-400 hover:text-rpg-gold">
+                <div class="text-xl">👥</div>
+                <div class="text-xs mt-1">Team</div>
+            </a>
+            <a href="world-map.html" class="flex-1 py-3 text-center text-rpg-gold tab-active">
+                <div class="text-xl">🗺️</div>
+                <div class="text-xs mt-1">World</div>
+            </a>
+            <a href="shop.html" class="flex-1 py-3 text-center text-gray-400 hover:text-rpg-gold">
+                <div class="text-xl">🛒</div>
+                <div class="text-xs mt-1">Shop</div>
+            </a>
+        </div>
+    </nav>
+
+</body>
+</html>

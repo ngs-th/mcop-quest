@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="th" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>World Map - MCOP Quest</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'cinzel': ['Cinzel', 'serif'],
+                        'inter': ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        'rpg': {
+                            'bg': '#1a1a2e',
+                            'card': '#16213e',
+                            'border': '#0f3460',
+                            'gold': '#f1c40f',
+                            'gold-dark': '#d4a906',
+                        },
+                        'hp': {
+                            'design': '#E67E22',
+                            'ac': '#3498DB',
+                            'api': '#9B59B6',
+                            'fe': '#1ABC9C',
+                            'testing': '#F1C40F',
+                            'uat': '#2ECC71',
+                        },
+                        'status': {
+                            'success': '#2ECC71',
+                            'warning': '#F1C40F',
+                            'danger': '#E74C3C',
+                            'info': '#3498DB',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .tab-active { border-bottom: 3px solid #f1c40f; }
+
+        /* Map background */
+        .map-container {
+            background:
+                radial-gradient(ellipse at 30% 20%, rgba(34, 139, 34, 0.3) 0%, transparent 50%),
+                radial-gradient(ellipse at 70% 60%, rgba(139, 90, 43, 0.2) 0%, transparent 40%),
+                radial-gradient(ellipse at 50% 80%, rgba(30, 144, 255, 0.15) 0%, transparent 30%),
+                linear-gradient(180deg, #1a1a2e 0%, #0d1421 100%);
+        }
+
+        /* Path animations */
+        @keyframes path-flow {
+            0% { stroke-dashoffset: 20; }
+            100% { stroke-dashoffset: 0; }
+        }
+
+        .path-active {
+            stroke-dasharray: 10 5;
+            animation: path-flow 1s linear infinite;
+        }
+
+        .path-locked {
+            stroke-dasharray: 5 10;
+            opacity: 0.3;
+        }
+
+        /* City animations */
+        @keyframes city-pulse {
+            0%, 100% { transform: scale(1); filter: drop-shadow(0 0 8px rgba(241, 196, 15, 0.5)); }
+            50% { transform: scale(1.05); filter: drop-shadow(0 0 15px rgba(241, 196, 15, 0.8)); }
+        }
+
+        @keyframes city-idle {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-3px); }
+        }
+
+        @keyframes fog-drift {
+            0%, 100% { opacity: 0.6; transform: translateX(0); }
+            50% { opacity: 0.8; transform: translateX(5px); }
+        }
+
+        .city-active { animation: city-pulse 2s ease-in-out infinite; }
+        .city-idle { animation: city-idle 3s ease-in-out infinite; }
+        .fog-overlay { animation: fog-drift 4s ease-in-out infinite; }
+
+        .castle-node {
+            cursor: pointer;
+            transition: transform 0.2s, filter 0.2s;
+            transform-box: fill-box;
+            transform-origin: center center;
+        }
+        .castle-node:hover {
+            filter: drop-shadow(0 0 10px rgba(241, 196, 15, 0.6));
+        }
+
+        /* Scrollbar styling */
+        .scroll-container::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        .scroll-container::-webkit-scrollbar-track {
+            background: #16213e;
+        }
+        .scroll-container::-webkit-scrollbar-thumb {
+            background: #0f3460;
+            border-radius: 4px;
+        }
+        .scroll-container::-webkit-scrollbar-thumb:hover {
+            background: #1a4a7a;
+        }
+
+        /* Commander card styles */
+        .commander-silhouette {
+            filter: brightness(0) saturate(100%);
+            opacity: 0.3;
+        }
+        .commander-blocked {
+            position: relative;
+        }
+        .commander-blocked::after {
+            content: '🚫';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 1.5rem;
+        }
+
+        /* Mini-map */
+        .mini-map {
+            position: fixed;
+            bottom: 80px;
+            right: 10px;
+            width: 100px;
+            height: 100px;
+            background: rgba(22, 33, 62, 0.9);
+            border: 2px solid #0f3460;
+            border-radius: 8px;
+            overflow: hidden;
+            z-index: 30;
+        }
+        .mini-map-viewport {
+            position: absolute;
+            border: 2px solid #f1c40f;
+            background: rgba(241, 196, 15, 0.1);
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body class="bg-rpg-bg text-white font-inter min-h-screen pb-20" x-data="worldMapData()">
+
+    <!-- Header -->
+    <header class="sticky top-0 z-40 bg-rpg-bg/95 backdrop-blur border-b border-rpg-border">
+        <div class="flex items-center justify-between px-4 py-3">
+            <div>
+                <h1 class="font-cinzel text-xl text-rpg-gold">World Map</h1>
+                <p class="text-gray-500 text-xs">MCOP Kingdom — 8 Territories</p>
+            </div>
+            <div class="flex items-center gap-3">
+                <!-- Zoom Controls -->
+                <div class="flex items-center gap-1 bg-rpg-card border border-rpg-border rounded-lg">
+                    <button @click="zoomOut()" class="px-2 py-1 text-gray-400 hover:text-rpg-gold">−</button>
+                    <span class="text-xs text-gray-400" x-text="Math.round(zoom * 100) + '%'"></span>
+                    <button @click="zoomIn()" class="px-2 py-1 text-gray-400 hover:text-rpg-gold">+</button>
+                </div>
+                <button @click="resetView()" class="text-xs text-gray-400 hover:text-rpg-gold">Reset</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Legend -->
+    <div class="sticky top-14 z-30 bg-rpg-bg/90 backdrop-blur border-b border-rpg-border px-4 py-2">
+        <div class="flex items-center justify-between">
+            <div class="flex items-center gap-4">
+                <div class="text-center">
+                    <div class="text-xl font-bold text-status-warning">54%</div>
+                    <p class="text-xs text-gray-500">Conquered</p>
+                </div>
+                <div class="h-8 w-px bg-rpg-border"></div>
+                <div class="text-xs text-gray-400">
+                    <div>🏰 2/8 Territories</div>
+                    <div>⚔️ 12/40 Commanders</div>
+                </div>
+            </div>
+            <div class="flex items-center gap-2 text-xs">
+                <span class="flex items-center gap-1"><span class="w-3 h-3 rounded bg-status-warning"></span> Battle</span>
+                <span class="flex items-center gap-1"><span class="w-3 h-3 rounded bg-status-success"></span> Clear</span>
+                <span class="flex items-center gap-1"><span class="w-3 h-3 rounded bg-gray-600"></span> Fog</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- RPG Map Canvas with Pan/Scroll -->
+    <main class="scroll-container map-container overflow-auto relative"
+          style="height: calc(100vh - 140px);"
+          x-ref="mapContainer"
+          @scroll="updateMiniMap()">
+        <div :style="'transform: scale(' + zoom + '); transform-origin: top left; transition: transform 0.2s;'">
+            <svg width="900" height="1400" viewBox="0 0 900 1400" class="mx-auto block" style="min-width: 900px;">
+
+                <!-- Background terrain features -->
+                <defs>
+                    <pattern id="grass" patternUnits="userSpaceOnUse" width="20" height="20">
+                        <rect width="20" height="20" fill="#1a2e1a"/>
+                        <circle cx="5" cy="5" r="1" fill="#2d4a2d" opacity="0.5"/>
+                        <circle cx="15" cy="15" r="1" fill="#2d4a2d" opacity="0.5"/>
+                    </pattern>
+                    <pattern id="mountain" patternUnits="userSpaceOnUse" width="30" height="30">
+                        <rect width="30" height="30" fill="#2d3748"/>
+                        <path d="M15 5 L25 25 L5 25 Z" fill="#4a5568" opacity="0.5"/>
+                    </pattern>
+                    <radialGradient id="fogGradient">
+                        <stop offset="0%" stop-color="#1a1a2e" stop-opacity="0.9"/>
+                        <stop offset="100%" stop-color="#1a1a2e" stop-opacity="0"/>
+                    </radialGradient>
+                    <filter id="glow">
+                        <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+                        <feMerge>
+                            <feMergeNode in="coloredBlur"/>
+                            <feMergeNode in="SourceGraphic"/>
+                        </feMerge>
+                    </filter>
+                    <!-- Silhouette filter -->
+                    <filter id="silhouette">
+                        <feColorMatrix type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 1 0"/>
+                    </filter>
+                </defs>
+
+                <!-- Terrain regions -->
+                <ellipse cx="200" cy="250" rx="150" ry="100" fill="url(#grass)" opacity="0.3"/>
+                <ellipse cx="650" cy="400" rx="120" ry="80" fill="url(#mountain)" opacity="0.3"/>
+                <ellipse cx="400" cy="900" rx="180" ry="100" fill="url(#grass)" opacity="0.2"/>
+                <ellipse cx="150" cy="700" rx="100" ry="120" fill="url(#grass)" opacity="0.3"/>
+
+                <!-- Decorative: Trees -->
+                <g opacity="0.4">
+                    <path d="M50 180 L55 160 L60 180 Z" fill="#228B22"/>
+                    <path d="M100 220 L105 200 L110 220 Z" fill="#228B22"/>
+                    <path d="M780 500 L785 480 L790 500 Z" fill="#228B22"/>
+                    <path d="M80 600 L85 580 L90 600 Z" fill="#228B22"/>
+                </g>
+
+                <!-- ============================================= -->
+                <!-- DEPENDENCY PATHS -->
+                <!-- ============================================= -->
+
+                <!-- Path: ระบบสมาชิก → ระบบสินค้า -->
+                <path d="M200 280 Q350 200 450 320"
+                      stroke="#f1c40f" stroke-width="4" fill="none"
+                      class="path-active" filter="url(#glow)"/>
+                <text x="320" y="230" fill="#f1c40f" font-size="10" opacity="0.7">requires login</text>
+
+                <!-- Path: ระบบสมาชิก → ระบบ Notification -->
+                <path d="M200 280 Q150 450 200 620"
+                      stroke="#2ECC71" stroke-width="3" fill="none"/>
+
+                <!-- Path: ระบบสินค้า → ระบบชำระเงิน (Locked) -->
+                <path d="M450 320 Q550 450 650 580"
+                      stroke="#718096" stroke-width="3" fill="none"
+                      class="path-locked"/>
+
+                <!-- Path: ระบบสินค้า → ระบบรายงาน -->
+                <path d="M450 320 Q400 500 350 700"
+                      stroke="#f1c40f" stroke-width="3" fill="none"
+                      class="path-active"/>
+
+                <!-- ============================================= -->
+                <!-- CITY 1: ระบบสมาชิก (In Battle) -->
+                <!-- ============================================= -->
+                <g class="castle-node city-active" transform="translate(200, 200)">
+                    <a href="city.html?id=1">
+                        <!-- Castle structure -->
+                        <ellipse cx="0" cy="80" rx="60" ry="20" fill="#2d3748" opacity="0.5"/>
+                        <rect x="-40" y="10" width="80" height="70" fill="#4a5568"/>
+                        <rect x="-50" y="-10" width="25" height="90" fill="#718096"/>
+                        <rect x="25" y="-10" width="25" height="90" fill="#718096"/>
+                        <path d="M-50 -10 L-37 -30 L-25 -10 Z" fill="#f1c40f"/>
+                        <path d="M25 -10 L37 -30 L50 -10 Z" fill="#f1c40f"/>
+                        <rect x="-15" y="-30" width="30" height="50" fill="#4a5568"/>
+                        <path d="M-15 -30 L0 -50 L15 -30 Z" fill="#f1c40f"/>
+                        <rect x="-10" y="50" width="20" height="30" rx="10" fill="#2d3748"/>
+
+                        <!-- BOSS CHARACTER (Full Body) - Knight King -->
+                        <g transform="translate(0, -80)" class="city-idle">
+                            <!-- Body -->
+                            <ellipse cx="0" cy="40" rx="15" ry="10" fill="#4a5568"/>
+                            <!-- Head -->
+                            <circle cx="0" cy="15" r="18" fill="#ffd5b5"/>
+                            <!-- Crown -->
+                            <path d="M-15 5 L-10 -10 L-5 0 L0 -15 L5 0 L10 -10 L15 5" fill="#f1c40f" stroke="#d4a906" stroke-width="1"/>
+                            <circle cx="0" cy="-8" r="3" fill="#e74c3c"/>
+                            <!-- Eyes -->
+                            <circle cx="-5" cy="13" r="2" fill="#2d3748"/>
+                            <circle cx="5" cy="13" r="2" fill="#2d3748"/>
+                            <!-- Armor -->
+                            <rect x="-18" y="30" width="36" height="25" rx="5" fill="#718096"/>
+                            <rect x="-12" y="32" width="24" height="8" fill="#4a5568"/>
+                            <circle cx="0" cy="40" r="4" fill="#f1c40f"/>
+                            <!-- Sword -->
+                            <rect x="22" y="25" width="4" height="35" fill="#a0aec0"/>
+                            <rect x="18" y="22" width="12" height="6" rx="2" fill="#f1c40f"/>
+                            <!-- Cape -->
+                            <path d="M-18 35 Q-25 60 -15 70" fill="#e74c3c"/>
+                            <path d="M18 35 Q25 60 15 70" fill="#e74c3c"/>
+                        </g>
+
+                        <!-- City Label -->
+                        <text x="0" y="110" text-anchor="middle" fill="#f1c40f" font-family="Cinzel" font-size="14" font-weight="bold">ระบบสมาชิก</text>
+                        <text x="0" y="128" text-anchor="middle" fill="#9CA3AF" font-size="11">⚔️ In Battle • 75%</text>
+                    </a>
+                </g>
+
+                <!-- COMMANDERS for City 1 -->
+                <g transform="translate(200, 340)">
+                    <text x="0" y="0" text-anchor="middle" fill="#f1c40f" font-size="11" font-family="Cinzel">— Commanders —</text>
+
+                    <!-- Commander 1: Login Flow (Active) -->
+                    <g transform="translate(-70, 20)" class="castle-node" @click="showCommander('login')">
+                        <rect x="-30" y="0" width="60" height="75" rx="5" fill="#16213e" stroke="#f1c40f" stroke-width="2"/>
+                        <!-- Commander Character -->
+                        <g transform="translate(0, 15)">
+                            <circle cx="0" cy="0" r="12" fill="#ffd5b5"/>
+                            <path d="M-8 -5 Q0 -12 8 -5" fill="#4a3728"/>
+                            <circle cx="-3" cy="-1" r="1.5" fill="#2d3748"/>
+                            <circle cx="3" cy="-1" r="1.5" fill="#2d3748"/>
+                            <rect x="-10" y="12" width="20" height="15" rx="3" fill="#9B59B6"/>
+                        </g>
+                        <text x="0" y="50" text-anchor="middle" fill="white" font-size="8">Login Flow</text>
+                        <!-- Minion Count -->
+                        <g transform="translate(20, -5)">
+                            <circle cx="0" cy="0" r="10" fill="#E74C3C"/>
+                            <text x="0" y="4" text-anchor="middle" fill="white" font-size="9" font-weight="bold">5</text>
+                        </g>
+                        <!-- Status: Active -->
+                        <rect x="-25" y="58" width="50" height="12" rx="6" fill="#f1c40f" opacity="0.2"/>
+                        <text x="0" y="67" text-anchor="middle" fill="#f1c40f" font-size="7">⚔️ Active</text>
+                    </g>
+
+                    <!-- Commander 2: Register Flow (Blocked - UI not done) -->
+                    <g transform="translate(0, 20)" class="castle-node" @click="showCommander('register')">
+                        <rect x="-30" y="0" width="60" height="75" rx="5" fill="#16213e" stroke="#E67E22" stroke-width="2"/>
+                        <!-- Commander Silhouette (Requirements not met) -->
+                        <g transform="translate(0, 15)" filter="url(#silhouette)" opacity="0.4">
+                            <circle cx="0" cy="0" r="12" fill="black"/>
+                            <rect x="-10" y="12" width="20" height="15" rx="3" fill="black"/>
+                        </g>
+                        <!-- Blocked Icon -->
+                        <text x="0" y="25" text-anchor="middle" font-size="16">🚫</text>
+                        <text x="0" y="50" text-anchor="middle" fill="#718096" font-size="8">Register Flow</text>
+                        <!-- Minion Count -->
+                        <g transform="translate(20, -5)">
+                            <circle cx="0" cy="0" r="10" fill="#718096"/>
+                            <text x="0" y="4" text-anchor="middle" fill="white" font-size="9" font-weight="bold">8</text>
+                        </g>
+                        <!-- Status: Blocked -->
+                        <rect x="-25" y="58" width="50" height="12" rx="6" fill="#E67E22" opacity="0.2"/>
+                        <text x="0" y="67" text-anchor="middle" fill="#E67E22" font-size="7">🎨 UI Pending</text>
+                    </g>
+
+                    <!-- Commander 3: Password Reset (Defeated) -->
+                    <g transform="translate(70, 20)" class="castle-node">
+                        <rect x="-30" y="0" width="60" height="75" rx="5" fill="#16213e" stroke="#2ECC71" stroke-width="2"/>
+                        <!-- Defeated Commander (Greyscale) -->
+                        <g transform="translate(0, 15)" opacity="0.5">
+                            <circle cx="0" cy="0" r="12" fill="#4a5568"/>
+                            <text x="-3" y="2" font-size="6" fill="#e74c3c">✗</text>
+                            <text x="3" y="2" font-size="6" fill="#e74c3c">✗</text>
+                            <rect x="-10" y="12" width="20" height="15" rx="3" fill="#4a5568"/>
+                        </g>
+                        <text x="0" y="25" text-anchor="middle" font-size="14">💀</text>
+                        <text x="0" y="50" text-anchor="middle" fill="#2ECC71" font-size="8">Password Reset</text>
+                        <!-- Minion Count (All defeated) -->
+                        <g transform="translate(20, -5)">
+                            <circle cx="0" cy="0" r="10" fill="#2ECC71"/>
+                            <text x="0" y="4" text-anchor="middle" fill="white" font-size="9" font-weight="bold">✓</text>
+                        </g>
+                        <!-- Status: Defeated -->
+                        <rect x="-25" y="58" width="50" height="12" rx="6" fill="#2ECC71" opacity="0.2"/>
+                        <text x="0" y="67" text-anchor="middle" fill="#2ECC71" font-size="7">✓ Defeated</text>
+                    </g>
+                </g>
+
+                <!-- ============================================= -->
+                <!-- CITY 2: ระบบสินค้า (In Battle) -->
+                <!-- ============================================= -->
+                <g class="castle-node city-active" transform="translate(450, 250)">
+                    <a href="city.html?id=2">
+                        <ellipse cx="0" cy="80" rx="60" ry="20" fill="#2d3748" opacity="0.5"/>
+                        <!-- Market building -->
+                        <rect x="-45" y="10" width="90" height="70" fill="#6b46c1"/>
+                        <path d="M-55 10 L0 -25 L55 10 Z" fill="#9B59B6"/>
+                        <path d="M-45 15 L-45 0 L45 0 L45 15" fill="#f1c40f"/>
+                        <rect x="-12" y="45" width="24" height="35" fill="#4a3728"/>
+                        <rect x="-35" y="25" width="18" height="15" fill="#2d3748"/>
+                        <rect x="17" y="25" width="18" height="15" fill="#2d3748"/>
+
+                        <!-- BOSS: Merchant Lord -->
+                        <g transform="translate(0, -60)" class="city-idle" style="animation-delay: 0.5s">
+                            <ellipse cx="0" cy="45" rx="12" ry="8" fill="#6b46c1"/>
+                            <circle cx="0" cy="15" r="15" fill="#ffd5b5"/>
+                            <ellipse cx="0" cy="5" rx="12" ry="4" fill="#f1c40f"/>
+                            <circle cx="0" cy="-2" r="3" fill="#e74c3c"/>
+                            <circle cx="-4" cy="13" r="2" fill="#2d3748"/>
+                            <circle cx="4" cy="13" r="2" fill="#2d3748"/>
+                            <path d="M-3 20 Q0 23 3 20" stroke="#2d3748" fill="none" stroke-width="1"/>
+                            <rect x="-15" y="28" width="30" height="20" rx="5" fill="#805ad5"/>
+                            <circle cx="18" cy="40" r="8" fill="#f1c40f"/>
+                            <text x="18" y="43" text-anchor="middle" font-size="8" fill="#1a1a2e">$</text>
+                        </g>
+
+                        <text x="0" y="110" text-anchor="middle" fill="#f1c40f" font-family="Cinzel" font-size="14" font-weight="bold">ระบบสินค้า</text>
+                        <text x="0" y="128" text-anchor="middle" fill="#9CA3AF" font-size="11">⚔️ In Battle • 45%</text>
+                    </a>
+                </g>
+
+                <!-- COMMANDERS for City 2 -->
+                <g transform="translate(450, 390)">
+                    <text x="0" y="0" text-anchor="middle" fill="#f1c40f" font-size="11" font-family="Cinzel">— Commanders (5) —</text>
+
+                    <!-- Show 3 commanders, indicate more -->
+                    <!-- Commander: Product List (Active) -->
+                    <g transform="translate(-70, 20)" class="castle-node">
+                        <rect x="-28" y="0" width="56" height="65" rx="5" fill="#16213e" stroke="#f1c40f" stroke-width="2"/>
+                        <g transform="translate(0, 12)">
+                            <circle cx="0" cy="0" r="10" fill="#ffd5b5"/>
+                            <circle cx="-3" cy="-1" r="1" fill="#2d3748"/>
+                            <circle cx="3" cy="-1" r="1" fill="#2d3748"/>
+                            <rect x="-8" y="10" width="16" height="12" rx="2" fill="#1ABC9C"/>
+                        </g>
+                        <text x="0" y="42" text-anchor="middle" fill="white" font-size="7">Product List</text>
+                        <g transform="translate(18, -5)">
+                            <circle cx="0" cy="0" r="8" fill="#E74C3C"/>
+                            <text x="0" y="3" text-anchor="middle" fill="white" font-size="8" font-weight="bold">6</text>
+                        </g>
+                        <text x="0" y="57" text-anchor="middle" fill="#f1c40f" font-size="6">⚔️ Active</text>
+                    </g>
+
+                    <!-- Commander: Cart (Silhouette) -->
+                    <g transform="translate(0, 20)" class="castle-node">
+                        <rect x="-28" y="0" width="56" height="65" rx="5" fill="#16213e" stroke="#718096" stroke-width="2"/>
+                        <g transform="translate(0, 12)" filter="url(#silhouette)" opacity="0.3">
+                            <circle cx="0" cy="0" r="10" fill="black"/>
+                            <rect x="-8" y="10" width="16" height="12" rx="2" fill="black"/>
+                        </g>
+                        <text x="0" y="20" text-anchor="middle" font-size="14">❓</text>
+                        <text x="0" y="42" text-anchor="middle" fill="#718096" font-size="7">Shopping Cart</text>
+                        <g transform="translate(18, -5)">
+                            <circle cx="0" cy="0" r="8" fill="#718096"/>
+                            <text x="0" y="3" text-anchor="middle" fill="white" font-size="8">?</text>
+                        </g>
+                        <text x="0" y="57" text-anchor="middle" fill="#718096" font-size="6">📋 Requirements</text>
+                    </g>
+
+                    <!-- Commander: Checkout (Blocked) -->
+                    <g transform="translate(70, 20)" class="castle-node">
+                        <rect x="-28" y="0" width="56" height="65" rx="5" fill="#16213e" stroke="#E67E22" stroke-width="2"/>
+                        <g transform="translate(0, 12)" filter="url(#silhouette)" opacity="0.3">
+                            <circle cx="0" cy="0" r="10" fill="black"/>
+                            <rect x="-8" y="10" width="16" height="12" rx="2" fill="black"/>
+                        </g>
+                        <text x="0" y="20" text-anchor="middle" font-size="14">🚫</text>
+                        <text x="0" y="42" text-anchor="middle" fill="#718096" font-size="7">Checkout</text>
+                        <g transform="translate(18, -5)">
+                            <circle cx="0" cy="0" r="8" fill="#718096"/>
+                            <text x="0" y="3" text-anchor="middle" fill="white" font-size="8">12</text>
+                        </g>
+                        <text x="0" y="57" text-anchor="middle" fill="#E67E22" font-size="6">🎨 UI Pending</text>
+                    </g>
+
+                    <!-- +2 more indicator -->
+                    <text x="0" y="100" text-anchor="middle" fill="#718096" font-size="10">+ 2 more commanders</text>
+                </g>
+
+                <!-- ============================================= -->
+                <!-- CITY 3: ระบบ Notification (Conquered) -->
+                <!-- ============================================= -->
+                <g class="castle-node" transform="translate(200, 570)">
+                    <a href="city.html?id=4">
+                        <ellipse cx="0" cy="70" rx="50" ry="18" fill="#2d3748" opacity="0.5"/>
+                        <!-- Bell tower -->
+                        <rect x="-30" y="5" width="60" height="65" fill="#4a5568"/>
+                        <path d="M-35 5 L0 -20 L35 5 Z" fill="#718096"/>
+                        <ellipse cx="0" cy="0" rx="15" ry="12" fill="#f1c40f" opacity="0.6"/>
+                        <rect x="-3" y="8" width="6" height="10" fill="#d4a906"/>
+
+                        <!-- Defeated Boss -->
+                        <g transform="translate(0, -50)" opacity="0.4">
+                            <circle cx="0" cy="15" r="15" fill="#4a5568"/>
+                            <text x="-5" y="17" font-size="10" fill="#e74c3c">✗</text>
+                            <text x="5" y="17" font-size="10" fill="#e74c3c">✗</text>
+                            <text x="0" y="40" text-anchor="middle" font-size="16">💀</text>
+                        </g>
+
+                        <!-- Victory banner -->
+                        <rect x="-10" y="-80" width="20" height="25" fill="#2ECC71"/>
+                        <text x="0" y="-65" text-anchor="middle" fill="white" font-size="14">✓</text>
+
+                        <text x="0" y="100" text-anchor="middle" fill="#2ECC71" font-family="Cinzel" font-size="14" font-weight="bold">ระบบ Notification</text>
+                        <text x="0" y="118" text-anchor="middle" fill="#9CA3AF" font-size="11">✓ Conquered • 100%</text>
+                    </a>
+                </g>
+
+                <!-- Defeated Commanders for Notification -->
+                <g transform="translate(200, 700)">
+                    <text x="0" y="0" text-anchor="middle" fill="#2ECC71" font-size="10" font-family="Cinzel">— All Defeated —</text>
+                    <g transform="translate(-35, 15)">
+                        <rect x="-25" y="0" width="50" height="50" rx="5" fill="#16213e" stroke="#2ECC71" stroke-width="1" opacity="0.5"/>
+                        <text x="0" y="25" text-anchor="middle" font-size="12">💀</text>
+                        <text x="0" y="42" text-anchor="middle" fill="#2ECC71" font-size="7">Email</text>
+                    </g>
+                    <g transform="translate(35, 15)">
+                        <rect x="-25" y="0" width="50" height="50" rx="5" fill="#16213e" stroke="#2ECC71" stroke-width="1" opacity="0.5"/>
+                        <text x="0" y="25" text-anchor="middle" font-size="12">💀</text>
+                        <text x="0" y="42" text-anchor="middle" fill="#2ECC71" font-size="7">Push</text>
+                    </g>
+                </g>
+
+                <!-- ============================================= -->
+                <!-- CITY 4: ระบบรายงาน (In Battle) -->
+                <!-- ============================================= -->
+                <g class="castle-node city-active" transform="translate(350, 850)">
+                    <a href="city.html?id=5">
+                        <ellipse cx="0" cy="70" rx="50" ry="18" fill="#2d3748" opacity="0.5"/>
+                        <!-- Library building -->
+                        <rect x="-40" y="5" width="80" height="65" fill="#2d3748"/>
+                        <ellipse cx="0" cy="5" rx="35" ry="20" fill="#4a5568"/>
+                        <rect x="-30" y="20" width="18" height="25" fill="#1a1a2e"/>
+                        <rect x="-6" y="20" width="18" height="25" fill="#1a1a2e"/>
+                        <rect x="18" y="20" width="18" height="25" fill="#1a1a2e"/>
+
+                        <!-- Scholar Boss -->
+                        <g transform="translate(0, -45)" class="city-idle">
+                            <circle cx="0" cy="15" r="15" fill="#ffd5b5"/>
+                            <rect x="-10" y="10" width="7" height="4" rx="1" fill="#a0aec0"/>
+                            <rect x="3" y="10" width="7" height="4" rx="1" fill="#a0aec0"/>
+                            <rect x="-12" y="28" width="24" height="18" rx="3" fill="#2d3748"/>
+                            <rect x="15" y="30" width="10" height="15" fill="#e53e3e"/>
+                        </g>
+
+                        <text x="0" y="100" text-anchor="middle" fill="#f1c40f" font-family="Cinzel" font-size="14" font-weight="bold">ระบบรายงาน</text>
+                        <text x="0" y="118" text-anchor="middle" fill="#9CA3AF" font-size="11">⚔️ In Battle • 30%</text>
+                    </a>
+                </g>
+
+                <!-- ============================================= -->
+                <!-- CITY 5: ระบบชำระเงิน (Fog of War) -->
+                <!-- ============================================= -->
+                <g class="castle-node" transform="translate(650, 530)" opacity="0.5">
+                    <a href="city.html?id=3">
+                        <ellipse cx="0" cy="70" rx="50" ry="18" fill="#2d3748" opacity="0.3"/>
+                        <!-- Bank building silhouette -->
+                        <rect x="-40" y="10" width="80" height="60" fill="#4a5568"/>
+                        <rect x="-35" y="10" width="10" height="60" fill="#718096"/>
+                        <rect x="-15" y="10" width="10" height="60" fill="#718096"/>
+                        <rect x="5" y="10" width="10" height="60" fill="#718096"/>
+                        <rect x="25" y="10" width="10" height="60" fill="#718096"/>
+                        <path d="M-50 10 L0 -15 L50 10 Z" fill="#2d3748"/>
+
+                        <!-- Fog -->
+                        <circle cx="0" cy="30" r="70" fill="url(#fogGradient)" class="fog-overlay"/>
+                        <text x="0" y="40" text-anchor="middle" fill="white" font-size="30">🌫️</text>
+
+                        <text x="0" y="100" text-anchor="middle" fill="#718096" font-family="Cinzel" font-size="14">ระบบชำระเงิน</text>
+                        <text x="0" y="118" text-anchor="middle" fill="#4a5568" font-size="11">🌫️ Fog of War</text>
+                    </a>
+                </g>
+
+                <!-- ============================================= -->
+                <!-- CITY 6: ระบบ Dashboard (Conquered) -->
+                <!-- ============================================= -->
+                <g class="castle-node" transform="translate(400, 1050)">
+                    <a href="city.html?id=7">
+                        <ellipse cx="0" cy="70" rx="50" ry="18" fill="#2d3748" opacity="0.5"/>
+                        <rect x="-35" y="5" width="70" height="65" fill="#4a5568"/>
+                        <rect x="-25" y="15" width="20" height="15" fill="#1a1a2e"/>
+                        <rect x="5" y="15" width="20" height="15" fill="#1a1a2e"/>
+                        <rect x="-23" y="17" width="15" height="4" fill="#2ECC71"/>
+                        <rect x="7" y="17" width="12" height="4" fill="#3498DB"/>
+                        <line x1="0" y1="5" x2="0" y2="-15" stroke="#718096" stroke-width="3"/>
+                        <circle cx="0" cy="-20" r="6" fill="#2ECC71"/>
+
+                        <!-- Defeated Boss -->
+                        <g transform="translate(0, -55)" opacity="0.4">
+                            <circle cx="0" cy="15" r="15" fill="#4a5568"/>
+                            <text x="0" y="40" text-anchor="middle" font-size="16">💀</text>
+                        </g>
+
+                        <rect x="-10" y="-85" width="20" height="25" fill="#2ECC71"/>
+                        <text x="0" y="-70" text-anchor="middle" fill="white" font-size="14">✓</text>
+
+                        <text x="0" y="100" text-anchor="middle" fill="#2ECC71" font-family="Cinzel" font-size="14" font-weight="bold">ระบบ Dashboard</text>
+                        <text x="0" y="118" text-anchor="middle" fill="#9CA3AF" font-size="11">✓ Conquered • 100%</text>
+                    </a>
+                </g>
+
+                <!-- ============================================= -->
+                <!-- CITY 7: ระบบ Admin (Fog of War) -->
+                <!-- ============================================= -->
+                <g class="castle-node" transform="translate(700, 750)" opacity="0.4">
+                    <a href="#">
+                        <ellipse cx="0" cy="70" rx="50" ry="18" fill="#2d3748" opacity="0.3"/>
+                        <rect x="-45" y="5" width="90" height="65" fill="#4a5568"/>
+                        <rect x="-50" y="-15" width="25" height="85" fill="#718096"/>
+                        <rect x="25" y="-15" width="25" height="85" fill="#718096"/>
+
+                        <circle cx="0" cy="30" r="70" fill="url(#fogGradient)" class="fog-overlay" style="animation-delay: 1s"/>
+                        <text x="0" y="40" text-anchor="middle" fill="white" font-size="30">🌫️</text>
+
+                        <text x="0" y="100" text-anchor="middle" fill="#718096" font-family="Cinzel" font-size="14">ระบบ Admin</text>
+                        <text x="0" y="118" text-anchor="middle" fill="#4a5568" font-size="11">🌫️ Fog of War</text>
+                    </a>
+                </g>
+
+                <!-- ============================================= -->
+                <!-- CITY 8: ระบบ Settings (Locked - Future Sprint) -->
+                <!-- ============================================= -->
+                <g class="castle-node" transform="translate(700, 1000)" opacity="0.3">
+                    <a href="#">
+                        <ellipse cx="0" cy="70" rx="50" ry="18" fill="#2d3748" opacity="0.3"/>
+                        <rect x="-35" y="5" width="70" height="65" fill="#2d3748"/>
+                        <circle cx="0" cy="35" r="25" fill="#4a5568"/>
+                        <circle cx="0" cy="35" r="12" fill="#2d3748"/>
+
+                        <rect x="-25" y="20" width="50" height="45" rx="5" fill="#1a1a2e" opacity="0.8"/>
+                        <text x="0" y="50" text-anchor="middle" fill="white" font-size="28">🔒</text>
+
+                        <text x="0" y="100" text-anchor="middle" fill="#4a5568" font-family="Cinzel" font-size="14">ระบบ Settings</text>
+                        <text x="0" y="118" text-anchor="middle" fill="#2d3748" font-size="11">🔒 Sprint 3</text>
+                    </a>
+                </g>
+
+                <!-- Player marker -->
+                <g transform="translate(200, 130)" class="city-idle">
+                    <circle cx="0" cy="0" r="18" fill="#f1c40f" opacity="0.3"/>
+                    <circle cx="0" cy="0" r="12" fill="#f1c40f" opacity="0.5"/>
+                    <text x="0" y="5" text-anchor="middle" font-size="16">📍</text>
+                    <text x="0" y="30" text-anchor="middle" fill="#f1c40f" font-size="9">You are here</text>
+                </g>
+
+                <!-- Compass -->
+                <g transform="translate(850, 60)">
+                    <circle cx="0" cy="0" r="30" fill="#16213e" stroke="#0f3460" stroke-width="2"/>
+                    <path d="M0 -22 L6 0 L0 22 L-6 0 Z" fill="#e74c3c"/>
+                    <path d="M0 22 L6 0 L0 -22 L-6 0 Z" fill="#718096"/>
+                    <text x="0" y="-32" text-anchor="middle" fill="#f1c40f" font-size="12" font-weight="bold">N</text>
+                </g>
+
+            </svg>
+        </div>
+    </main>
+
+    <!-- Mini-map -->
+    <div class="mini-map" x-show="showMiniMap">
+        <svg width="100" height="100" viewBox="0 0 900 1400" preserveAspectRatio="xMidYMid meet">
+            <!-- Simplified city markers -->
+            <circle cx="200" cy="200" r="30" fill="#f1c40f"/>
+            <circle cx="450" cy="250" r="30" fill="#f1c40f"/>
+            <circle cx="200" cy="570" r="30" fill="#2ECC71"/>
+            <circle cx="350" cy="850" r="30" fill="#f1c40f"/>
+            <circle cx="650" cy="530" r="30" fill="#718096"/>
+            <circle cx="400" cy="1050" r="30" fill="#2ECC71"/>
+            <circle cx="700" cy="750" r="30" fill="#718096"/>
+            <circle cx="700" cy="1000" r="30" fill="#4a5568"/>
+        </svg>
+        <div class="mini-map-viewport"
+             :style="'width: ' + viewportWidth + 'px; height: ' + viewportHeight + 'px; left: ' + viewportX + 'px; top: ' + viewportY + 'px;'"></div>
+    </div>
+
+    <!-- Bottom Tab Bar -->
+    <nav class="fixed bottom-0 left-0 right-0 bg-rpg-card border-t border-rpg-border z-50">
+        <div class="flex justify-around">
+            <a href="hero.html" class="flex-1 py-3 text-center text-gray-400 hover:text-rpg-gold">
+                <div class="text-xl">⚔️</div>
+                <div class="text-xs mt-1">Hero</div>
+            </a>
+            <a href="team.html" class="flex-1 py-3 text-center text-gray-400 hover:text-rpg-gold">
+                <div class="text-xl">👥</div>
+                <div class="text-xs mt-1">Team</div>
+            </a>
+            <a href="world-map.html" class="flex-1 py-3 text-center text-rpg-gold tab-active">
+                <div class="text-xl">🗺️</div>
+                <div class="text-xs mt-1">World</div>
+            </a>
+            <a href="shop.html" class="flex-1 py-3 text-center text-gray-400 hover:text-rpg-gold">
+                <div class="text-xl">🛒</div>
+                <div class="text-xs mt-1">Shop</div>
+            </a>
+        </div>
+    </nav>
+
+    <script>
+        function worldMapData() {
+            return {
+                zoom: 1,
+                showMiniMap: true,
+                viewportX: 0,
+                viewportY: 0,
+                viewportWidth: 30,
+                viewportHeight: 20,
+
+                zoomIn() {
+                    this.zoom = Math.min(this.zoom + 0.25, 2);
+                },
+
+                zoomOut() {
+                    this.zoom = Math.max(this.zoom - 0.25, 0.5);
+                },
+
+                resetView() {
+                    this.zoom = 1;
+                    this.$refs.mapContainer.scrollTo(0, 0);
+                },
+
+                updateMiniMap() {
+                    const container = this.$refs.mapContainer;
+                    const scrollX = container.scrollLeft;
+                    const scrollY = container.scrollTop;
+                    const viewWidth = container.clientWidth;
+                    const viewHeight = container.clientHeight;
+                    const contentWidth = 900 * this.zoom;
+                    const contentHeight = 1400 * this.zoom;
+
+                    // Mini-map is 100x100, content is 900x1400
+                    const scaleX = 100 / 900;
+                    const scaleY = 100 / 1400;
+
+                    this.viewportX = (scrollX / this.zoom) * scaleX;
+                    this.viewportY = (scrollY / this.zoom) * scaleY;
+                    this.viewportWidth = Math.min((viewWidth / this.zoom) * scaleX, 100);
+                    this.viewportHeight = Math.min((viewHeight / this.zoom) * scaleY, 100);
+                },
+
+                showCommander(id) {
+                    // Could open modal or navigate to commander detail
+                    window.location.href = 'commander.html?id=' + id;
+                }
+            }
+        }
+    </script>
+
+</body>
+</html>
