@@ -1,0 +1,39 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__laravel-boost__application-info",
+      "mcp__laravel-boost__list-routes",
+      "mcp__laravel-boost__database-connections",
+      "mcp__laravel-boost__tinker",
+      "mcp__laravel-boost__get-config",
+      "Bash(php artisan boost:mcp:*)",
+      "Bash(composer show:*)",
+      "Bash(php artisan:*)",
+      "mcp__cerebras-mcp__write",
+      "Bash(php artisan test:*)",
+      "Bash(php artisan make:migration:*)",
+      "Bash(php artisan migrate)",
+      "Bash(php artisan tinker:*)",
+      "Bash(php artisan migrate:rollback --step=1)",
+      "Bash(php artisan db:show audits)",
+      "Bash(php artisan list)",
+      "Bash(php artisan code:analyse:*)",
+      "Bash(claude config set:*)",
+      "mcp__plugin_laravel-boost_laravel-boost__get-config",
+      "mcp__plugin_laravel-boost_laravel-boost__application-info",
+      "Bash(git checkout:*)",
+      "Bash(./vendor/bin/pint:*)",
+      "Bash(./vendor/bin/phpstan:*)",
+      "mcp__sequential-thinking__sequentialthinking",
+      "mcp__plugin_serena_serena__find_symbol",
+      "mcp__plugin_serena_serena__activate_project",
+      "mcp__plugin_serena_serena__list_dir",
+      "mcp__plugin_claude-mem_mcp-search____IMPORTANT",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git push:*)",
+      "Bash(test:*)"
+    ]
+  },
+  "outputStyle": "default"
+}
