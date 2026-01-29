@@ -1,0 +1,231 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+    <defs>
+        <!-- Warrior Avatar -->
+        <symbol id="icon-warrior" viewBox="0 0 64 64">
+            <circle cx="32" cy="20" r="12" fill="#d4a853"/>
+            <path d="M20 20 Q20 8 32 8 Q44 8 44 20 L44 24 Q44 32 32 32 Q20 32 20 24 Z" fill="#c0392b"/>
+            <path d="M32 8 L28 2 L32 6 L36 2 Z" fill="#e74c3c"/>
+            <circle cx="28" cy="20" r="2" fill="#2c1810"/>
+            <circle cx="36" cy="20" r="2" fill="#2c1810"/>
+            <path d="M30 26 Q32 28 34 26" stroke="#2c1810" fill="none" stroke-width="1"/>
+            <rect x="20" y="36" width="24" height="20" rx="4" fill="#7f8c8d"/>
+            <rect x="24" y="40" width="16" height="8" fill="#95a5a6"/>
+            <rect x="16" y="38" width="4" height="16" fill="#7f8c8d"/>
+            <rect x="44" y="38" width="4" height="16" fill="#7f8c8d"/>
+            <rect x="46" y="30" width="3" height="20" fill="#f4d03f"/>
+            <circle cx="47.5" cy="28" r="3" fill="#e74c3c"/>
+            <ellipse cx="14" cy="46" rx="6" ry="8" fill="#5c4018" stroke="#d4a853" stroke-width="2"/>
+        </symbol>
+
+        <!-- Mage Avatar -->
+        <symbol id="icon-mage" viewBox="0 0 64 64">
+            <circle cx="32" cy="22" r="10" fill="#f4e8d0"/>
+            <path d="M18 24 L32 4 L46 24 Z" fill="#9b59b6"/>
+            <ellipse cx="32" cy="24" rx="14" ry="4" fill="#8e44ad"/>
+            <circle cx="5" cy="24" r="3" fill="#9b59b6" opacity="0.6"/>
+            <circle cx="59" cy="20" r="4" fill="#9b59b6" opacity="0.8"/>
+            <circle cx="56" cy="28" r="2" fill="#f4d03f" opacity="0.9"/>
+            <circle cx="28" cy="22" r="1.5" fill="#2c1810"/>
+            <circle cx="36" cy="22" r="1.5" fill="#2c1810"/>
+            <path d="M22 38 L18 58 L46 58 L42 38 Z" fill="#9b59b6"/>
+            <path d="M24 42 L24 54 L40 54 L40 42 Z" fill="#8e44ad"/>
+            <rect x="48" y="20" width="3" height="30" fill="#5c4018"/>
+            <circle cx="49.5" cy="18" r="4" fill="#3498db"/>
+        </symbol>
+
+        <!-- Healer Avatar -->
+        <symbol id="icon-healer" viewBox="0 0 64 64">
+            <circle cx="32" cy="22" r="11" fill="#f4e8d0"/>
+            <rect x="22" y="12" width="20" height="8" rx="2" fill="#ecf0f1"/>
+            <rect x="30" y="8" width="4" height="6" fill="#e74c3c"/>
+            <circle cx="28" cy="22" r="2" fill="#2c1810"/>
+            <circle cx="36" cy="22" r="2" fill="#2c1810"/>
+            <path d="M30 28 Q32 30 34 28" stroke="#2c1810" fill="none"/>
+            <path d="M20 36 L18 58 L46 58 L44 36 Z" fill="#ecf0f1"/>
+            <rect x="28" y="40" width="8" height="12" rx="4" fill="#e74c3c"/>
+            <rect x="26" y="46" width="12" height="4" fill="#e74c3c"/>
+            <circle cx="10" cy="42" r="3" fill="#2ecc71" opacity="0.6"/>
+            <circle cx="54" cy="38" r="4" fill="#2ecc71" opacity="0.8"/>
+        </symbol>
+
+        <!-- Archer Avatar -->
+        <symbol id="icon-archer" viewBox="0 0 64 64">
+            <circle cx="32" cy="20" r="10" fill="#d4a853"/>
+            <path d="M20 18 Q20 10 32 8 Q44 10 44 18 L44 22 Q44 28 32 28 Q20 28 20 22 Z" fill="#27ae60"/>
+            <circle cx="28" cy="20" r="2" fill="#2c1810"/>
+            <circle cx="36" cy="20" r="2" fill="#2c1810"/>
+            <path d="M24 36 L20 56 L44 56 L40 36 Z" fill="#27ae60"/>
+            <path d="M14 32 L10 48 L14 48 L18 32 Z" fill="#5c4018"/>
+            <path d="M50 32 L54 48 L50 48 L46 32 Z" fill="#5c4018"/>
+            <rect x="48" y="25" width="8" height="3" fill="#5c4018"/>
+            <path d="M52 28 L52 50" stroke="#f4d03f" stroke-width="2"/>
+            <path d="M52 28 L48 35 L52 32 L56 35 Z" fill="#95a5a6"/>
+        </symbol>
+
+        <!-- Castle/City Icon -->
+        <symbol id="icon-castle" viewBox="0 0 64 64">
+            <rect x="12" y="20" width="40" height="36" fill="#7f8c8d"/>
+            <rect x="8" y="12" width="12" height="44" fill="#95a5a6"/>
+            <rect x="44" y="12" width="12" height="44" fill="#95a5a6"/>
+            <path d="M8 12 L14 4 L20 12 Z" fill="#c0392b"/>
+            <path d="M44 12 L50 4 L56 12 Z" fill="#c0392b"/>
+            <rect x="24" y="8" width="16" height="24" fill="#7f8c8d"/>
+            <path d="M24 8 L32 0 L40 8 Z" fill="#c0392b"/>
+            <rect x="28" y="28" width="8" height="12" rx="4" fill="#2c1810"/>
+            <rect x="16" y="36" width="8" height="8" fill="#2c1810"/>
+            <rect x="40" y="36" width="8" height="8" fill="#2c1810"/>
+            <rect x="26" y="4" width="4" height="4" fill="#f4d03f"/>
+        </symbol>
+
+        <!-- Tower/Flow Icon -->
+        <symbol id="icon-tower" viewBox="0 0 64 64">
+            <rect x="20" y="16" width="24" height="44" fill="#7f8c8d"/>
+            <path d="M16 16 L32 4 L48 16 Z" fill="#95a5a6"/>
+            <rect x="28" y="24" width="8" height="8" fill="#2c1810"/>
+            <circle cx="32" cy="8" r="4" fill="#f4d03f"/>
+            <rect x="30" y="40" width="4" height="12" fill="#2c1810"/>
+            <path d="M12 56 L52 56" stroke="#5c4018" stroke-width="4"/>
+            <circle cx="32" cy="8" r="6" fill="none" stroke="#f4d03f" stroke-width="2" opacity="0.5"/>
+        </symbol>
+
+        <!-- Sword/Quest Icon -->
+        <symbol id="icon-sword" viewBox="0 0 64 64">
+            <rect x="30" y="8" width="4" height="36" fill="#95a5a6"/>
+            <rect x="26" y="40" width="12" height="4" fill="#d4a853"/>
+            <rect x="28" y="44" width="8" height="8" fill="#5c4018"/>
+            <path d="M30 8 L32 4 L34 8 Z" fill="#e74c3c"/>
+            <circle cx="32" cy="6" r="2" fill="#f4d03f"/>
+            <rect x="22" y="42" width="20" height="2" fill="#f4d03f"/>
+        </symbol>
+
+        <!-- Shield/Defense Icon -->
+        <symbol id="icon-shield" viewBox="0 0 64 64">
+            <path d="M32 8 L48 16 L48 32 Q48 48 32 56 Q16 48 16 32 L16 16 Z" fill="#5c4018" stroke="#d4a853" stroke-width="3"/>
+            <path d="M32 16 L40 20 L40 32 Q40 42 32 48 Q24 42 24 32 L24 20 Z" fill="#7f8c8d"/>
+            <circle cx="32" cy="32" r="6" fill="#d4a853"/>
+            <path d="M32 28 L32 36 M28 32 L36 32" stroke="#5c4018" stroke-width="2"/>
+        </symbol>
+
+        <!-- Potion/Health Icon -->
+        <symbol id="icon-potion" viewBox="0 0 64 64">
+            <path d="M24 20 L24 28 Q16 32 16 44 Q16 56 32 56 Q48 56 48 44 Q48 32 40 28 L40 20 Z" fill="#c0392b" opacity="0.8"/>
+            <ellipse cx="32" cy="20" rx="10" ry="4" fill="#95a5a6"/>
+            <ellipse cx="32" cy="20" rx="6" ry="2" fill="#7f8c8d"/>
+            <circle cx="28" cy="40" r="3" fill="#fff" opacity="0.3"/>
+            <circle cx="36" cy="46" r="2" fill="#fff" opacity="0.3"/>
+            <rect x="28" y="12" width="8" height="8" fill="#95a5a6"/>
+        </symbol>
+
+        <!-- Gem/Coin Icon -->
+        <symbol id="icon-gem" viewBox="0 0 64 64">
+            <path d="M32 8 L48 24 L32 56 L16 24 Z" fill="#3498db"/>
+            <path d="M32 8 L32 24 L16 24 Z" fill="#5dade2"/>
+            <path d="M32 8 L32 24 L48 24 Z" fill="#2980b9"/>
+            <path d="M16 24 L32 24 L32 56 Z" fill="#2980b9"/>
+            <path d="M48 24 L32 24 L32 56 Z" fill="#5dade2"/>
+            <path d="M24 16 L32 8 L40 16" fill="#85c1e9"/>
+        </symbol>
+
+        <!-- Gold/Coin Stack Icon -->
+        <symbol id="icon-gold" viewBox="0 0 64 64">
+            <ellipse cx="32" cy="50" rx="18" ry="6" fill="#d4a853"/>
+            <ellipse cx="32" cy="44" rx="18" ry="6" fill="#f4d03f"/>
+            <ellipse cx="32" cy="38" rx="18" ry="6" fill="#d4a853"/>
+            <ellipse cx="32" cy="32" rx="18" ry="6" fill="#f4d03f"/>
+            <ellipse cx="32" cy="26" rx="18" ry="6" fill="#d4a853"/>
+            <text x="32" y="36" text-anchor="middle" font-size="12" fill="#5c4018" font-weight="bold">$</text>
+        </symbol>
+
+        <!-- Map/World Icon -->
+        <symbol id="icon-map" viewBox="0 0 64 64">
+            <rect x="8" y="8" width="48" height="48" rx="4" fill="#5c4018" stroke="#d4a853" stroke-width="2"/>
+            <path d="M16 16 L20 48 L32 40 L44 52 L48 20 L32 28 L16 16 Z" fill="#d4a853" opacity="0.3"/>
+            <circle cx="24" cy="24" r="3" fill="#e74c3c"/>
+            <circle cx="40" cy="36" r="3" fill="#27ae60"/>
+            <path d="M8 8 L56 56 M56 8 L8 56" stroke="#d4a853" stroke-width="0.5" opacity="0.3"/>
+            <circle cx="32" cy="32" r="20" fill="none" stroke="#d4a853" stroke-width="1" opacity="0.3"/>
+        </symbol>
+
+        <!-- Team/Party Icon -->
+        <symbol id="icon-team" viewBox="0 0 64 64">
+            <circle cx="32" cy="16" r="8" fill="#d4a853"/>
+            <path d="M24 32 L20 56 L44 56 L40 32 Z" fill="#c0392b"/>
+            <circle cx="20" cy="24" r="6" fill="#d4a853"/>
+            <path d="M14 36 L10 52 L24 52 L26 36 Z" fill="#3498db"/>
+            <circle cx="44" cy="24" r="6" fill="#d4a853"/>
+            <path d="M50 36 L54 52 L40 52 L38 36 Z" fill="#27ae60"/>
+            <path d="M24 20 Q32 24 40 20" stroke="#2c1810" fill="none" stroke-width="1"/>
+        </symbol>
+
+        <!-- Bug/Monster Icon -->
+        <symbol id="icon-bug" viewBox="0 0 64 64">
+            <ellipse cx="32" cy="36" rx="14" ry="16" fill="#8e44ad"/>
+            <ellipse cx="32" cy="32" rx="10" ry="12" fill="#9b59b6"/>
+            <circle cx="26" cy="30" r="4" fill="#fff"/>
+            <circle cx="38" cy="30" r="4" fill="#fff"/>
+            <circle cx="27" cy="31" r="2" fill="#2c1810"/>
+            <circle cx="39" cy="31" r="2" fill="#2c1810"/>
+            <path d="M28 40 Q32 44 36 40" stroke="#2c1810" fill="none"/>
+            <path d="M18 32 L10 28 M18 36 L8 36 M18 40 L10 44" stroke="#8e44ad" stroke-width="3"/>
+            <path d="M46 32 L54 28 M46 36 L56 36 M46 40 L54 44" stroke="#8e44ad" stroke-width="3"/>
+            <path d="M28 52 L24 60 M36 52 L40 60" stroke="#8e44ad" stroke-width="2"/>
+        </symbol>
+
+        <!-- Shop/Merchant Icon -->
+        <symbol id="icon-shop" viewBox="0 0 64 64">
+            <rect x="12" y="24" width="40" height="32" fill="#7f8c8d"/>
+            <path d="M8 24 L32 12 L56 24 Z" fill="#95a5a6"/>
+            <rect x="28" y="40" width="8" height="16" fill="#5c4018"/>
+            <rect x="16" y="32" width="8" height="8" fill="#2c1810"/>
+            <rect x="40" y="32" width="8" height="8" fill="#2c1810"/>
+            <circle cx="20" cy="28" r="2" fill="#f4d03f"/>
+            <circle cx="44" cy="28" r="2" fill="#f4d03f"/>
+            <rect x="26" y="16" width="12" height="3" fill="#c0392b"/>
+            <circle cx="48" cy="48" r="6" fill="#f4d03f"/>
+            <text x="48" y="52" text-anchor="middle" font-size="8" fill="#5c4018">$</text>
+        </symbol>
+
+        <!-- Star/XP Icon -->
+        <symbol id="icon-star" viewBox="0 0 64 64">
+            <path d="M32 4 L38 24 L60 24 L42 38 L48 60 L32 48 L16 60 L22 38 L4 24 L26 24 Z" fill="#f4d03f" stroke="#d4a853" stroke-width="2"/>
+            <path d="M32 12 L36 26 L50 26 L38 36 L42 50 L32 42 L22 50 L26 36 L14 26 L28 26 Z" fill="#fff8dc"/>
+        </symbol>
+
+        <!-- Scroll/Quest Icon -->
+        <symbol id="icon-scroll" viewBox="0 0 64 64">
+            <rect x="16" y="12" width="32" height="40" rx="4" fill="#f4e8d0"/>
+            <path d="M16 12 Q12 12 12 16 L12 48 Q12 52 16 52" fill="none" stroke="#d4a853" stroke-width="2"/>
+            <path d="M48 12 Q52 12 52 16 L52 48 Q52 52 48 52" fill="none" stroke="#d4a853" stroke-width="2"/>
+            <line x1="20" y1="20" x2="44" y2="20" stroke="#5c4018" stroke-width="2"/>
+            <line x1="20" y1="28" x2="44" y2="28" stroke="#5c4018" stroke-width="2"/>
+            <line x1="20" y1="36" x2="40" y2="36" stroke="#5c4018" stroke-width="2"/>
+            <circle cx="32" cy="8" r="4" fill="#d4a853"/>
+            <circle cx="32" cy="56" r="4" fill="#d4a853"/>
+        </symbol>
+
+        <!-- Crown/Leader Icon -->
+        <symbol id="icon-crown" viewBox="0 0 64 64">
+            <path d="M12 40 L16 20 L24 28 L32 12 L40 28 L48 20 L52 40 Z" fill="#f4d03f" stroke="#d4a853" stroke-width="2"/>
+            <rect x="12" y="40" width="40" height="8" rx="2" fill="#d4a853"/>
+            <circle cx="16" cy="20" r="3" fill="#e74c3c"/>
+            <circle cx="32" cy="12" r="3" fill="#3498db"/>
+            <circle cx="48" cy="20" r="3" fill="#27ae60"/>
+            <circle cx="32" cy="32" r="4" fill="#9b59b6"/>
+        </symbol>
+
+        <!-- Lightning/Buff Icon -->
+        <symbol id="icon-buff" viewBox="0 0 64 64">
+            <path d="M36 4 L20 28 L32 28 L24 56 L48 32 L36 32 L44 4 Z" fill="#f4d03f" stroke="#d4a853" stroke-width="2"/>
+            <circle cx="12" cy="20" r="4" fill="#f4d03f" opacity="0.5"/>
+            <circle cx="52" cy="40" r="4" fill="#f4d03f" opacity="0.5"/>
+        </symbol>
+
+        <!-- Warning/Danger Icon -->
+        <symbol id="icon-warning" viewBox="0 0 64 64">
+            <path d="M32 8 L56 52 L8 52 Z" fill="#c0392b" stroke="#e74c3c" stroke-width="3"/>
+            <text x="32" y="46" text-anchor="middle" font-size="28" fill="#fff" font-weight="bold">!</text>
+            <circle cx="32" cy="4" r="3" fill="#f4d03f"/>
+        </symbol>
+    </defs>
+</svg>

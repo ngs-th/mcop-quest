@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hero Dashboard - MCOP Quest</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/fantasy-theme.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Crimson Text', Georgia, serif;
+            background: linear-gradient(135deg, #1a0f0a 0%, #2c1810 50%, #1a0f0a 100%);
+            min-height: 100vh;
+            color: #f4e8d0;
+            padding-bottom: 80px;
+        }
+
+        /* Background Pattern */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image:
+                radial-gradient(circle at 20% 30%, rgba(212, 168, 83, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 80% 70%, rgba(192, 57, 43, 0.05) 0%, transparent 40%),
+                url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23d4a853' fill-opacity='0.02'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(180deg, #2c1810 0%, #1a0f0a 100%);
+            border-bottom: 3px solid #8b6914;
+            padding: 15px 20px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+        }
+
+        .header-content {
+            max-width: 800px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-title {
+            font-family: 'Cinzel', serif;
+            font-size: 20px;
+            color: #d4a853;
+        }
+
+        .header-subtitle {
+            font-size: 12px;
+            color: #8b6914;
+            margin-top: 2px;
+        }
+
+        .currency-display {
+            display: flex;
+            gap: 15px;
+        }
+
+        .currency-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 6px 12px;
+            border-radius: 20px;
+            border: 1px solid #5c4018;
+        }
+
+        .currency-icon {
+            font-size: 16px;
+        }
+
+        .currency-value {
+            font-weight: 600;
+            color: #d4a853;
+        }
+
+        /* Main Content */
+        .main-content {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Hero Card */
+        .hero-card {
+            background: linear-gradient(145deg, #4a2e1f 0%, #3d2418 100%);
+            border: 3px solid #8b6914;
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow:
+                inset 0 0 30px rgba(0, 0, 0, 0.4),
+                0 10px 30px rgba(0, 0, 0, 0.5);
+            position: relative;
+        }
+
+        .hero-card::before {
+            content: '◆';
+            position: absolute;
+            top: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: #d4a853;
+            font-size: 20px;
+            background: #2c1810;
+            padding: 0 15px;
+        }
+
+        .hero-header {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .hero-avatar {
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(145deg, #3d2418 0%, #2c1810 100%);
+            border: 3px solid #d4a853;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 50px;
+            box-shadow: 0 0 20px rgba(212, 168, 83, 0.3);
+            position: relative;
+        }
+
+        .hero-avatar::before {
+            content: '';
+            position: absolute;
+            inset: -6px;
+            border: 2px dashed #8b6914;
+            border-radius: 50%;
+            animation: rotate 20s linear infinite;
+        }
+
+        @keyframes rotate {
+            to { transform: rotate(360deg); }
+        }
+
+        .hero-level-badge {
+            position: absolute;
+            bottom: -5px;
+            right: -5px;
+            background: #d4a853;
+            color: #1a0f0a;
+            font-size: 12px;
+            font-weight: bold;
+            padding: 4px 10px;
+            border-radius: 20px;
+            border: 2px solid #2c1810;
+        }
+
+        .hero-info {
+            flex: 1;
+        }
+
+        .hero-name {
+            font-family: 'Cinzel', serif;
+            font-size: 28px;
+            color: #f4e8d0;
+            margin-bottom: 5px;
+        }
+
+        .hero-class {
+            color: #9b59b6;
+            font-size: 16px;
+            margin-bottom: 15px;
+        }
+
+        /* XP Bar */
+        .xp-section {
+            margin-top: 15px;
+        }
+
+        .xp-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .xp-label {
+            color: #8b6914;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        .xp-value {
+            color: #d4a853;
+        }
+
+        .xp-bar {
+            height: 12px;
+            background: #1a0f0a;
+            border: 2px solid #5c4018;
+            border-radius: 6px;
+            overflow: hidden;
+        }
+
+        .xp-fill {
+            height: 100%;
+            width: 85%;
+            background: linear-gradient(90deg, #d4a853 0%, #f4d03f 100%);
+            border-radius: 4px;
+            position: relative;
+        }
+
+        .xp-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 40%;
+            background: linear-gradient(180deg, rgba(255,255,255,0.3), transparent);
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #5c4018;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 12px;
+            border: 1px solid #5c4018;
+        }
+
+        .stat-value {
+            font-family: 'Cinzel', serif;
+            font-size: 24px;
+            color: #d4a853;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: #8b6914;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        /* Section Title */
+        .section-title {
+            font-family: 'Cinzel', serif;
+            font-size: 20px;
+            color: #d4a853;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-title::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: linear-gradient(90deg, #8b6914, transparent);
+        }
+
+        /* Battle Scene */
+        .battle-card {
+            background: linear-gradient(145deg, #3d2418 0%, #2c1810 100%);
+            border: 2px solid #c0392b;
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 25px;
+        }
+
+        .battle-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+            color: #e74c3c;
+        }
+
+        .battle-title {
+            font-family: 'Cinzel', serif;
+            font-size: 16px;
+        }
+
+        .battle-count {
+            background: rgba(192, 57, 43, 0.2);
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            margin-left: auto;
+        }
+
+        .battle-arena {
+            background: linear-gradient(180deg, #1a0f0a 0%, #0d0705 100%);
+            border-radius: 12px;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            min-height: 120px;
+            border: 1px solid #5c4018;
+        }
+
+        .hero-side {
+            text-align: center;
+        }
+
+        .hero-mini {
+            font-size: 50px;
+            animation: float 2s ease-in-out infinite;
+        }
+
+        .monster-side {
+            display: flex;
+            gap: 10px;
+        }
+
+        .monster {
+            text-align: center;
+            animation: shake 2s ease-in-out infinite;
+        }
+
+        .monster:nth-child(2) { animation-delay: 0.3s; }
+        .monster:nth-child(3) { animation-delay: 0.6s; }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-3px) rotate(-2deg); }
+            75% { transform: translateX(3px) rotate(2deg); }
+        }
+
+        .monster-icon {
+            font-size: 40px;
+        }
+
+        .monster-type {
+            font-size: 10px;
+            color: #9b59b6;
+        }
+
+        /* Task List */
+        .task-card {
+            background: linear-gradient(145deg, #3d2418 0%, #2c1810 100%);
+            border: 2px solid #8b6914;
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 25px;
+        }
+
+        .task-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .task-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 15px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+            border: 1px solid #5c4018;
+            transition: all 0.3s ease;
+        }
+
+        .task-item:hover {
+            border-color: #d4a853;
+            background: rgba(212, 168, 83, 0.05);
+        }
+
+        .task-icon {
+            font-size: 20px;
+        }
+
+        .task-info {
+            flex: 1;
+        }
+
+        .task-name {
+            font-size: 15px;
+            color: #f4e8d0;
+            margin-bottom: 2px;
+        }
+
+        .task-meta {
+            font-size: 12px;
+            color: #8b6914;
+        }
+
+        .task-status {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .task-status.doing {
+            background: rgba(243, 156, 18, 0.2);
+            color: #f39c12;
+            border: 1px solid #f39c12;
+        }
+
+        .task-status.pending {
+            background: rgba(127, 140, 141, 0.2);
+            color: #7f8c8d;
+            border: 1px solid #7f8c8d;
+        }
+
+        /* Equipment Section */
+        .equipment-card {
+            background: linear-gradient(145deg, #3d2418 0%, #2c1810 100%);
+            border: 2px solid #8b6914;
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 25px;
+        }
+
+        .equipment-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+        }
+
+        .equip-slot {
+            aspect-ratio: 1;
+            background: rgba(0, 0, 0, 0.3);
+            border: 2px solid #5c4018;
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .equip-slot:hover {
+            border-color: #d4a853;
+            box-shadow: 0 0 15px rgba(212, 168, 83, 0.2);
+        }
+
+        .equip-slot.occupied {
+            border-color: #8b6914;
+            background: rgba(212, 168, 83, 0.05);
+        }
+
+        .equip-icon {
+            font-size: 28px;
+            margin-bottom: 5px;
+        }
+
+        .equip-label {
+            font-size: 10px;
+            color: #8b6914;
+            text-transform: uppercase;
+        }
+
+        .equip-name {
+            font-size: 11px;
+            color: #2ecc71;
+            margin-top: 2px;
+        }
+
+        /* Bottom Navigation */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(180deg, #2c1810 0%, #1a0f0a 100%);
+            border-top: 3px solid #8b6914;
+            box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.5);
+            z-index: 100;
+        }
+
+        .nav-content {
+            max-width: 800px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-around;
+            padding: 10px 0;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+            padding: 8px 20px;
+            color: #5c4018;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .nav-item.active,
+        .nav-item:hover {
+            color: #d4a853;
+        }
+
+        .nav-item.active::before {
+            content: '';
+            position: absolute;
+            top: -13px;
+            width: 40px;
+            height: 3px;
+            background: #d4a853;
+            box-shadow: 0 0 10px rgba(212, 168, 83, 0.5);
+        }
+
+        .nav-icon {
+            font-size: 24px;
+        }
+
+        .nav-label {
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .hero-header {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .hero-avatar {
+                width: 80px;
+                height: 80px;
+                font-size: 40px;
+            }
+
+            .hero-name {
+                font-size: 22px;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .equipment-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .monster-side {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body x-data="heroV2Data()">
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <div>
+                <h1 class="header-title">Hero Dashboard</h1>
+                <p class="header-subtitle">Ken - Warrior</p>
+            </div>
+            <div class="currency-display">
+                <div class="currency-item">
+                    <span class="currency-icon">🪙</span>
+                    <span class="currency-value">2,450</span>
+                </div>
+                <div class="currency-item">
+                    <span class="currency-icon">💎</span>
+                    <span class="currency-value">15</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Hero Card -->
+        <div class="hero-card">
+            <div class="hero-header">
+                <div class="hero-avatar">
+                    ⚔️
+                    <span class="hero-level-badge">Lv.15</span>
+                </div>
+                <div class="hero-info">
+                    <h2 class="hero-name">Ken</h2>
+                    <p class="hero-class">⚔️ Warrior (Backend Dev)</p>
+
+                    <!-- XP Bar -->
+                    <div class="xp-section">
+                        <div class="xp-header">
+                            <span class="xp-label">Experience</span>
+                            <span class="xp-value">850 / 1,000 XP</span>
+                        </div>
+                        <div class="xp-bar">
+                            <div class="xp-fill"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stats Grid -->
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-value">47</div>
+                    <div class="stat-label">Victories</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">2,450</div>
+                    <div class="stat-label">Gold</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">15</div>
+                    <div class="stat-label">Gems</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Battle Scene -->
+        <div class="battle-card">
+            <div class="battle-header">
+                <span>⚔️</span>
+                <span class="battle-title">Currently Fighting</span>
+                <span class="battle-count">3 Minions</span>
+            </div>
+            <div class="battle-arena">
+                <div class="hero-side">
+                    <div class="hero-mini">⚔️</div>
+                </div>
+                <div style="font-size: 24px; color: #8b6914;">VS</div>
+                <div class="monster-side">
+                    <div class="monster">
+                        <div class="monster-icon">👾</div>
+                        <div class="monster-type">API</div>
+                    </div>
+                    <div class="monster">
+                        <div class="monster-icon">👾</div>
+                        <div class="monster-type">API</div>
+                    </div>
+                    <div class="monster">
+                        <div class="monster-icon">👾</div>
+                        <div class="monster-type">FE</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Active Tasks -->
+        <div class="task-card">
+            <h3 class="section-title">⚔️ Active Tasks</h3>
+            <div class="task-list">
+                <div class="task-item">
+                    <span class="task-icon">⚙️</span>
+                    <div class="task-info">
+                        <div class="task-name">JWT Token refresh mechanism</div>
+                        <div class="task-meta">Flow: Login</div>
+                    </div>
+                    <span class="task-status doing">Doing</span>
+                </div>
+                <div class="task-item">
+                    <span class="task-icon">⚙️</span>
+                    <div class="task-info">
+                        <div class="task-name">Password reset API endpoint</div>
+                        <div class="task-meta">Flow: Password Reset</div>
+                    </div>
+                    <span class="task-status doing">Doing</span>
+                </div>
+                <div class="task-item">
+                    <span class="task-icon">💻</span>
+                    <div class="task-info">
+                        <div class="task-name">Connect to auth API</div>
+                        <div class="task-meta">Flow: Login</div>
+                    </div>
+                    <span class="task-status doing">Doing</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Equipment -->
+        <div class="equipment-card">
+            <h3 class="section-title">🛡️ Equipment</h3>
+            <div class="equipment-grid">
+                <div class="equip-slot occupied">
+                    <span class="equip-icon">🪖</span>
+                    <span class="equip-label">Head</span>
+                    <span class="equip-name">Iron Helm</span>
+                </div>
+                <div class="equip-slot occupied">
+                    <span class="equip-icon">🛡️</span>
+                    <span class="equip-label">L.Hand</span>
+                    <span class="equip-name">Wood Shield</span>
+                </div>
+                <div class="equip-slot occupied">
+                    <span class="equip-icon">🛡️</span>
+                    <span class="equip-label">Body</span>
+                    <span class="equip-name">Knight Armor</span>
+                </div>
+                <div class="equip-slot occupied">
+                    <span class="equip-icon">⚔️</span>
+                    <span class="equip-label">R.Hand</span>
+                    <span class="equip-name">Steel Sword</span>
+                </div>
+                <div class="equip-slot occupied">
+                    <span class="equip-icon">👖</span>
+                    <span class="equip-label">Legs</span>
+                    <span class="equip-name">Iron Greaves</span>
+                </div>
+                <div class="equip-slot occupied">
+                    <span class="equip-icon">👢</span>
+                    <span class="equip-label">Feet</span>
+                    <span class="equip-name">Leather Boots</span>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Bottom Navigation -->
+    <nav class="bottom-nav">
+        <div class="nav-content">
+            <a href="hero-v2.html" class="nav-item active">
+                <span class="nav-icon">⚔️</span>
+                <span class="nav-label">Hero</span>
+            </a>
+            <a href="#" class="nav-item">
+                <span class="nav-icon">👥</span>
+                <span class="nav-label">Party</span>
+            </a>
+            <a href="#" class="nav-item">
+                <span class="nav-icon">🗺️</span>
+                <span class="nav-label">World</span>
+            </a>
+            <a href="#" class="nav-item">
+                <span class="nav-icon">🛒</span>
+                <span class="nav-label">Shop</span>
+            </a>
+        </div>
+    </nav>
+
+    <script>
+        function heroV2Data() {
+            return {
+                // Hero data
+            }
+        }
+    </script>
+</body>
+</html>
