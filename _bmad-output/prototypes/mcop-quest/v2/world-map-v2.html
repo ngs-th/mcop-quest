@@ -1,365 +1,638 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MCOP Quest - World Map</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=VT323&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --bg-parchment: #e8dcc0;
-            --bg-parchment-dark: #d4c8a8;
-            --border-gold: #c9a227;
-            --border-gold-light: #e8d478;
-            --text-dark: #2c2416;
-            --accent-blue: #4a90d9;
-        }
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>MCOP Quest - World Map</title>
+        <script src="https://cdn.tailwindcss.com"></script>
+        <link
+            href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=VT323&display=swap"
+            rel="stylesheet"
+        />
+        <style>
+            :root {
+                --bg-parchment: #e8dcc0;
+                --bg-parchment-dark: #d4c8a8;
+                --border-gold: #c9a227;
+                --text-dark: #2c2416;
+            }
 
-        body {
-            font-family: 'VT323', monospace;
-            background: #1a1510;
-            color: var(--text-dark);
-        }
+            body {
+                font-family: "VT323", monospace;
+                background: #1a1510;
+                color: var(--text-dark);
+            }
 
-        .font-fantasy {
-            font-family: 'Cinzel', serif;
-        }
+            .font-fantasy {
+                font-family: "Cinzel", serif;
+            }
 
-        /* Golden Frame Border */
-        .golden-frame {
-            border: 8px solid var(--border-gold);
-            border-image: linear-gradient(135deg,
-                #bf953f 0%,
-                #fcf6ba 25%,
-                #b38728 50%,
-                #fbf5b7 75%,
-                #aa771c 100%) 1;
-            box-shadow:
-                inset 0 0 30px rgba(0,0,0,0.5),
-                0 0 20px rgba(201, 162, 39, 0.3);
-        }
+            /* Golden Frame Border */
+            .golden-frame {
+                border: 8px solid var(--border-gold);
+                border-image: linear-gradient(
+                        135deg,
+                        #bf953f 0%,
+                        #fcf6ba 25%,
+                        #b38728 50%,
+                        #fbf5b7 75%,
+                        #aa771c 100%
+                    )
+                    1;
+                box-shadow:
+                    inset 0 0 30px rgba(0, 0, 0, 0.5),
+                    0 0 20px rgba(201, 162, 39, 0.3);
+            }
 
-        /* Parchment Background */
-        .parchment {
-            background:
-                linear-gradient(135deg, rgba(232,220,192,0.9) 0%, rgba(212,200,168,0.95) 100%),
-                url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%' height='100%' filter='url(%23noise)'/%3E%3C/svg%3E");
-            position: relative;
-        }
+            /* Parchment Background */
+            .parchment {
+                background: linear-gradient(
+                    135deg,
+                    #e8dcc0 0%,
+                    #d4c8a8 50%,
+                    #c9b896 100%
+                );
+                position: relative;
+            }
 
-        .parchment::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: url("data:image/svg+xml,%3Csvg width='100' height='100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0,0 L100,0 L100,100 L0,100 Z' fill='none' stroke='%23c9a227' stroke-width='0.5' opacity='0.3'/%3E%3C/svg%3E");
-            pointer-events: none;
-        }
+            .parchment::before {
+                content: "";
+                position: absolute;
+                inset: 0;
+                background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%' height='100%' filter='url(%23noise)' opacity='0.15'/%3E%3C/svg%3E");
+                opacity: 0.4;
+                pointer-events: none;
+            }
 
-        /* Sidebar Button Styles */
-        .sidebar-btn {
-            background: linear-gradient(135deg, #5a4a3a 0%, #3e3226 100%);
-            border: 3px solid var(--border-gold);
-            transition: all 0.2s;
-            position: relative;
-            overflow: hidden;
-        }
+            /* Water areas */
+            .water-area {
+                background: linear-gradient(135deg, #4a90a4 0%, #2d5a6b 100%);
+                border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%;
+                position: relative;
+            }
 
-        .sidebar-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(201, 162, 39, 0.4);
-        }
+            .water-area::after {
+                content: "";
+                position: absolute;
+                inset: 10%;
+                background: repeating-linear-gradient(
+                    0deg,
+                    transparent,
+                    transparent 10px,
+                    rgba(255, 255, 255, 0.1) 10px,
+                    rgba(255, 255, 255, 0.1) 12px
+                );
+                border-radius: inherit;
+            }
 
-        .sidebar-btn.active {
-            background: linear-gradient(135deg, #7a6a5a 0%, #5a4a3a 100%);
-            box-shadow: inset 0 2px 8px rgba(0,0,0,0.4);
-        }
+            /* Sidebar Button Styles */
+            .sidebar-btn {
+                background: linear-gradient(135deg, #4a4035 0%, #2d2820 100%);
+                border: 3px solid var(--border-gold);
+                transition: all 0.2s;
+            }
 
-        /* Map Location Marker */
-        .location-marker {
-            position: absolute;
-            transform: translate(-50%, -50%);
-            cursor: pointer;
-            transition: transform 0.2s;
-        }
+            .sidebar-btn:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 4px 12px rgba(201, 162, 39, 0.4);
+            }
 
-        .location-marker:hover {
-            transform: translate(-50%, -50%) scale(1.1);
-            z-index: 10;
-        }
+            .sidebar-btn.active {
+                background: linear-gradient(135deg, #6a6055 0%, #4a4035 100%);
+                box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.4);
+            }
 
-        /* Health Bar */
-        .health-bar {
-            position: absolute;
-            width: 120px;
-            height: 20px;
-            transform: translateX(-50%);
-        }
+            /* Map Location Marker */
+            .location-marker {
+                position: absolute;
+                transform: translate(-50%, -50%);
+                cursor: pointer;
+                transition: all 0.2s;
+                z-index: 10;
+            }
 
-        .health-bar-bg {
-            width: 100%;
-            height: 100%;
-            background: #3a3020;
-            border-radius: 4px;
-            border: 2px solid #5a4a3a;
-            overflow: hidden;
-        }
+            .location-marker:hover {
+                transform: translate(-50%, -60%) scale(1.05);
+                z-index: 20;
+                filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.3));
+            }
 
-        .health-bar-fill {
-            height: 100%;
-            border-radius: 2px;
-            transition: width 0.3s;
-        }
+            /* Health Bar */
+            .health-bar {
+                position: absolute;
+                width: 100px;
+                height: 14px;
+                left: 50%;
+                transform: translateX(-50%);
+                top: -20px;
+            }
 
-        .health-full { background: linear-gradient(180deg, #66bb6a 0%, #43a047 100%); }
-        .health-stable { background: linear-gradient(180deg, #42a5f5 0%, #1e88e5 100%); }
-        .health-medium { background: linear-gradient(180deg, #ffca28 0%, #ffb300 100%); }
-        .health-low { background: linear-gradient(180deg, #ef5350 0%, #d32f2f 100%); }
+            .health-bar-bg {
+                width: 100%;
+                height: 100%;
+                background: #2a2015;
+                border-radius: 3px;
+                border: 1px solid #5a4a3a;
+                overflow: hidden;
+            }
 
-        /* Banner Label */
-        .banner-label {
-            background: linear-gradient(135deg, #5d4037 0%, #3e2723 100%);
-            border: 2px solid var(--border-gold);
-            padding: 4px 16px;
-            font-size: 11px;
-            letter-spacing: 0.5px;
-            color: #e8d478;
-            clip-path: polygon(10% 0, 90% 0, 100% 50%, 90% 100%, 10% 100%, 0% 50%);
-        }
+            .health-bar-fill {
+                height: 100%;
+                border-radius: 2px;
+            }
 
-        /* Connection Arrows */
-        .connection-arrow {
-            position: absolute;
-            width: 32px;
-            height: 32px;
-            opacity: 0.8;
-        }
+            .health-full {
+                background: linear-gradient(180deg, #5cb85c 0%, #4cae4c 100%);
+            }
+            .health-stable {
+                background: linear-gradient(180deg, #5bc0de 0%, #46b8da 100%);
+            }
+            .health-medium {
+                background: linear-gradient(180deg, #f0ad4e 0%, #ec971f 100%);
+            }
+            .health-low {
+                background: linear-gradient(180deg, #d9534f 0%, #c9302c 100%);
+            }
 
-        /* Resource Counter */
-        .resource-counter {
-            background: linear-gradient(135deg, #2c2416 0%, #1a1510 100%);
-            border: 2px solid var(--border-gold);
-            padding: 4px 12px;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
+            /* Banner Label */
+            .banner-label {
+                position: absolute;
+                background: linear-gradient(135deg, #5d4037 0%, #3e2723 100%);
+                border: 2px solid var(--border-gold);
+                padding: 4px 12px;
+                font-size: 10px;
+                letter-spacing: 0.5px;
+                color: #e8d478;
+                white-space: nowrap;
+                left: 50%;
+                transform: translateX(-50%);
+                clip-path: polygon(
+                    8% 0,
+                    92% 0,
+                    100% 50%,
+                    92% 100%,
+                    8% 100%,
+                    0% 50%
+                );
+                text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+            }
 
-        /* Isometric Transform Helper */
-        .iso-container {
-            transform: rotateX(60deg) rotateZ(-45deg);
-            transform-style: preserve-3d;
-        }
+            /* Pixel Art */
+            .pixel-art {
+                image-rendering: pixelated;
+                image-rendering: -moz-crisp-edges;
+                image-rendering: crisp-edges;
+            }
 
-        /* Pixel Art Scaling */
-        .pixel-art {
-            image-rendering: pixelated;
-            image-rendering: -moz-crisp-edges;
-            image-rendering: crisp-edges;
-        }
-    </style>
-</head>
-<body class="min-h-screen p-4">
-    <div class="max-w-7xl mx-auto">
-        <!-- Header -->
-        <div class="flex items-center justify-between mb-4 px-4">
-            <h1 class="font-fantasy text-4xl font-bold text-amber-400 drop-shadow-lg">
-                MCOP Quest
-            </h1>
-            <div class="flex gap-4">
-                <div class="resource-counter rounded-lg">
-                    <img src="assets-pixels/ui/coin.png" alt="Gold" class="w-5 h-5 pixel-art">
-                    <span class="text-amber-300 text-lg">2,450</span>
+            /* Resource Counter */
+            .resource-counter {
+                background: linear-gradient(135deg, #2c2416 0%, #1a1510 100%);
+                border: 2px solid var(--border-gold);
+                padding: 4px 12px;
+                display: flex;
+                align-items: center;
+                gap: 6px;
+            }
+
+            /* Glow effects */
+            .glow-green {
+                filter: drop-shadow(0 0 10px rgba(76, 175, 80, 0.5));
+            }
+            .glow-blue {
+                filter: drop-shadow(0 0 10px rgba(33, 150, 243, 0.5));
+            }
+            .glow-purple {
+                filter: drop-shadow(0 0 10px rgba(156, 39, 176, 0.5));
+            }
+            .glow-red {
+                filter: drop-shadow(0 0 15px rgba(244, 67, 54, 0.6));
+            }
+        </style>
+    </head>
+    <body class="min-h-screen p-4">
+        <div class="max-w-7xl mx-auto">
+            <!-- Header -->
+            <div class="flex items-center justify-between mb-4 px-4">
+                <h1
+                    class="font-fantasy text-4xl font-bold text-amber-400 drop-shadow-lg"
+                    style="text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5)"
+                >
+                    MCOP Quest
+                </h1>
+                <div class="flex gap-4">
+                    <div class="resource-counter rounded-lg">
+                        <img
+                            src="assets-pixels/ui/coin.png"
+                            alt="Gold"
+                            class="w-5 h-5 pixel-art"
+                        />
+                        <span class="text-amber-300 text-lg">2,450</span>
+                    </div>
+                    <div class="resource-counter rounded-lg">
+                        <img
+                            src="assets-pixels/ui/gem.png"
+                            alt="Gems"
+                            class="w-5 h-5 pixel-art"
+                        />
+                        <span class="text-cyan-300 text-lg">15</span>
+                    </div>
                 </div>
-                <div class="resource-counter rounded-lg">
-                    <img src="assets-pixels/ui/gem.png" alt="Gems" class="w-5 h-5 pixel-art">
-                    <span class="text-cyan-300 text-lg">15</span>
+            </div>
+
+            <!-- Main Game Frame -->
+            <div class="golden-frame rounded-lg overflow-hidden">
+                <div class="parchment min-h-[720px] flex">
+                    <!-- Left Sidebar -->
+                    <div
+                        class="w-20 bg-gradient-to-b from-amber-900/40 via-amber-800/30 to-amber-950/40 p-2 flex flex-col gap-3 border-r-4 border-amber-700/50"
+                    >
+                        <!-- Compass -->
+                        <div
+                            class="w-14 h-14 mx-auto mb-2 bg-amber-100/20 rounded-full p-1"
+                        >
+                            <img
+                                src="assets-pixels/ui/compass.png"
+                                alt="Compass"
+                                class="w-full h-full pixel-art"
+                            />
+                        </div>
+
+                        <!-- World Button -->
+                        <button
+                            class="sidebar-btn rounded-lg p-2 flex flex-col items-center gap-1 active"
+                        >
+                            <div
+                                class="w-10 h-10 rounded-full bg-blue-500/30 border-2 border-blue-400 flex items-center justify-center overflow-hidden"
+                            >
+                                <img
+                                    src="assets-pixels/terrain/grass.png"
+                                    alt="World"
+                                    class="w-full h-full pixel-art opacity-80"
+                                />
+                            </div>
+                            <span
+                                class="text-amber-200 text-[10px] font-fantasy"
+                                >WORLD</span
+                            >
+                        </button>
+
+                        <!-- Party Button -->
+                        <button
+                            class="sidebar-btn rounded-lg p-2 flex flex-col items-center gap-1"
+                        >
+                            <div
+                                class="w-10 h-10 rounded-full bg-purple-500/30 border-2 border-purple-400 flex items-center justify-center overflow-hidden"
+                            >
+                                <img
+                                    src="assets-pixels/characters/party.png"
+                                    alt="Party"
+                                    class="w-full h-full pixel-art"
+                                />
+                            </div>
+                            <span
+                                class="text-amber-200 text-[10px] font-fantasy"
+                                >PARTY</span
+                            >
+                        </button>
+
+                        <!-- Hero Button -->
+                        <button
+                            class="sidebar-btn rounded-lg p-2 flex flex-col items-center gap-1"
+                        >
+                            <div
+                                class="w-10 h-10 rounded-full bg-amber-500/30 border-2 border-amber-400 flex items-center justify-center overflow-hidden"
+                            >
+                                <img
+                                    src="assets-pixels/characters/warrior.png"
+                                    alt="Hero"
+                                    class="w-full h-full pixel-art"
+                                />
+                            </div>
+                            <span
+                                class="text-amber-200 text-[10px] font-fantasy"
+                                >HERO</span
+                            >
+                        </button>
+                    </div>
+
+                    <!-- Map Area -->
+                    <div class="flex-1 relative" style="min-height: 720px">
+                        <!-- Water Areas (Background) -->
+                        <div
+                            class="water-area absolute opacity-80"
+                            style="left: 5%; top: 5%; width: 25%; height: 35%"
+                        ></div>
+                        <div
+                            class="water-area absolute opacity-70"
+                            style="
+                                right: 8%;
+                                bottom: 15%;
+                                width: 30%;
+                                height: 40%;
+                            "
+                        ></div>
+
+                        <!-- Crystal Island (Top Left - Water area) -->
+                        <div
+                            class="location-marker"
+                            style="left: 12%; top: 18%"
+                        >
+                            <img
+                                src="assets-pixels/terrain/island.png"
+                                alt="Crystal Island"
+                                class="w-20 h-14 pixel-art glow-blue"
+                            />
+                        </div>
+
+                        <!-- Mountain (Top Left) -->
+                        <div class="location-marker" style="left: 5%; top: 10%">
+                            <img
+                                src="assets-pixels/terrain/mountain.png"
+                                alt="Mountain"
+                                class="w-24 h-20 pixel-art"
+                            />
+                        </div>
+
+                        <!-- Bridge -->
+                        <div class="absolute" style="left: 22%; top: 28%">
+                            <img
+                                src="assets-pixels/terrain/bridge.png"
+                                alt="Bridge"
+                                class="w-16 h-8 pixel-art rotate-12"
+                            />
+                        </div>
+
+                        <!-- ==================== MAIN CASTLE (Center) ==================== -->
+                        <div
+                            class="location-marker"
+                            style="left: 42%; top: 32%"
+                        >
+                            <!-- Health Bar Above -->
+                            <div class="health-bar">
+                                <div class="health-bar-bg">
+                                    <div
+                                        class="health-bar-fill health-full"
+                                        style="width: 100%"
+                                    ></div>
+                                </div>
+                            </div>
+                            <!-- Banner -->
+                            <div class="banner-label" style="top: -42px">
+                                MEMBER CITY SYSTEM MODULE — HEALTH: FULL
+                            </div>
+                            <!-- Building -->
+                            <img
+                                src="assets-pixels/structures/main_castle.png"
+                                alt="Main Castle"
+                                class="w-36 h-32 pixel-art glow-green drop-shadow-2xl"
+                            />
+                        </div>
+
+                        <!-- Characters around castle -->
+                        <div class="absolute" style="left: 45%; top: 42%">
+                            <img
+                                src="assets-pixels/characters/map_char.png"
+                                alt="Player"
+                                class="w-5 h-5 pixel-art"
+                            />
+                        </div>
+                        <div class="absolute" style="left: 48%; top: 44%">
+                            <img
+                                src="assets-pixels/characters/map_char.png"
+                                alt="Player"
+                                class="w-5 h-5 pixel-art"
+                            />
+                        </div>
+                        <div class="absolute" style="left: 40%; top: 45%">
+                            <img
+                                src="assets-pixels/characters/map_char.png"
+                                alt="Player"
+                                class="w-5 h-5 pixel-art"
+                            />
+                        </div>
+
+                        <!-- Arrow: Castle -> Task Tower -->
+                        <div class="absolute" style="left: 52%; top: 25%">
+                            <img
+                                src="assets-pixels/ui/arrow_right.png"
+                                alt="Connection"
+                                class="w-6 h-6 pixel-art rotate-45"
+                            />
+                        </div>
+
+                        <!-- ==================== TASK TOWER (Top Right) ==================== -->
+                        <div
+                            class="location-marker"
+                            style="left: 70%; top: 22%"
+                        >
+                            <div class="health-bar">
+                                <div class="health-bar-bg">
+                                    <div
+                                        class="health-bar-fill health-stable"
+                                        style="width: 85%"
+                                    ></div>
+                                </div>
+                            </div>
+                            <div class="banner-label" style="top: -38px">
+                                TASK TOWER
+                            </div>
+                            <img
+                                src="assets-pixels/structures/task_tower.png"
+                                alt="Task Tower"
+                                class="w-28 h-36 pixel-art glow-blue drop-shadow-xl"
+                            />
+                            <!-- Health Label -->
+                            <div
+                                class="absolute -right-16 top-8 text-[10px] text-blue-300 font-bold"
+                            >
+                                HEALTH: STABLE
+                            </div>
+                        </div>
+
+                        <!-- Arrow: Task Tower -> Bug Bastion -->
+                        <div class="absolute" style="left: 78%; top: 38%">
+                            <img
+                                src="assets-pixels/ui/arrow_down.png"
+                                alt="Connection"
+                                class="w-5 h-5 pixel-art"
+                            />
+                        </div>
+
+                        <!-- ==================== BUG BASTION (Right Middle) ==================== -->
+                        <div
+                            class="location-marker"
+                            style="left: 82%; top: 48%"
+                        >
+                            <div class="banner-label" style="top: -28px">
+                                BUG BASTION
+                            </div>
+                            <img
+                                src="assets-pixels/structures/bug_bastion.png"
+                                alt="Bug Bastion"
+                                class="w-28 h-26 pixel-art drop-shadow-lg"
+                            />
+                        </div>
+
+                        <!-- Arrow: Castle -> Alchemy Lab -->
+                        <div class="absolute" style="left: 30%; top: 38%">
+                            <img
+                                src="assets-pixels/ui/arrow_left.png"
+                                alt="Connection"
+                                class="w-5 h-5 pixel-art -rotate-45"
+                            />
+                        </div>
+
+                        <!-- ==================== ANALYTICS ALCHEMY LAB (Left) ==================== -->
+                        <div
+                            class="location-marker"
+                            style="left: 22%; top: 42%"
+                        >
+                            <div class="health-bar">
+                                <div class="health-bar-bg">
+                                    <div
+                                        class="health-bar-fill health-stable"
+                                        style="width: 75%"
+                                    ></div>
+                                </div>
+                            </div>
+                            <div
+                                class="banner-label"
+                                style="top: -38px; font-size: 9px"
+                            >
+                                ANALYTICS ALCHEMY LAB
+                            </div>
+                            <img
+                                src="assets-pixels/structures/alchemy_lab.png"
+                                alt="Alchemy Lab"
+                                class="w-24 h-24 pixel-art glow-purple drop-shadow-lg"
+                            />
+                        </div>
+
+                        <!-- Arrow: Alchemy Lab -> Community Commons -->
+                        <div class="absolute" style="left: 32%; top: 55%">
+                            <img
+                                src="assets-pixels/ui/arrow_down.png"
+                                alt="Connection"
+                                class="w-5 h-5 pixel-art rotate-45"
+                            />
+                        </div>
+
+                        <!-- ==================== COMMUNITY COMMONS (Bottom Center) ==================== -->
+                        <div
+                            class="location-marker"
+                            style="left: 42%; top: 72%"
+                        >
+                            <img
+                                src="assets-pixels/structures/community_commons.png"
+                                alt="Community Commons"
+                                class="w-24 h-20 pixel-art drop-shadow-lg"
+                            />
+                            <div class="banner-label" style="bottom: -22px">
+                                COMMUNITY COMMONS
+                            </div>
+                        </div>
+
+                        <!-- Arrow: Community Commons -> Payment Fortress -->
+                        <div class="absolute" style="left: 55%; top: 68%">
+                            <img
+                                src="assets-pixels/ui/arrow_right.png"
+                                alt="Connection"
+                                class="w-5 h-5 pixel-art -rotate-12"
+                            />
+                        </div>
+
+                        <!-- ==================== PAYMENT FORTRESS (Bottom Right) ==================== -->
+                        <div
+                            class="location-marker"
+                            style="left: 72%; top: 68%"
+                        >
+                            <div class="health-bar">
+                                <div class="health-bar-bg">
+                                    <div
+                                        class="health-bar-fill health-low"
+                                        style="width: 25%"
+                                    ></div>
+                                </div>
+                            </div>
+                            <div
+                                class="banner-label"
+                                style="
+                                    top: -48px;
+                                    font-size: 8px;
+                                    line-height: 1.2;
+                                    padding: 6px 16px;
+                                "
+                            >
+                                PAYMENT FORTRESS: BILLING & PAYMENTS<br />HEALTH:
+                                LOW (FOG OF WAR)
+                            </div>
+
+                            <!-- Warning Icon -->
+                            <div
+                                class="absolute -right-12 -top-4 animate-pulse"
+                            >
+                                <img
+                                    src="assets-pixels/ui/warning.png"
+                                    alt="Warning"
+                                    class="w-10 h-10 pixel-art"
+                                />
+                            </div>
+
+                            <img
+                                src="assets-pixels/structures/payment_fortress.png"
+                                alt="Payment Fortress"
+                                class="w-32 h-36 pixel-art glow-red drop-shadow-2xl"
+                            />
+
+                            <!-- Storm cloud effect -->
+                            <div
+                                class="absolute -top-4 left-1/2 -translate-x-1/2 w-28 h-12 bg-purple-900/50 rounded-full blur-xl"
+                            ></div>
+                            <div
+                                class="absolute -top-2 left-1/2 -translate-x-1/2 w-20 h-8 bg-purple-800/40 rounded-full blur-lg"
+                            ></div>
+                        </div>
+
+                        <!-- Arrow: Bug Bastion -> Payment Fortress -->
+                        <div class="absolute" style="left: 78%; top: 58%">
+                            <img
+                                src="assets-pixels/ui/arrow_down.png"
+                                alt="Connection"
+                                class="w-5 h-5 pixel-art"
+                            />
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bottom Info Bar -->
+            <div
+                class="mt-4 flex items-center justify-between px-4 py-3 bg-gradient-to-r from-amber-900/60 via-amber-800/40 to-amber-900/60 rounded-lg border border-amber-700/50"
+            >
+                <div class="flex items-center gap-6">
+                    <span class="text-amber-200"
+                        >Location:
+                        <span class="text-white font-bold"
+                            >World Map</span
+                        ></span
+                    >
+                    <span class="text-amber-600">|</span>
+                    <span class="text-amber-200"
+                        >Active Tasks:
+                        <span class="text-green-400 font-bold">5</span></span
+                    >
+                </div>
+                <div class="flex items-center gap-2">
+                    <span class="text-amber-300 text-sm"
+                        >Select a location to view tasks</span
+                    >
+                    <img
+                        src="assets-pixels/ui/arrow_right.png"
+                        alt="Hint"
+                        class="w-4 h-4 pixel-art opacity-60"
+                    />
                 </div>
             </div>
         </div>
-
-        <!-- Main Game Frame -->
-        <div class="golden-frame rounded-lg overflow-hidden">
-            <div class="parchment min-h-[700px] flex">
-                <!-- Left Sidebar -->
-                <div class="w-24 bg-gradient-to-b from-amber-900/20 to-amber-950/30 p-2 flex flex-col gap-3 border-r-4 border-amber-700/50">
-                    <!-- Compass -->
-                    <div class="w-16 h-16 mx-auto mb-2">
-                        <img src="assets-pixels/ui/compass.png" alt="Compass" class="w-full h-full pixel-art">
-                    </div>
-
-                    <!-- World Button -->
-                    <button class="sidebar-btn rounded-lg p-2 flex flex-col items-center gap-1 active">
-                        <div class="w-10 h-10 rounded-full bg-blue-500/30 border-2 border-blue-400 flex items-center justify-center">
-                            <span class="text-2xl">🌍</span>
-                        </div>
-                        <span class="text-amber-200 text-xs font-fantasy">WORLD</span>
-                    </button>
-
-                    <!-- Party Button -->
-                    <button class="sidebar-btn rounded-lg p-2 flex flex-col items-center gap-1">
-                        <div class="w-10 h-10 rounded-full bg-purple-500/30 border-2 border-purple-400 flex items-center justify-center">
-                            <img src="assets-pixels/characters/party.png" alt="Party" class="w-8 h-8 pixel-art">
-                        </div>
-                        <span class="text-amber-200 text-xs font-fantasy">PARTY</span>
-                    </button>
-
-                    <!-- Hero Button -->
-                    <button class="sidebar-btn rounded-lg p-2 flex flex-col items-center gap-1">
-                        <div class="w-10 h-10 rounded-full bg-amber-500/30 border-2 border-amber-400 flex items-center justify-center overflow-hidden">
-                            <img src="assets-pixels/characters/warrior.png" alt="Hero" class="w-8 h-8 pixel-art">
-                        </div>
-                        <span class="text-amber-200 text-xs font-fantasy">HERO</span>
-                    </button>
-                </div>
-
-                <!-- Map Area -->
-                <div class="flex-1 relative p-4" style="min-height: 680px;">
-                    <!-- Background Terrain Grid -->
-                    <div class="absolute inset-4 opacity-30"
-                         style="background-image: url('assets-pixels/terrain/grass.png'); background-size: 64px;">
-                    </div>
-
-                    <!-- Water Areas -->
-                    <div class="absolute top-20 left-20 w-48 h-32 bg-blue-400/40 rounded-full blur-xl"></div>
-                    <div class="absolute bottom-32 right-32 w-64 h-48 bg-blue-400/30 rounded-full blur-xl"></div>
-
-                    <!-- Crystal Island (Top Left) -->
-                    <div class="location-marker" style="left: 15%; top: 20%;">
-                        <img src="assets-pixels/terrain/island.png" alt="Crystal Island" class="w-24 h-16 pixel-art">
-                    </div>
-
-                    <!-- Mountain (Top Left area) -->
-                    <div class="location-marker" style="left: 8%; top: 15%;">
-                        <img src="assets-pixels/terrain/mountain.png" alt="Mountain" class="w-32 h-24 pixel-art">
-                    </div>
-
-                    <!-- MAIN CASTLE - Member City System Module (Center Top) -->
-                    <div class="location-marker" style="left: 50%; top: 35%;">
-                        <!-- Health Bar -->
-                        <div class="health-bar" style="top: -30px; left: 50%;">
-                            <div class="health-bar-bg">
-                                <div class="health-bar-fill health-full" style="width: 100%;"></div>
-                            </div>
-                        </div>
-                        <!-- Banner -->
-                        <div class="banner-label absolute -top-14 left-1/2 transform -translate-x-1/2 whitespace-nowrap">
-                            MEMBER CITY SYSTEM MODULE - HEALTH: FULL
-                        </div>
-                        <!-- Building -->
-                        <img src="assets-pixels/structures/main_castle.png" alt="Main Castle" class="w-40 h-36 pixel-art drop-shadow-2xl">
-                    </div>
-
-                    <!-- TASK TOWER (Top Right) -->
-                    <div class="location-marker" style="left: 75%; top: 25%;">
-                        <div class="health-bar" style="top: -30px; left: 50%;">
-                            <div class="health-bar-bg">
-                                <div class="health-bar-fill health-stable" style="width: 80%;"></div>
-                            </div>
-                        </div>
-                        <div class="banner-label absolute -top-10 left-1/2 transform -translate-x-1/2">
-                            TASK TOWER
-                        </div>
-                        <img src="assets-pixels/structures/task_tower.png" alt="Task Tower" class="w-32 h-40 pixel-art">
-                        <div class="absolute -right-8 top-4 text-xs text-blue-300 font-bold">HEALTH: STABLE</div>
-
-                        <!-- Connection Arrow to Main Castle -->
-                        <img src="assets-pixels/ui/arrow_left.png" alt="Connection" class="absolute -left-12 top-16 w-8 h-8">
-                    </div>
-
-                    <!-- BUG BASTION (Right) -->
-                    <div class="location-marker" style="left: 82%; top: 45%;">
-                        <div class="banner-label absolute -top-8 left-1/2 transform -translate-x-1/2">
-                            BUG BASTION
-                        </div>
-                        <img src="assets-pixels/structures/bug_bastion.png" alt="Bug Bastion" class="w-32 h-30 pixel-art">
-
-                        <!-- Arrow to Task Tower -->
-                        <img src="assets-pixels/ui/arrow_up.png" alt="Connection" class="absolute -top-8 left-8 w-6 h-6">
-                    </div>
-
-                    <!-- ANALYTICS ALCHEMY LAB (Bottom Left) -->
-                    <div class="location-marker" style="left: 25%; top: 60%;">
-                        <div class="health-bar" style="top: -25px; left: 50%;">
-                            <div class="health-bar-bg">
-                                <div class="health-bar-fill health-stable" style="width: 70%;"></div>
-                            </div>
-                        </div>
-                        <div class="banner-label absolute -top-10 left-1/2 transform -translate-x-1/2 whitespace-nowrap text-[10px]">
-                            ANALYTICS ALCHEMY LAB
-                        </div>
-                        <img src="assets-pixels/structures/alchemy_lab.png" alt="Alchemy Lab" class="w-28 h-28 pixel-art">
-
-                        <!-- Connection Arrow -->
-                        <img src="assets-pixels/ui/arrow_right.png" alt="Connection" class="absolute -right-4 top-8 w-6 h-6">
-                    </div>
-
-                    <!-- PAYMENT FORTRESS (Bottom Right) -->
-                    <div class="location-marker" style="left: 70%; top: 70%;">
-                        <div class="health-bar" style="top: -25px; left: 50%;">
-                            <div class="health-bar-bg">
-                                <div class="health-bar-fill health-low" style="width: 30%;"></div>
-                            </div>
-                        </div>
-                        <div class="banner-label absolute -top-16 left-1/2 transform -translate-x-1/2 whitespace-nowrap text-[9px]">
-                            PAYMENT FORTRESS: BILLING & PAYMENTS<br>HEALTH: LOW (FOG OF WAR)
-                        </div>
-
-                        <!-- Warning Icon -->
-                        <div class="absolute -right-12 -top-4">
-                            <img src="assets-pixels/ui/warning.png" alt="Warning" class="w-10 h-10 pixel-art">
-                        </div>
-
-                        <img src="assets-pixels/structures/payment_fortress.png" alt="Payment Fortress" class="w-36 h-40 pixel-art">
-
-                        <!-- Storm Cloud Effect -->
-                        <div class="absolute -top-8 left-0 w-full h-12 bg-purple-900/40 rounded-full blur-lg"></div>
-                    </div>
-
-                    <!-- COMMUNITY COMMONS (Bottom Center) -->
-                    <div class="location-marker" style="left: 45%; top: 75%;">
-                        <img src="assets-pixels/structures/community_commons.png" alt="Community Commons" class="w-28 h-24 pixel-art">
-                        <div class="banner-label absolute -bottom-6 left-1/2 transform -translate-x-1/2 text-[10px]">
-                            COMMUNITY COMMONS
-                        </div>
-
-                        <!-- Arrow to Payment Fortress -->
-                        <img src="assets-pixels/ui/arrow_right.png" alt="Connection" class="absolute -right-8 top-4 w-6 h-6">
-                    </div>
-
-                    <!-- Small Characters on Map -->
-                    <div class="absolute" style="left: 52%; top: 42%;">
-                        <img src="assets-pixels/characters/map_char.png" alt="Player" class="w-6 h-6 pixel-art">
-                    </div>
-                    <div class="absolute" style="left: 55%; top: 45%;">
-                        <img src="assets-pixels/characters/map_char.png" alt="Player" class="w-6 h-6 pixel-art">
-                    </div>
-                    <div class="absolute" style="left: 48%; top: 50%;">
-                        <img src="assets-pixels/characters/map_char.png" alt="Player" class="w-6 h-6 pixel-art">
-                    </div>
-
-                    <!-- Connection Lines (Decorative) -->
-                    <svg class="absolute inset-0 pointer-events-none" style="width: 100%; height: 100%;">
-                        <!-- Paths between locations -->
-                        <path d="M 350 240 Q 400 200 450 180" stroke="#4ade80" stroke-width="2" fill="none" opacity="0.5"/>
-                        <path d="M 550 280 Q 600 300 620 350" stroke="#60a5fa" stroke-width="2" fill="none" opacity="0.5"/>
-                    </svg>
-                </div>
-            </div>
-        </div>
-
-        <!-- Bottom Info Bar -->
-        <div class="mt-4 flex items-center justify-between px-4 py-2 bg-gradient-to-r from-amber-900/40 via-amber-800/30 to-amber-900/40 rounded-lg border border-amber-700/50">
-            <div class="flex items-center gap-4">
-                <span class="text-amber-200 text-sm">Location: <span class="text-white">World Map</span></span>
-                <span class="text-amber-600">|</span>
-                <span class="text-amber-200 text-sm">Active Tasks: <span class="text-green-400">5</span></span>
-            </div>
-            <div class="flex items-center gap-2">
-                <span class="text-amber-300 text-xs">Select a location to view tasks</span>
-                <img src="assets-pixels/ui/arrow_right.png" alt="Hint" class="w-4 h-4 pixel-art opacity-50">
-            </div>
-        </div>
-    </div>
-</body>
+    </body>
 </html>
