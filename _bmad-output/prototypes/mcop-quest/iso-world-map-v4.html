@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MCOP Quest - V4 Constructed Map</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            background-color: #2c3e50;
+            overflow: hidden;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .viewport {
+            position: relative;
+            width: 1200px;
+            height: 900px;
+            /* Debug border/background to see canvas */
+            /* background: rgba(0,0,0,0.2); */
+        }
+
+        /* --- SPRITE SYSTEM --- */
+        .sprite {
+            position: absolute;
+            background-image: url('../../public/images/iso-sprites.png');
+            background-repeat: no-repeat;
+            pointer-events: auto;
+            transition: transform 0.2s ease-out;
+            cursor: pointer;
+        }
+
+        .sprite:hover {
+            transform: translateY(-10px) scale(1.05);
+            /* Interactive Pop */
+            filter: brightness(1.1);
+            z-index: 1000 !important;
+        }
+
+        /* Defining the "Cuts" based on the generated grid 
+           Assuming 1024x1024 image.
+           - Castle: Top Left (~500x500)
+           - Market: Bottom Left (~500x500)
+           - Tower: Top Right Strip
+           - Terrain: Right Side
+        */
+
+        .asset-castle {
+            width: 500px;
+            height: 500px;
+            background-position: 0% 0%;
+            background-size: 200%;
+            /* Scale up so 50% covers the div */
+            /* The image is roughly 2 columns. If width is 100%, crop is hard. 
+               If background-size is 200%, the image doubles. 0% left is left half. */
+        }
+
+        .asset-market {
+            width: 450px;
+            height: 350px;
+            background-position: 0% 95%;
+            /* Bottom Left */
+            background-size: 200%;
+        }
+
+        .asset-tower {
+            width: 250px;
+            height: 400px;
+            background-position: 95% 5%;
+            /* Top Right */
+            background-size: 250%;
+            /* It's thinner, zoom in more */
+        }
+
+        .asset-grass {
+            width: 200px;
+            height: 150px;
+            background-position: 95% 50%;
+            /* Mid Right */
+            background-size: 300%;
+        }
+
+        .asset-water {
+            width: 200px;
+            height: 150px;
+            background-position: 95% 95%;
+            /* Bottom Right */
+            background-size: 300%;
+        }
+
+        /* --- LAYERING (Manual Z-Index for "Construction") --- */
+        /*
+           Isometric Sort Order:
+           Items "higher" on screen (lower Y) are behind.
+           Items "lower" on screen (higher Y) are in front.
+           Z-index should roughly match Y position.
+        */
+
+        .tooltip {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translate(-50%, -100%);
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 4px;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s;
+            font-size: 12px;
+            white-space: nowrap;
+        }
+
+        .sprite:hover .tooltip {
+            opacity: 1;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="fixed top-4 left-4 text-white z-50">
+        <h1 class="text-2xl font-bold font-serif">World Map Construction (V4)</h1>
+        <p class="text-gray-300 text-sm">Assets parsed from AI generation -> Assembled in HTML</p>
+    </div>
+
+    <div class="viewport">
+
+        <!-- LAYER 1: WATER BASE (Background) -->
+        <div class="sprite asset-water" style="top: 100px; left: 800px; z-index: 10;"></div>
+        <div class="sprite asset-water" style="top: 200px; left: 900px; z-index: 20;"></div>
+        <div class="sprite asset-water" style="top: 300px; left: 800px; z-index: 30;"></div>
+
+        <!-- LAYER 2: GRASS ISLAND (Terrain) -->
+        <!-- Building a small landmass -->
+        <div class="sprite asset-grass" style="top: 150px; left: 300px; z-index: 15;"></div>
+        <div class="sprite asset-grass" style="top: 200px; left: 450px; z-index: 20;"></div>
+        <div class="sprite asset-grass" style="top: 250px; left: 300px; z-index: 25;"></div>
+        <div class="sprite asset-grass" style="top: 300px; left: 450px; z-index: 30;"></div>
+        <div class="sprite asset-grass" style="top: 300px; left: 150px; z-index: 30;"></div>
+
+        <div class="sprite asset-grass" style="top: 350px; left: 300px; z-index: 35;"></div>
+        <div class="sprite asset-grass" style="top: 400px; left: 450px; z-index: 40;"></div>
+
+        <div class="sprite asset-grass" style="top: 450px; left: 600px; z-index: 45;"></div>
+
+        <!-- LAYER 3: BUILDINGS -->
+
+        <!-- Main Castle (Center) -->
+        <!-- Offset Y needs to be considered so it sits "on" the tile -->
+        <div class="sprite asset-castle" style="top: 50px; left: 150px; z-index: 100;">
+            <div class="tooltip">Member City (System A)</div>
+        </div>
+
+        <!-- Magic Tower (Right Back) -->
+        <div class="sprite asset-tower" style="top: 20px; left: 550px; z-index: 40;">
+            <div class="tooltip">Wizard Tower (Magic)</div>
+        </div>
+
+        <!-- Market (Front Right) -->
+        <div class="sprite asset-market" style="top: 350px; left: 550px; z-index: 150;">
+            <div class="tooltip">Trade Market (Shop)</div>
+        </div>
+
+        <!-- Decor (Reusing Grass as bushes/trees for now or scale down) -->
+        <div class="sprite asset-grass" style="top: 400px; left: 200px; z-index: 120; transform: scale(0.5);"></div>
+
+    </div>
+
+</body>
+
+</html>

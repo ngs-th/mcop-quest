@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MCOP Quest - High Fidelity Prototype</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=MedievalSharp&family=Cinzel:wght@700&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --paper: #e3d5b8;
+            --ink: #2c1810;
+            --accent: #8b4513;
+        }
+
+        body {
+            background-color: #1a1a1a;
+            height: 100vh;
+            overflow: hidden;
+            font-family: 'MedievalSharp', serif;
+            color: var(--ink);
+        }
+
+        /* Paper Texture Overlay */
+        .paper-texture {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to right, rgba(227, 213, 184, 0.9), rgba(227, 213, 184, 0.95)),
+                url('data:image/svg+xml;utf8,<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><filter id="noise"><feTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="3" stitchTiles="stitch"/></filter><rect width="100%" height="100%" filter="url(%23noise)" opacity="0.4"/></svg>');
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        /* Container */
+        .viewport {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            perspective: 3000px;
+        }
+
+        .world-plane {
+            width: 1200px;
+            height: 1200px;
+            position: relative;
+            transform-style: preserve-3d;
+            /* True Isometric Angle */
+            transform: rotateX(60deg) rotateZ(-45deg);
+            transition: transform 0.5s;
+        }
+
+        /* --- Hand-Drawn SVG Filter --- */
+        .hand-drawn {
+            filter: url('#ink-wobble') drop-shadow(2px 4px 6px rgba(0, 0, 0, 0.3));
+        }
+
+        /* --- Assets --- */
+
+        /* Terrain Chunks (Not Grid) */
+        .island {
+            position: absolute;
+            transform-style: preserve-3d;
+        }
+
+        .land-shape {
+            fill: #c2b280;
+            /* Duller parchment earth */
+            stroke: #5d4037;
+            stroke-width: 3;
+            transition: fill 0.3s;
+        }
+
+        .island:hover .land-shape {
+            fill: #d4c492;
+        }
+
+        /* Buildings (Billboards) */
+        .structure {
+            position: absolute;
+            transform-style: preserve-3d;
+            /* Counter-rotate to stand vertically */
+            transform: rotateZ(45deg) rotateX(-60deg) translateZ(0);
+            transform-origin: bottom center;
+            cursor: pointer;
+            transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .structure:hover {
+            transform: rotateZ(45deg) rotateX(-60deg) scale(1.1) translateY(-10px);
+            z-index: 1000 !important;
+        }
+
+        /* Specific Asset Styles */
+        .structure svg {
+            overflow: visible;
+        }
+
+        .roof {
+            fill: #8b3a3a;
+            stroke: #2c1810;
+            stroke-width: 2;
+        }
+
+        .wall {
+            fill: #e3d5b8;
+            stroke: #2c1810;
+            stroke-width: 2;
+        }
+
+        .wood {
+            fill: #8b5a2b;
+            stroke: #2c1810;
+            stroke-width: 2;
+        }
+
+        /* UI */
+        .hud {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4' height='4' viewBox='0 0 4 4'%3E%3Cpath fill='%239C92AC' fill-opacity='0.1' d='M1 3h1v1H1V3zm2-2h1v1H3V1z'/%3E%3C/svg%3E"), #f4e4bc;
+            border: 4px solid #5d4037;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
+            padding: 10px 30px;
+            border-radius: 4px;
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="paper-texture"></div>
+
+    <!-- SVG Filters & Definitions -->
+    <svg width="0" height="0" style="position: absolute;">
+        <defs>
+            <!-- The Secret Sauce: Hand Drawn Wobble -->
+            <filter id="ink-wobble">
+                <feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="3" result="noise" />
+                <feDisplacementMap in="SourceGraphic" in2="noise" scale="3" />
+            </filter>
+        </defs>
+    </svg>
+
+    <div class="viewport">
+        <div class="world-plane">
+
+            <!-- 1. Layer: Terrain (Organic Shapes) -->
+            <!-- Main Continent -->
+            <div class="island" style="top: 200px; left: 200px; width: 800px; height: 800px; z-index: 1;">
+                <svg width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="none" class="hand-drawn">
+                    <!-- Irregular Island Shape -->
+                    <path class="land-shape" d="M10,50 Q20,20 50,10 Q80,20 90,50 Q80,80 50,90 Q20,80 10,50 Z" />
+                    <!-- Grid Lines Overlay (Subtle) -->
+                    <path d="M10,50 L90,50 M50,10 L50,90" stroke="#8b7355" stroke-width="0.5" stroke-dasharray="2,2"
+                        opacity="0.5" fill="none" />
+                </svg>
+            </div>
+
+            <!-- Satellite Island (Product City Base) -->
+            <div class="island" style="top: 100px; left: 600px; width: 300px; height: 300px; z-index: 2;">
+                <svg width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="none" class="hand-drawn">
+                    <path class="land-shape" d="M10,50 Q30,10 70,20 Q90,50 70,80 Q30,90 10,50 Z" />
+                </svg>
+            </div>
+
+            <!-- Roads (Dotted Lines following terrain) -->
+            <div class="island"
+                style="top: 200px; left: 200px; width: 800px; height: 800px; pointer-events: none; z-index: 3;">
+                <svg width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="none" class="hand-drawn">
+                    <!-- Road from Center to Top Left -->
+                    <path d="M50,50 Q40,40 30,30" stroke="#d6b88e" stroke-width="4" fill="none"
+                        stroke-dasharray="5,2" />
+                    <!-- Road from Center to Right -->
+                    <path d="M50,50 Q70,45 80,40" stroke="#d6b88e" stroke-width="4" fill="none"
+                        stroke-dasharray="5,2" />
+                </svg>
+            </div>
+
+
+            <!-- 2. Layer: Structures (Rich Vector Art) -->
+
+            <!-- CENTRAL CASTLE (Member City) -->
+            <div class="structure" style="top: 50%; left: 50%; z-index: 50;">
+                <svg width="160" height="200" viewBox="0 0 100 120" class="hand-drawn">
+                    <!-- Shadow -->
+                    <ellipse cx="50" cy="110" rx="30" ry="10" fill="rgba(0,0,0,0.3)" filter="blur(2px)" />
+
+                    <!-- Main Keep -->
+                    <rect x="30" y="60" width="40" height="40" class="wall" />
+                    <!-- Door -->
+                    <path d="M45,100 L45,80 Q50,75 55,80 L55,100 Z" fill="#2c1810" />
+
+                    <!-- Towers (Left) -->
+                    <rect x="20" y="50" width="15" height="60" class="wall" />
+                    <path d="M15,50 L27.5,30 L40,50 H15 Z" class="roof" />
+
+                    <!-- Towers (Right) -->
+                    <rect x="65" y="50" width="15" height="60" class="wall" />
+                    <path d="M60,50 L72.5,30 L85,50 H60 Z" class="roof" />
+
+                    <!-- Main Roof -->
+                    <path d="M25,60 L50,30 L75,60 H25 Z" class="roof" />
+
+                    <!-- Flag -->
+                    <path d="M50,30 L50,10" stroke="#2c1810" stroke-width="1" />
+                    <path d="M50,10 L70,15 L50,20 Z" fill="#e74c3c" />
+
+                    <!-- Label -->
+                    <g transform="translate(50, 0)">
+                        <rect x="-40" y="-15" width="80" height="20" fill="#fff" stroke="#2c1810" rx="2" />
+                        <text x="0" y="0" text-anchor="middle" font-size="10" fill="#2c1810">MEMBER CITY</text>
+                    </g>
+                </svg>
+            </div>
+
+            <!-- MARKET (Product City) -->
+            <div class="structure" style="top: 30%; left: 80%; z-index: 40;">
+                <svg width="120" height="120" viewBox="0 0 100 100" class="hand-drawn">
+                    <ellipse cx="50" cy="90" rx="25" ry="8" fill="rgba(0,0,0,0.3)" />
+                    <!-- Stall Structure -->
+                    <rect x="30" y="60" width="40" height="30" class="wood" />
+                    <!-- Awning (Striped) -->
+                    <path d="M25,60 L50,40 L75,60 H25 Z" fill="#f1c40f" stroke="#2c1810" />
+                    <path d="M35,60 L45,45 L55,45 L65,60" fill="none" stroke="#d35400" stroke-width="2" />
+
+                    <!-- Goods -->
+                    <circle cx="40" cy="75" r="3" fill="red" />
+                    <circle cx="50" cy="75" r="3" fill="green" />
+                    <circle cx="60" cy="75" r="3" fill="blue" />
+                </svg>
+            </div>
+
+            <!-- TOWER (Support) -->
+            <div class="structure" style="top: 30%; left: 30%; z-index: 45;">
+                <svg width="100" height="180" viewBox="0 0 100 150" class="hand-drawn">
+                    <ellipse cx="50" cy="140" rx="20" ry="6" fill="rgba(0,0,0,0.3)" />
+                    <!-- Body -->
+                    <rect x="35" y="80" width="30" height="60" class="wall" />
+                    <!-- Head -->
+                    <circle cx="50" cy="60" r="25" class="wall" />
+                    <!-- Roof -->
+                    <path d="M50,35 L25,60 H75 L50,35 Z" class="roof" />
+                    <!-- Window -->
+                    <circle cx="50" cy="60" r="8" fill="#3498db" stroke="#2c1810" />
+                </svg>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- HUD -->
+    <div class="hud">
+        <h1 class="text-2xl font-bold text-[#8b4513]">KINGDOM MAP</h1>
+        <p class="text-sm italic">High Fidelity Prototype V2</p>
+    </div>
+
+    <script>
+        // Interactive Tilt
+        const world = document.querySelector('.world-plane');
+        document.addEventListener('mousemove', (e) => {
+            const x = (window.innerWidth / 2 - e.pageX) / 50;
+            const y = (window.innerHeight / 2 - e.pageY) / 50;
+            // Subtle parallax
+            // world.style.transform = `rotateX(${60 + y}deg) rotateZ(${-45 + x}deg)`;
+        });
+    </script>
+</body>
+
+</html>

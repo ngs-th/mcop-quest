@@ -1,0 +1,471 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1.0, user-scalable=no"
+        />
+        <title>MCOP Quest - Kingdom Rush Map</title>
+        <script src="https://cdn.tailwindcss.com"></script>
+        <link
+            href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=VT323&display=swap"
+            rel="stylesheet"
+        />
+        <style>
+            :root {
+                --bg-parchment: #e8dcc0;
+                --border-gold: #c9a227;
+                --text-dark: #2c2416;
+            }
+
+            body {
+                font-family: "VT323", monospace;
+                background: #1a1510;
+                color: var(--text-dark);
+                overflow: hidden;
+            }
+
+            .font-fantasy {
+                font-family: "Cinzel", serif;
+            }
+
+            .golden-frame {
+                border: 8px solid var(--border-gold);
+                border-image: linear-gradient(
+                        135deg,
+                        #bf953f 0%,
+                        #fcf6ba 25%,
+                        #b38728 50%,
+                        #fbf5b7 75%,
+                        #aa771c 100%
+                    )
+                    1;
+                box-shadow:
+                    inset 0 0 30px rgba(0, 0, 0, 0.5),
+                    0 0 20px rgba(201, 162, 39, 0.3);
+            }
+
+            #map-container {
+                background: linear-gradient(135deg, #2d5016 0%, #3d6b26 50%, #2d5016 100%);
+            }
+
+            canvas {
+                display: block;
+                cursor: grab;
+            }
+
+            canvas:active {
+                cursor: grabbing;
+            }
+
+            .loading-overlay {
+                position: absolute;
+                inset: 0;
+                background: #1a1510;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                z-index: 50;
+                transition: opacity 0.5s;
+            }
+
+            .loading-overlay.hidden {
+                opacity: 0;
+                pointer-events: none;
+            }
+
+            .loading-spinner {
+                width: 60px;
+                height: 60px;
+                border: 4px solid #c9a227;
+                border-top-color: transparent;
+                border-radius: 50%;
+                animation: spin 1s linear infinite;
+            }
+
+            @keyframes spin {
+                to { transform: rotate(360deg); }
+            }
+
+            .zoom-controls {
+                position: absolute;
+                bottom: 20px;
+                right: 20px;
+                display: flex;
+                flex-direction: column;
+                gap: 8px;
+            }
+
+            .zoom-btn {
+                width: 44px;
+                height: 44px;
+                background: linear-gradient(135deg, #d4b896 0%, #c9a880 100%);
+                border: 2px solid #8b7355;
+                border-radius: 8px;
+                font-size: 24px;
+                font-weight: bold;
+                color: #2c2416;
+                cursor: pointer;
+                transition: all 0.2s;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .zoom-btn:hover {
+                background: linear-gradient(135deg, #e8dcc0 0%, #d4c8a8 100%);
+                transform: scale(1.05);
+            }
+
+            .location-modal {
+                position: fixed;
+                inset: 0;
+                background: rgba(0, 0, 0, 0.8);
+                display: none;
+                align-items: center;
+                justify-content: center;
+                z-index: 100;
+            }
+
+            .location-modal.active {
+                display: flex;
+            }
+        </style>
+    </head>
+    <body class="h-screen flex flex-col">
+        <!-- Header -->
+        <header class="bg-gradient-to-r from-amber-900 via-amber-800 to-amber-900 border-b-4 border-amber-600 px-6 py-3 flex items-center justify-between shrink-0">
+            <h1 class="font-fantasy text-3xl text-amber-200 tracking-wider">MCOP QUEST</h1>
+            <div class="flex items-center gap-4">
+                <div class="bg-amber-950/50 px-4 py-2 rounded-lg border border-amber-700">
+                    <span class="text-amber-400">Gold:</span>
+                    <span class="text-yellow-400 font-bold text-xl">2,450</span>
+                </div>
+                <div class="bg-amber-950/50 px-4 py-2 rounded-lg border border-amber-700">
+                    <span class="text-amber-400">Gems:</span>
+                    <span class="text-cyan-400 font-bold text-xl">15</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="flex-1 relative overflow-hidden golden-frame m-2">
+            <div id="map-container" class="absolute inset-0">
+                <canvas id="game-map"></canvas>
+            </div>
+
+            <!-- Loading Overlay -->
+            <div id="loading" class="loading-overlay">
+                <div class="loading-spinner mb-4"></div>
+                <p class="text-amber-400 text-xl font-fantasy">Loading Kingdom...</p>
+            </div>
+
+            <!-- Zoom Controls -->
+            <div class="zoom-controls">
+                <button class="zoom-btn" id="zoom-in" title="Zoom In">+</button>
+                <button class="zoom-btn" id="zoom-out" title="Zoom Out">−</button>
+            </div>
+
+            <!-- Mini Map -->
+            <div class="absolute top-4 left-4 bg-amber-950/80 border-2 border-amber-700 rounded-lg p-2 w-48 h-36">
+                <p class="text-amber-400 text-xs text-center font-fantasy mb-1">World Overview</p>
+                <div class="relative w-full h-28 bg-green-900/50 rounded overflow-hidden">
+                    <!-- Mini map will be rendered here -->
+                    <canvas id="minimap" width="180" height="110"></canvas>
+                </div>
+            </div>
+
+            <!-- Status Bar -->
+            <div class="absolute bottom-0 left-0 right-0 bg-amber-950/90 border-t border-amber-700 px-4 py-2 flex items-center justify-between">
+                <div class="flex items-center gap-4 text-amber-400">
+                    <span>Location: <span class="text-amber-200" id="current-location">World Map</span></span>
+                    <span>|</span>
+                    <span>Active Tasks: <span class="text-green-400">5</span></span>
+                </div>
+                <div class="text-amber-500 text-sm" id="hover-status">
+                    Drag to pan • Scroll to zoom • Click locations
+                </div>
+            </div>
+        </main>
+
+        <!-- Location Detail Modal -->
+        <div id="location-modal" class="location-modal">
+            <div class="bg-gradient-to-br from-amber-100 to-amber-200 rounded-lg border-4 border-amber-600 p-6 max-w-md w-full mx-4 shadow-2xl">
+                <h2 id="modal-title" class="font-fantasy text-2xl text-amber-900 mb-4">Location Name</h2>
+                <div id="modal-content" class="text-amber-800 space-y-2">
+                    <!-- Dynamic content -->
+                </div>
+                <button id="close-modal" class="mt-6 w-full bg-amber-700 hover:bg-amber-600 text-amber-100 py-2 rounded font-fantasy transition-colors">
+                    Close
+                </button>
+            </div>
+        </div>
+
+        <!-- Scripts -->
+        <script type="module">
+            import initMap from '/public/js/map/index.js';
+
+            // Sample map data
+            const mapData = {
+                width: 40,
+                height: 30,
+                tileSize: 128,
+                layers: [
+                    // Terrain layer (simplified - all grass for now)
+                    {
+                        name: 'terrain',
+                        data: generateTerrainLayer(40, 30)
+                    },
+                    // Roads layer
+                    {
+                        name: 'roads',
+                        data: generateRoadsLayer(40, 30)
+                    }
+                ],
+                locations: [
+                    {
+                        id: 'member_city',
+                        name: 'Member City',
+                        nameTh: 'เมืองสมาชิก',
+                        x: 1536,
+                        y: 1024,
+                        type: 'castle',
+                        health: 100,
+                        maxHealth: 100,
+                        status: 'full',
+                        isFoggy: false
+                    },
+                    {
+                        id: 'task_tower',
+                        name: 'Task Tower',
+                        nameTh: 'หอคอยภารกิจ',
+                        x: 2560,
+                        y: 640,
+                        type: 'tower',
+                        health: 75,
+                        maxHealth: 100,
+                        status: 'stable',
+                        isFoggy: false
+                    },
+                    {
+                        id: 'bug_bastion',
+                        name: 'Bug Bastion',
+                        nameTh: 'ป้อมบั๊ก',
+                        x: 3840,
+                        y: 1280,
+                        type: 'bastion',
+                        health: 45,
+                        maxHealth: 100,
+                        status: 'medium',
+                        isFoggy: false
+                    },
+                    {
+                        id: 'alchemy_lab',
+                        name: 'Analytics Lab',
+                        nameTh: 'ห้องแล็บวิเคราะห์',
+                        x: 1792,
+                        y: 2048,
+                        type: 'lab',
+                        health: 85,
+                        maxHealth: 100,
+                        status: 'stable',
+                        isFoggy: false
+                    },
+                    {
+                        id: 'community_commons',
+                        name: 'Community Commons',
+                        nameTh: 'ลานชุมชน',
+                        x: 1024,
+                        y: 2816,
+                        type: 'market',
+                        health: 90,
+                        maxHealth: 100,
+                        status: 'full',
+                        isFoggy: false
+                    },
+                    {
+                        id: 'payment_fortress',
+                        name: 'Payment Fortress',
+                        nameTh: 'ป้อมการเงิน',
+                        x: 3200,
+                        y: 2560,
+                        type: 'fortress',
+                        health: 20,
+                        maxHealth: 100,
+                        status: 'low',
+                        isFoggy: true
+                    },
+                    {
+                        id: 'product_city',
+                        name: 'Product City',
+                        nameTh: 'เมืองสินค้า',
+                        x: 512,
+                        y: 512,
+                        type: 'merchant',
+                        health: 80,
+                        maxHealth: 100,
+                        status: 'stable',
+                        isFoggy: false
+                    },
+                    {
+                        id: 'notification_tower',
+                        name: 'Notification Tower',
+                        nameTh: 'หอสัญญาณ',
+                        x: 4224,
+                        y: 512,
+                        type: 'bell_tower',
+                        health: 95,
+                        maxHealth: 100,
+                        status: 'full',
+                        isFoggy: false
+                    }
+                ]
+            };
+
+            // Generate terrain layer (simple grass)
+            function generateTerrainLayer(width, height) {
+                const data = [];
+                for (let y = 0; y < height; y++) {
+                    for (let x = 0; x < width; x++) {
+                        // Random grass variation
+                        const grassType = Math.floor(Math.random() * 3) + 1;
+                        data.push(grassType);
+                    }
+                }
+                return data;
+            }
+
+            // Generate roads layer
+            function generateRoadsLayer(width, height) {
+                const data = new Array(width * height).fill(0);
+
+                // Helper to set road tile
+                function setRoad(x, y, type) {
+                    if (x >= 0 && x < width && y >= 0 && y < height) {
+                        data[y * width + x] = type;
+                    }
+                }
+
+                // Define road paths between locations
+                const roads = [
+                    // Product City to Member City
+                    { from: { x: 4, y: 4 }, to: { x: 12, y: 8 } },
+                    // Member City to Alchemy Lab
+                    { from: { x: 12, y: 8 }, to: { x: 14, y: 16 } },
+                    // Alchemy Lab to Community Commons
+                    { from: { x: 14, y: 16 }, to: { x: 8, y: 22 } },
+                    // Member City to Task Tower
+                    { from: { x: 12, y: 8 }, to: { x: 20, y: 5 } },
+                    // Task Tower to Bug Bastion
+                    { from: { x: 20, y: 5 }, to: { x: 30, y: 10 } },
+                    // Bug Bastion to Payment Fortress
+                    { from: { x: 30, y: 10 }, to: { x: 25, y: 20 } },
+                    // Community Commons to Payment Fortress
+                    { from: { x: 8, y: 22 }, to: { x: 25, y: 20 } },
+                    // Task Tower to Notification Tower
+                    { from: { x: 20, y: 5 }, to: { x: 33, y: 4 } },
+                ];
+
+                // Draw roads
+                for (const road of roads) {
+                    const dx = road.to.x - road.from.x;
+                    const dy = road.to.y - road.from.y;
+                    const steps = Math.max(Math.abs(dx), Math.abs(dy));
+
+                    for (let i = 0; i <= steps; i++) {
+                        const t = i / steps;
+                        const x = Math.round(road.from.x + dx * t);
+                        const y = Math.round(road.from.y + dy * t);
+                        setRoad(x, y, 4); // dirt road
+                    }
+                }
+
+                return data;
+            }
+
+            // Initialize map
+            let mapRenderer = null;
+
+            async function init() {
+                try {
+                    mapRenderer = await initMap('game-map', mapData, {
+                        exposeRenderer: (r) => { window.mapRenderer = r; },
+                        onLocationClick: (location) => {
+                            showLocationModal(location);
+                        },
+                        onLocationHover: (location) => {
+                            const statusEl = document.getElementById('hover-status');
+                            if (location) {
+                                statusEl.textContent = `${location.name} - Health: ${location.health}%`;
+                            } else {
+                                statusEl.textContent = 'Drag to pan • Scroll to zoom • Click locations';
+                            }
+                        }
+                    });
+
+                    // Setup zoom buttons
+                    document.getElementById('zoom-in').addEventListener('click', () => {
+                        mapRenderer.zoomIn();
+                    });
+                    document.getElementById('zoom-out').addEventListener('click', () => {
+                        mapRenderer.zoomOut();
+                    });
+
+                    // Hide loading
+                    setTimeout(() => {
+                        document.getElementById('loading').classList.add('hidden');
+                    }, 1000);
+
+                } catch (error) {
+                    console.error('Failed to initialize map:', error);
+                    document.getElementById('loading').innerHTML = `
+                        <p class="text-red-400">Failed to load map</p>
+                        <p class="text-amber-600 text-sm mt-2">${error.message}</p>
+                    `;
+                }
+            }
+
+            // Modal functions
+            function showLocationModal(location) {
+                const modal = document.getElementById('location-modal');
+                const title = document.getElementById('modal-title');
+                const content = document.getElementById('modal-content');
+
+                title.textContent = location.name;
+                content.innerHTML = `
+                    <p><strong>Thai Name:</strong> ${location.nameTh}</p>
+                    <p><strong>Health:</strong> ${location.health}/${location.maxHealth}</p>
+                    <p><strong>Status:</strong> <span style="color: ${getStatusColor(location)}">${location.status.toUpperCase()}</span></p>
+                    <p><strong>Coordinates:</strong> (${location.x}, ${location.y})</p>
+                    ${location.isFoggy ? '<p class="text-red-600">⚠️ Fog of War - Requirements unclear</p>' : ''}
+                `;
+
+                modal.classList.add('active');
+            }
+
+            function getStatusColor(location) {
+                if (location.isFoggy) return '#95a5a6';
+                if (location.health >= 90) return '#2ecc71';
+                if (location.health >= 60) return '#3498db';
+                if (location.health >= 30) return '#f1c40f';
+                return '#e74c3c';
+            }
+
+            // Close modal
+            document.getElementById('close-modal').addEventListener('click', () => {
+                document.getElementById('location-modal').classList.remove('active');
+            });
+
+            document.getElementById('location-modal').addEventListener('click', (e) => {
+                if (e.target.id === 'location-modal') {
+                    document.getElementById('location-modal').classList.remove('active');
+                }
+            });
+
+            // Start
+            init();
+        </script>
+    </body>
+</html>

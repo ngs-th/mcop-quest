@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('flows', function (Blueprint $table) {
             $table->id();
             $table->foreignId('system_id')->constrained()->cascadeOnDelete();
+            $table->string('external_id')->nullable()->index(); // CSV Flow ID
             $table->string('name');
             $table->string('group')->nullable(); // For separating squads if needed
             $table->string('assignee')->nullable(); // Main owner

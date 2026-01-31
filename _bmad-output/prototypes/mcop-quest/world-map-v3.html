@@ -1,0 +1,782 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>World Map v3 - MCOP Quest</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=MedievalSharp&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* ============================================= */
+        /* PARCHMENT THEME                               */
+        /* ============================================= */
+        :root {
+            --parchment: #d4b896;
+            --parchment-light: #e8d5b7;
+            --parchment-dark: #b89b6a;
+            --border-wood: #6b4226;
+            --border-gold: #c9a227;
+            --sea: #4a90a4;
+            --sea-deep: #2d6a7e;
+            --grass: #5a8a3c;
+            --grass-light: #7ab356;
+            --forest: #2d5a1e;
+            --mountain: #8b7355;
+            --mountain-snow: #d0c8b8;
+            --road: #a0875a;
+            --hp-full: #2ecc71;
+            --hp-stable: #3498db;
+            --hp-medium: #f1c40f;
+            --hp-low: #e74c3c;
+            --hp-fog: #95a5a6;
+        }
+
+        body {
+            margin: 0;
+            overflow: hidden;
+            background: #2a1a0e;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .font-medieval { font-family: 'MedievalSharp', 'Cinzel', serif; }
+        .font-cinzel { font-family: 'Cinzel', serif; }
+
+        /* Parchment frame */
+        .parchment-frame {
+            background: linear-gradient(135deg, #6b4226 0%, #8b5e3c 5%, #6b4226 10%, #8b5e3c 95%, #6b4226 100%);
+            padding: 8px;
+            border-radius: 8px;
+            box-shadow:
+                inset 0 0 20px rgba(0,0,0,0.5),
+                0 0 30px rgba(0,0,0,0.8);
+        }
+
+        .parchment-inner {
+            background:
+                radial-gradient(ellipse at 20% 30%, rgba(232,213,183,0.8) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 70%, rgba(180,155,106,0.5) 0%, transparent 40%),
+                linear-gradient(180deg, var(--parchment-light) 0%, var(--parchment) 40%, var(--parchment-dark) 100%);
+            border-radius: 4px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Corner ornaments */
+        .corner-ornament {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            z-index: 10;
+        }
+        .corner-tl { top: 0; left: 0; }
+        .corner-tr { top: 0; right: 0; transform: scaleX(-1); }
+        .corner-bl { bottom: 0; left: 0; transform: scaleY(-1); }
+        .corner-br { bottom: 0; right: 0; transform: scale(-1); }
+
+        /* Title banner */
+        .title-banner {
+            background: linear-gradient(180deg, #5a3a1a 0%, #3a2010 50%, #5a3a1a 100%);
+            border: 2px solid var(--border-gold);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+        }
+
+        /* Side navigation */
+        .side-nav {
+            position: absolute;
+            left: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 20;
+        }
+        .side-nav-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2px;
+            padding: 8px 6px;
+            background: linear-gradient(180deg, #5a3a1a, #3a2010);
+            border: 2px solid var(--border-gold);
+            border-radius: 8px;
+            color: #c9a227;
+            text-decoration: none;
+            font-size: 10px;
+            font-family: 'Cinzel', serif;
+            transition: all 0.2s;
+            width: 52px;
+        }
+        .side-nav-btn:hover, .side-nav-btn.active {
+            background: linear-gradient(180deg, #7a5a3a, #5a3a1a);
+            border-color: #f1c40f;
+            color: #f1c40f;
+        }
+        .side-nav-btn .icon { font-size: 18px; }
+
+        /* HP Label */
+        .hp-label {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 9px;
+            font-weight: 700;
+            font-family: 'Cinzel', serif;
+            border: 1.5px solid;
+        }
+        .hp-full { background: rgba(46,204,113,0.2); border-color: var(--hp-full); color: var(--hp-full); }
+        .hp-stable { background: rgba(52,152,219,0.2); border-color: var(--hp-stable); color: var(--hp-stable); }
+        .hp-medium { background: rgba(241,196,15,0.2); border-color: var(--hp-medium); color: var(--hp-medium); }
+        .hp-low { background: rgba(231,76,60,0.2); border-color: var(--hp-low); color: var(--hp-low); }
+        .hp-fog { background: rgba(149,165,166,0.2); border-color: var(--hp-fog); color: var(--hp-fog); }
+
+        /* Map scroll */
+        .map-scroll {
+            overflow: auto;
+            cursor: grab;
+        }
+        .map-scroll:active { cursor: grabbing; }
+        .map-scroll::-webkit-scrollbar { width: 6px; height: 6px; }
+        .map-scroll::-webkit-scrollbar-track { background: #3a2010; }
+        .map-scroll::-webkit-scrollbar-thumb { background: #6b4226; border-radius: 3px; }
+
+        /* City hover */
+        .city-node { cursor: pointer; }
+        .city-node:hover .city-glow { opacity: 0.8; }
+        .city-node:hover .city-label { fill: #3a2010; font-size: 15px; }
+
+        /* Animations */
+        @keyframes flag-wave {
+            0%, 100% { transform: skewX(0deg); }
+            25% { transform: skewX(3deg); }
+            75% { transform: skewX(-3deg); }
+        }
+        @keyframes water-shimmer {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 0.6; }
+        }
+        @keyframes npc-idle {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-2px); }
+        }
+        @keyframes fog-move {
+            0%, 100% { opacity: 0.7; transform: translate(0, 0); }
+            33% { opacity: 0.5; transform: translate(5px, -3px); }
+            66% { opacity: 0.8; transform: translate(-3px, 2px); }
+        }
+        @keyframes smoke-rise {
+            0% { opacity: 0.6; transform: translateY(0) scale(1); }
+            100% { opacity: 0; transform: translateY(-15px) scale(1.5); }
+        }
+        @keyframes crystal-glow {
+            0%, 100% { filter: drop-shadow(0 0 3px rgba(100,200,255,0.5)); }
+            50% { filter: drop-shadow(0 0 8px rgba(100,200,255,0.9)); }
+        }
+
+        .flag-wave { animation: flag-wave 2s ease-in-out infinite; }
+        .water-shimmer { animation: water-shimmer 3s ease-in-out infinite; }
+        .npc-idle { animation: npc-idle 2s ease-in-out infinite; }
+        .fog-move { animation: fog-move 5s ease-in-out infinite; }
+        .smoke-rise { animation: smoke-rise 2s ease-out infinite; }
+        .crystal-glow { animation: crystal-glow 2s ease-in-out infinite; }
+
+        /* Warning pulse */
+        @keyframes warning-pulse {
+            0%, 100% { opacity: 0.7; }
+            50% { opacity: 1; }
+        }
+        .warning-pulse { animation: warning-pulse 1s ease-in-out infinite; }
+    </style>
+</head>
+<body x-data="worldMap()">
+
+    <!-- Full-screen parchment frame -->
+    <div class="parchment-frame w-screen h-screen flex flex-col">
+        <div class="parchment-inner flex-1 flex flex-col relative">
+
+            <!-- Corner ornaments (SVG) -->
+            <svg class="corner-ornament corner-tl" viewBox="0 0 50 50">
+                <path d="M0 0 L50 0 L50 8 Q30 8 20 20 Q8 30 8 50 L0 50 Z" fill="#6b4226"/>
+                <path d="M5 5 L45 5 L45 10 Q28 10 18 22 Q10 30 10 45 L5 45 Z" fill="#c9a227" opacity="0.6"/>
+                <circle cx="12" cy="12" r="4" fill="#c9a227"/>
+            </svg>
+            <svg class="corner-ornament corner-tr" viewBox="0 0 50 50">
+                <path d="M0 0 L50 0 L50 8 Q30 8 20 20 Q8 30 8 50 L0 50 Z" fill="#6b4226"/>
+                <path d="M5 5 L45 5 L45 10 Q28 10 18 22 Q10 30 10 45 L5 45 Z" fill="#c9a227" opacity="0.6"/>
+                <circle cx="12" cy="12" r="4" fill="#c9a227"/>
+            </svg>
+            <svg class="corner-ornament corner-bl" viewBox="0 0 50 50">
+                <path d="M0 0 L50 0 L50 8 Q30 8 20 20 Q8 30 8 50 L0 50 Z" fill="#6b4226"/>
+                <path d="M5 5 L45 5 L45 10 Q28 10 18 22 Q10 30 10 45 L5 45 Z" fill="#c9a227" opacity="0.6"/>
+                <circle cx="12" cy="12" r="4" fill="#c9a227"/>
+            </svg>
+            <svg class="corner-ornament corner-br" viewBox="0 0 50 50">
+                <path d="M0 0 L50 0 L50 8 Q30 8 20 20 Q8 30 8 50 L0 50 Z" fill="#6b4226"/>
+                <path d="M5 5 L45 5 L45 10 Q28 10 18 22 Q10 30 10 45 L5 45 Z" fill="#c9a227" opacity="0.6"/>
+                <circle cx="12" cy="12" r="4" fill="#c9a227"/>
+            </svg>
+
+            <!-- TITLE BANNER -->
+            <div class="title-banner text-center py-2 px-4 mx-auto mt-2 rounded-lg" style="max-width: 320px;">
+                <h1 class="font-medieval text-2xl tracking-wider" style="color: #f1c40f; text-shadow: 0 2px 4px rgba(0,0,0,0.8);">
+                    MCOP QUEST
+                </h1>
+                <p class="text-xs font-cinzel" style="color: #a0875a;">Kingdom of Systems — 8 Territories</p>
+            </div>
+
+            <!-- SIDE NAVIGATION -->
+            <div class="side-nav flex flex-col gap-2">
+                <a href="world-map-v3.html" class="side-nav-btn active">
+                    <span class="icon">🌍</span>
+                    <span>World</span>
+                </a>
+                <a href="team.html" class="side-nav-btn">
+                    <span class="icon">⚔️</span>
+                    <span>Party</span>
+                </a>
+                <a href="hero.html" class="side-nav-btn">
+                    <span class="icon">🦸</span>
+                    <span>Hero</span>
+                </a>
+                <a href="shop.html" class="side-nav-btn">
+                    <span class="icon">🛒</span>
+                    <span>Shop</span>
+                </a>
+            </div>
+
+            <!-- COMPASS (top-left inside map) -->
+            <div class="absolute top-14 left-14 z-10">
+                <svg width="60" height="60" viewBox="0 0 60 60">
+                    <circle cx="30" cy="30" r="28" fill="#3a2010" stroke="#c9a227" stroke-width="2"/>
+                    <circle cx="30" cy="30" r="24" fill="none" stroke="#8b5e3c" stroke-width="1"/>
+                    <!-- Cardinal directions -->
+                    <text x="30" y="12" text-anchor="middle" fill="#c9a227" font-size="8" font-family="Cinzel" font-weight="bold">N</text>
+                    <text x="30" y="55" text-anchor="middle" fill="#8b5e3c" font-size="7" font-family="Cinzel">S</text>
+                    <text x="8" y="33" text-anchor="middle" fill="#8b5e3c" font-size="7" font-family="Cinzel">W</text>
+                    <text x="52" y="33" text-anchor="middle" fill="#8b5e3c" font-size="7" font-family="Cinzel">E</text>
+                    <!-- Needle -->
+                    <polygon points="30,14 33,30 27,30" fill="#e74c3c"/>
+                    <polygon points="30,46 33,30 27,30" fill="#95a5a6"/>
+                    <circle cx="30" cy="30" r="3" fill="#c9a227"/>
+                </svg>
+            </div>
+
+            <!-- ZOOM CONTROLS (top-right) -->
+            <div class="absolute top-14 right-14 z-10 flex flex-col gap-1">
+                <button @click="zoomIn()" class="w-8 h-8 rounded bg-[#3a2010] border border-[#c9a227] text-[#c9a227] font-bold text-lg hover:bg-[#5a3a1a]">+</button>
+                <span class="text-center text-xs font-cinzel" style="color: #6b4226;" x-text="Math.round(zoom*100)+'%'"></span>
+                <button @click="zoomOut()" class="w-8 h-8 rounded bg-[#3a2010] border border-[#c9a227] text-[#c9a227] font-bold text-lg hover:bg-[#5a3a1a]">−</button>
+                <button @click="resetView()" class="mt-1 px-1 py-1 rounded bg-[#3a2010] border border-[#6b4226] text-[#8b5e3c] text-[8px] font-cinzel hover:border-[#c9a227]">Reset</button>
+            </div>
+
+            <!-- LEGEND (bottom-right) -->
+            <div class="absolute bottom-4 right-4 z-10 p-2 rounded-lg" style="background: rgba(58,32,16,0.9); border: 1px solid #6b4226;">
+                <div class="text-[9px] font-cinzel space-y-1" style="color: #a0875a;">
+                    <div class="flex items-center gap-1"><span class="w-2 h-2 rounded-full" style="background: var(--hp-full)"></span> Health: Full</div>
+                    <div class="flex items-center gap-1"><span class="w-2 h-2 rounded-full" style="background: var(--hp-stable)"></span> Health: Stable</div>
+                    <div class="flex items-center gap-1"><span class="w-2 h-2 rounded-full" style="background: var(--hp-medium)"></span> Health: Medium</div>
+                    <div class="flex items-center gap-1"><span class="w-2 h-2 rounded-full" style="background: var(--hp-low)"></span> Health: Low</div>
+                    <div class="flex items-center gap-1"><span class="w-2 h-2 rounded-full" style="background: var(--hp-fog)"></span> Fog of War</div>
+                </div>
+            </div>
+
+            <!-- ============================================= -->
+            <!-- MAP CANVAS                                    -->
+            <!-- ============================================= -->
+            <div class="map-scroll flex-1" x-ref="mapContainer" @scroll="updateMiniMap()">
+                <div :style="'transform: scale(' + zoom + '); transform-origin: top left; transition: transform 0.2s;'">
+                    <svg width="1000" height="800" viewBox="0 0 1000 800" style="min-width: 1000px; min-height: 800px;">
+                        <defs>
+                            <!-- Parchment texture -->
+                            <pattern id="parchTex" patternUnits="userSpaceOnUse" width="200" height="200">
+                                <rect width="200" height="200" fill="#d4b896"/>
+                                <circle cx="50" cy="50" r="40" fill="#caa87a" opacity="0.15"/>
+                                <circle cx="150" cy="130" r="60" fill="#b89b6a" opacity="0.1"/>
+                            </pattern>
+                            <!-- Water pattern -->
+                            <pattern id="waterPat" patternUnits="userSpaceOnUse" width="30" height="30">
+                                <rect width="30" height="30" fill="#4a90a4"/>
+                                <path d="M0 15 Q7 10 15 15 Q22 20 30 15" stroke="#6bb5cc" stroke-width="1" fill="none" opacity="0.5"/>
+                            </pattern>
+                            <!-- Grass pattern -->
+                            <pattern id="grassPat" patternUnits="userSpaceOnUse" width="15" height="15">
+                                <rect width="15" height="15" fill="#6a9a4a"/>
+                                <line x1="3" y1="15" x2="3" y2="11" stroke="#5a8a3c" stroke-width="1"/>
+                                <line x1="7" y1="15" x2="8" y2="10" stroke="#4a7a2c" stroke-width="1"/>
+                                <line x1="12" y1="15" x2="11" y2="12" stroke="#5a8a3c" stroke-width="1"/>
+                            </pattern>
+                            <!-- Sand -->
+                            <pattern id="sandPat" patternUnits="userSpaceOnUse" width="10" height="10">
+                                <rect width="10" height="10" fill="#c9b47a"/>
+                                <circle cx="3" cy="3" r="0.5" fill="#b8a36a" opacity="0.5"/>
+                                <circle cx="8" cy="7" r="0.5" fill="#b8a36a" opacity="0.5"/>
+                            </pattern>
+                            <!-- Fog gradient -->
+                            <radialGradient id="fogRad">
+                                <stop offset="0%" stop-color="#8a9aaa" stop-opacity="0.9"/>
+                                <stop offset="70%" stop-color="#8a9aaa" stop-opacity="0.5"/>
+                                <stop offset="100%" stop-color="#8a9aaa" stop-opacity="0"/>
+                            </radialGradient>
+                            <!-- Glow filter -->
+                            <filter id="glowF">
+                                <feGaussianBlur stdDeviation="2" result="blur"/>
+                                <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+                            </filter>
+                        </defs>
+
+                        <!-- ====== BASE MAP ====== -->
+                        <!-- Parchment background -->
+                        <rect width="1000" height="800" fill="url(#parchTex)"/>
+
+                        <!-- Sea / Water areas -->
+                        <ellipse cx="900" cy="200" rx="180" ry="250" fill="url(#waterPat)" opacity="0.6"/>
+                        <ellipse cx="50" cy="700" rx="120" ry="150" fill="url(#waterPat)" opacity="0.5"/>
+                        <path d="M0 650 Q100 600 200 680 Q300 750 200 800 L0 800 Z" fill="url(#waterPat)" opacity="0.5"/>
+                        <!-- Water shimmer -->
+                        <ellipse cx="880" cy="180" rx="60" ry="40" fill="#6bb5cc" opacity="0.15" class="water-shimmer"/>
+                        <ellipse cx="60" cy="720" rx="40" ry="30" fill="#6bb5cc" opacity="0.15" class="water-shimmer" style="animation-delay:1s"/>
+
+                        <!-- Grass regions -->
+                        <ellipse cx="250" cy="250" rx="180" ry="120" fill="url(#grassPat)" opacity="0.4"/>
+                        <ellipse cx="500" cy="450" rx="200" ry="130" fill="url(#grassPat)" opacity="0.35"/>
+                        <ellipse cx="350" cy="650" rx="150" ry="100" fill="url(#grassPat)" opacity="0.3"/>
+
+                        <!-- Sand/beach -->
+                        <ellipse cx="820" cy="350" rx="80" ry="40" fill="url(#sandPat)" opacity="0.5"/>
+                        <ellipse cx="120" cy="600" rx="60" ry="30" fill="url(#sandPat)" opacity="0.4"/>
+
+                        <!-- ====== MOUNTAINS ====== -->
+                        <g opacity="0.7">
+                            <!-- Mountain range top-right -->
+                            <path d="M700 80 L730 20 L760 80 Z" fill="#8b7355"/><path d="M730 20 L745 50 L715 50 Z" fill="#d0c8b8"/>
+                            <path d="M740 85 L765 35 L790 85 Z" fill="#7a6345"/><path d="M765 35 L778 60 L752 60 Z" fill="#d0c8b8"/>
+                            <path d="M670 90 L695 40 L720 90 Z" fill="#8b7355"/><path d="M695 40 L708 65 L682 65 Z" fill="#c0b8a8"/>
+                            <!-- Mountains center-left -->
+                            <path d="M80 350 L110 290 L140 350 Z" fill="#8b7355"/><path d="M110 290 L123 320 L97 320 Z" fill="#d0c8b8"/>
+                            <path d="M120 360 L145 310 L170 360 Z" fill="#7a6345"/><path d="M145 310 L155 335 L135 335 Z" fill="#c0b8a8"/>
+                        </g>
+
+                        <!-- ====== TREES / FOREST ====== -->
+                        <g>
+                            <!-- Forest cluster top-left -->
+                            <g opacity="0.8">
+                                <circle cx="100" cy="180" r="12" fill="#2d5a1e"/><circle cx="100" cy="176" r="8" fill="#3a7a28"/>
+                                <circle cx="120" cy="190" r="10" fill="#2d5a1e"/><circle cx="120" cy="186" r="7" fill="#3a7a28"/>
+                                <circle cx="80" cy="195" r="11" fill="#2d5a1e"/><circle cx="80" cy="191" r="7" fill="#3a7a28"/>
+                                <circle cx="140" cy="185" r="9" fill="#2d5a1e"/><circle cx="140" cy="182" r="6" fill="#3a7a28"/>
+                                <circle cx="105" cy="205" r="10" fill="#2d5a1e"/><circle cx="105" cy="201" r="7" fill="#3a7a28"/>
+                            </g>
+                            <!-- Forest mid -->
+                            <g opacity="0.7">
+                                <circle cx="380" cy="350" r="10" fill="#2d5a1e"/><circle cx="380" cy="347" r="7" fill="#3a7a28"/>
+                                <circle cx="400" cy="340" r="12" fill="#2d5a1e"/><circle cx="400" cy="336" r="8" fill="#3a7a28"/>
+                                <circle cx="420" cy="355" r="9" fill="#2d5a1e"/><circle cx="420" cy="352" r="6" fill="#3a7a28"/>
+                                <circle cx="360" cy="360" r="11" fill="#2d5a1e"/><circle cx="360" cy="356" r="7" fill="#3a7a28"/>
+                            </g>
+                            <!-- Forest bottom-right -->
+                            <g opacity="0.7">
+                                <circle cx="700" cy="550" r="10" fill="#2d5a1e"/><circle cx="700" cy="547" r="7" fill="#3a7a28"/>
+                                <circle cx="720" cy="540" r="12" fill="#2d5a1e"/><circle cx="720" cy="537" r="8" fill="#3a7a28"/>
+                                <circle cx="680" cy="560" r="9" fill="#2d5a1e"/><circle cx="680" cy="557" r="6" fill="#3a7a28"/>
+                            </g>
+                            <!-- Scattered trees -->
+                            <circle cx="300" cy="180" r="7" fill="#2d5a1e" opacity="0.5"/><circle cx="300" cy="177" r="5" fill="#3a7a28" opacity="0.5"/>
+                            <circle cx="560" cy="280" r="8" fill="#2d5a1e" opacity="0.5"/><circle cx="560" cy="277" r="5" fill="#3a7a28" opacity="0.5"/>
+                            <circle cx="480" cy="590" r="7" fill="#2d5a1e" opacity="0.5"/><circle cx="480" cy="587" r="5" fill="#3a7a28" opacity="0.5"/>
+                            <circle cx="250" cy="500" r="8" fill="#2d5a1e" opacity="0.5"/><circle cx="250" cy="497" r="5" fill="#3a7a28" opacity="0.5"/>
+                        </g>
+
+                        <!-- ====== CRYSTALS ====== -->
+                        <g class="crystal-glow">
+                            <polygon points="455,320 460,300 465,320" fill="#64c8ff" opacity="0.8"/>
+                            <polygon points="450,322 458,305 466,322" fill="#40a0d0" opacity="0.5"/>
+                            <polygon points="460,325 463,310 468,325" fill="#80d8ff" opacity="0.6"/>
+                        </g>
+                        <g class="crystal-glow" style="animation-delay: 1s">
+                            <polygon points="620,410 624,395 628,410" fill="#c080ff" opacity="0.7"/>
+                            <polygon points="616,412 623,398 630,412" fill="#9060d0" opacity="0.4"/>
+                        </g>
+
+                        <!-- ====== ROADS / PATHS ====== -->
+                        <!-- Road: Member City → Product City -->
+                        <path d="M310 230 Q400 200 480 260" stroke="#a0875a" stroke-width="6" fill="none" stroke-linecap="round" opacity="0.7"/>
+                        <path d="M310 230 Q400 200 480 260" stroke="#c9b47a" stroke-width="3" fill="none" stroke-dasharray="8 6" stroke-linecap="round" opacity="0.5"/>
+
+                        <!-- Road: Member City → Notification Tower -->
+                        <path d="M230 310 Q200 400 210 480" stroke="#a0875a" stroke-width="5" fill="none" stroke-linecap="round" opacity="0.7"/>
+
+                        <!-- Road: Product City → Analytics Lab -->
+                        <path d="M550 310 Q530 400 460 500" stroke="#a0875a" stroke-width="5" fill="none" stroke-linecap="round" opacity="0.6"/>
+                        <path d="M550 310 Q530 400 460 500" stroke="#c9b47a" stroke-width="2" fill="none" stroke-dasharray="6 5" opacity="0.4"/>
+
+                        <!-- Road: Product City → Payment Fortress (locked) -->
+                        <path d="M600 290 Q700 350 750 420" stroke="#8a7a6a" stroke-width="4" fill="none" stroke-dasharray="5 8" opacity="0.3"/>
+
+                        <!-- Road: Analytics Lab → Community Commons -->
+                        <path d="M430 550 Q380 600 350 650" stroke="#a0875a" stroke-width="5" fill="none" stroke-linecap="round" opacity="0.6"/>
+
+                        <!-- Road: Notification → Dashboard -->
+                        <path d="M250 540 Q300 560 350 620" stroke="#78a060" stroke-width="4" fill="none" stroke-linecap="round" opacity="0.6"/>
+
+                        <!-- ============================================= -->
+                        <!-- CITY 1: Member City (ระบบสมาชิก) — Health: Full -->
+                        <!-- ============================================= -->
+                        <g class="city-node" transform="translate(230, 220)" onclick="window.location='city.html?id=1'">
+                            <!-- City glow -->
+                            <circle cx="0" cy="0" r="60" fill="#2ecc71" opacity="0.08" class="city-glow"/>
+                            <!-- Castle base -->
+                            <ellipse cx="0" cy="55" rx="55" ry="15" fill="#6b4226" opacity="0.4"/>
+                            <!-- Main wall -->
+                            <rect x="-40" y="-5" width="80" height="55" fill="#a0875a" rx="3"/>
+                            <rect x="-40" y="-5" width="80" height="8" fill="#c9b47a"/>
+                            <!-- Towers -->
+                            <rect x="-48" y="-25" width="20" height="75" fill="#b89b6a" rx="2"/>
+                            <rect x="28" y="-25" width="20" height="75" fill="#b89b6a" rx="2"/>
+                            <!-- Tower tops (red) -->
+                            <path d="M-48 -25 L-38 -45 L-28 -25 Z" fill="#c0392b"/>
+                            <path d="M28 -25 L38 -45 L48 -25 Z" fill="#c0392b"/>
+                            <!-- Central tower -->
+                            <rect x="-12" y="-40" width="24" height="50" fill="#c9b47a" rx="2"/>
+                            <path d="M-12 -40 L0 -60 L12 -40 Z" fill="#e74c3c"/>
+                            <!-- Flag -->
+                            <line x1="0" y1="-60" x2="0" y2="-80" stroke="#6b4226" stroke-width="2"/>
+                            <rect x="0" y="-80" width="18" height="12" fill="#f1c40f" class="flag-wave" rx="1"/>
+                            <text x="9" y="-72" text-anchor="middle" fill="#6b4226" font-size="7">♛</text>
+                            <!-- Gate -->
+                            <rect x="-10" y="25" width="20" height="30" rx="10" fill="#4a3218"/>
+                            <!-- Windows -->
+                            <rect x="-30" y="10" width="8" height="10" rx="1" fill="#4a3218"/>
+                            <rect x="22" y="10" width="8" height="10" rx="1" fill="#4a3218"/>
+                            <!-- Boss NPC on top -->
+                            <g transform="translate(0, -90)" class="npc-idle">
+                                <circle cx="0" cy="0" r="10" fill="#ffd5b5"/>
+                                <path d="M-8 -5 L0 -15 L8 -5 Z" fill="#f1c40f"/><!-- crown -->
+                                <circle cx="-3" cy="-1" r="1.5" fill="#2d3748"/>
+                                <circle cx="3" cy="-1" r="1.5" fill="#2d3748"/>
+                                <rect x="-7" y="8" width="14" height="10" rx="2" fill="#718096"/>
+                            </g>
+                            <!-- HP Label -->
+                            <g transform="translate(0, -108)">
+                                <rect x="-35" y="-8" width="70" height="16" rx="8" fill="rgba(46,204,113,0.2)" stroke="#2ecc71" stroke-width="1.5"/>
+                                <text x="0" y="3" text-anchor="middle" fill="#2ecc71" font-size="9" font-family="Cinzel" font-weight="bold">Health: Full</text>
+                            </g>
+                            <!-- City name -->
+                            <text x="0" y="78" text-anchor="middle" fill="#3a2010" font-family="Cinzel" font-size="13" font-weight="bold" class="city-label">Member City</text>
+                            <text x="0" y="92" text-anchor="middle" fill="#6b4226" font-size="10" font-family="Cinzel">ระบบสมาชิก</text>
+                        </g>
+
+                        <!-- ============================================= -->
+                        <!-- CITY 2: Product City (ระบบสินค้า) — Health: Medium -->
+                        <!-- ============================================= -->
+                        <g class="city-node" transform="translate(550, 250)" onclick="window.location='city.html?id=2'">
+                            <circle cx="0" cy="0" r="55" fill="#f1c40f" opacity="0.06" class="city-glow"/>
+                            <ellipse cx="0" cy="50" rx="50" ry="14" fill="#6b4226" opacity="0.4"/>
+                            <!-- Market buildings -->
+                            <rect x="-45" y="0" width="35" height="45" fill="#b89b6a" rx="2"/>
+                            <path d="M-45 0 L-27 -18 L-10 0 Z" fill="#9B59B6"/>
+                            <rect x="-10" y="-10" width="40" height="55" fill="#a0875a" rx="2"/>
+                            <path d="M-10 -10 L10 -30 L30 -10 Z" fill="#8E44AD"/>
+                            <rect x="30" y="5" width="25" height="40" fill="#b89b6a" rx="2"/>
+                            <path d="M30 5 L42 -8 L55 5 Z" fill="#9B59B6"/>
+                            <!-- Stall/Awning -->
+                            <path d="M-40 25 L-5 25 L-5 20 L-40 20 Z" fill="#f1c40f"/>
+                            <!-- Windows -->
+                            <rect x="-37" y="12" width="7" height="8" rx="1" fill="#4a3218"/>
+                            <rect x="-22" y="12" width="7" height="8" rx="1" fill="#4a3218"/>
+                            <rect x="0" y="5" width="8" height="10" rx="1" fill="#4a3218"/>
+                            <rect x="15" y="5" width="8" height="10" rx="1" fill="#4a3218"/>
+                            <!-- Coin sign -->
+                            <circle cx="42" cy="15" r="8" fill="#f1c40f" stroke="#d4a906" stroke-width="1.5"/>
+                            <text x="42" y="19" text-anchor="middle" fill="#6b4226" font-size="10" font-weight="bold">$</text>
+                            <!-- Boss NPC -->
+                            <g transform="translate(10, -45)" class="npc-idle" style="animation-delay: 0.3s">
+                                <circle cx="0" cy="0" r="9" fill="#ffd5b5"/>
+                                <ellipse cx="0" cy="-6" rx="8" ry="3" fill="#f1c40f"/><!-- hat -->
+                                <circle cx="-3" cy="-1" r="1.5" fill="#2d3748"/>
+                                <circle cx="3" cy="-1" r="1.5" fill="#2d3748"/>
+                                <rect x="-7" y="8" width="14" height="10" rx="2" fill="#805ad5"/>
+                            </g>
+                            <!-- HP Label -->
+                            <g transform="translate(0, -60)">
+                                <rect x="-42" y="-8" width="84" height="16" rx="8" fill="rgba(241,196,15,0.2)" stroke="#f1c40f" stroke-width="1.5"/>
+                                <text x="0" y="3" text-anchor="middle" fill="#f1c40f" font-size="9" font-family="Cinzel" font-weight="bold">Health: Medium</text>
+                            </g>
+                            <text x="0" y="72" text-anchor="middle" fill="#3a2010" font-family="Cinzel" font-size="13" font-weight="bold" class="city-label">Product City</text>
+                            <text x="0" y="86" text-anchor="middle" fill="#6b4226" font-size="10" font-family="Cinzel">ระบบสินค้า</text>
+                        </g>
+
+                        <!-- ============================================= -->
+                        <!-- CITY 3: Task Tower (Tasks) — Health: Stable -->
+                        <!-- ============================================= -->
+                        <g class="city-node" transform="translate(420, 170)" onclick="window.location='city.html?id=3'">
+                            <circle cx="0" cy="0" r="40" fill="#3498db" opacity="0.06" class="city-glow"/>
+                            <ellipse cx="0" cy="40" rx="25" ry="8" fill="#6b4226" opacity="0.4"/>
+                            <!-- Tower -->
+                            <rect x="-15" y="-20" width="30" height="60" fill="#b89b6a" rx="2"/>
+                            <rect x="-20" y="-10" width="40" height="8" fill="#c9b47a"/>
+                            <rect x="-20" y="15" width="40" height="8" fill="#c9b47a"/>
+                            <!-- Tower top -->
+                            <path d="M-18 -20 L0 -45 L18 -20 Z" fill="#3498DB"/>
+                            <!-- Flag -->
+                            <line x1="0" y1="-45" x2="0" y2="-60" stroke="#6b4226" stroke-width="1.5"/>
+                            <rect x="0" y="-60" width="12" height="8" fill="#3498DB" rx="1" class="flag-wave"/>
+                            <!-- Window -->
+                            <circle cx="0" cy="-5" r="5" fill="#4a3218"/>
+                            <rect x="-4" y="18" width="8" height="10" rx="1" fill="#4a3218"/>
+                            <!-- HP Label -->
+                            <g transform="translate(0, -68)">
+                                <rect x="-38" y="-8" width="76" height="16" rx="8" fill="rgba(52,152,219,0.2)" stroke="#3498db" stroke-width="1.5"/>
+                                <text x="0" y="3" text-anchor="middle" fill="#3498db" font-size="9" font-family="Cinzel" font-weight="bold">Health: Stable</text>
+                            </g>
+                            <text x="0" y="56" text-anchor="middle" fill="#3a2010" font-family="Cinzel" font-size="11" font-weight="bold" class="city-label">Task Tower</text>
+                        </g>
+
+                        <!-- ============================================= -->
+                        <!-- CITY 4: Notification Tower (Conquered) -->
+                        <!-- ============================================= -->
+                        <g class="city-node" transform="translate(200, 500)" onclick="window.location='city.html?id=4'">
+                            <circle cx="0" cy="0" r="45" fill="#2ecc71" opacity="0.06" class="city-glow"/>
+                            <ellipse cx="0" cy="45" rx="35" ry="12" fill="#6b4226" opacity="0.3"/>
+                            <!-- Bell tower -->
+                            <rect x="-20" y="-10" width="40" height="50" fill="#a0a0a0"/>
+                            <path d="M-25 -10 L0 -35 L25 -10 Z" fill="#b0b0b0"/>
+                            <!-- Bell -->
+                            <ellipse cx="0" cy="-20" rx="10" ry="8" fill="#c9a227" opacity="0.6"/>
+                            <!-- Victory banner -->
+                            <rect x="-8" y="-55" width="16" height="20" fill="#2ecc71" rx="2"/>
+                            <text x="0" y="-42" text-anchor="middle" fill="white" font-size="12" font-weight="bold">✓</text>
+                            <!-- Greyed out (conquered) -->
+                            <rect x="-35" y="-60" width="70" height="110" fill="none" stroke="#2ecc71" stroke-width="2" stroke-dasharray="4 3" rx="8" opacity="0.5"/>
+                            <!-- HP Label -->
+                            <g transform="translate(0, -65)">
+                                <rect x="-35" y="-8" width="70" height="16" rx="8" fill="rgba(46,204,113,0.2)" stroke="#2ecc71" stroke-width="1.5"/>
+                                <text x="0" y="3" text-anchor="middle" fill="#2ecc71" font-size="9" font-family="Cinzel" font-weight="bold">✓ Conquered</text>
+                            </g>
+                            <text x="0" y="65" text-anchor="middle" fill="#5a8a5a" font-family="Cinzel" font-size="11" font-weight="bold" class="city-label">Notification</text>
+                            <text x="0" y="78" text-anchor="middle" fill="#6b8a6b" font-size="9" font-family="Cinzel">ระบบแจ้งเตือน</text>
+                        </g>
+
+                        <!-- ============================================= -->
+                        <!-- CITY 5: Analytics Alchemy Lab — Health: Medium -->
+                        <!-- ============================================= -->
+                        <g class="city-node" transform="translate(430, 520)" onclick="window.location='city.html?id=5'">
+                            <circle cx="0" cy="0" r="50" fill="#f1c40f" opacity="0.06" class="city-glow"/>
+                            <ellipse cx="0" cy="48" rx="45" ry="14" fill="#6b4226" opacity="0.35"/>
+                            <!-- Lab building -->
+                            <rect x="-40" y="0" width="80" height="45" fill="#b89b6a" rx="3"/>
+                            <path d="M-45 0 L0 -25 L45 0 Z" fill="#c9b47a"/>
+                            <!-- Dome -->
+                            <ellipse cx="0" cy="-15" rx="20" ry="15" fill="#805ad5" opacity="0.6"/>
+                            <!-- Chimney with smoke -->
+                            <rect x="25" y="-15" width="8" height="15" fill="#8b7355"/>
+                            <circle cx="29" cy="-20" r="5" fill="#c0c0c0" opacity="0.4" class="smoke-rise"/>
+                            <circle cx="32" cy="-25" r="4" fill="#d0d0d0" opacity="0.3" class="smoke-rise" style="animation-delay:0.5s"/>
+                            <!-- Potion bottles -->
+                            <circle cx="-20" cy="15" r="5" fill="#9B59B6" opacity="0.6"/>
+                            <circle cx="-10" cy="18" r="4" fill="#3498DB" opacity="0.6"/>
+                            <circle cx="10" cy="15" r="5" fill="#2ECC71" opacity="0.6"/>
+                            <!-- Door -->
+                            <rect x="-8" y="22" width="16" height="23" rx="8" fill="#4a3218"/>
+                            <!-- NPC Scholar -->
+                            <g transform="translate(-25, -40)" class="npc-idle" style="animation-delay:0.7s">
+                                <circle cx="0" cy="0" r="8" fill="#ffd5b5"/>
+                                <rect x="-6" y="-3" width="5" height="3" rx="1" fill="#a0aec0"/>
+                                <rect x="1" y="-3" width="5" height="3" rx="1" fill="#a0aec0"/>
+                                <rect x="-6" y="7" width="12" height="10" rx="2" fill="#2d3748"/>
+                                <rect x="7" y="8" width="5" height="8" fill="#e53e3e"/>
+                            </g>
+                            <!-- HP Label -->
+                            <g transform="translate(0, -52)">
+                                <rect x="-42" y="-8" width="84" height="16" rx="8" fill="rgba(241,196,15,0.2)" stroke="#f1c40f" stroke-width="1.5"/>
+                                <text x="0" y="3" text-anchor="middle" fill="#f1c40f" font-size="9" font-family="Cinzel" font-weight="bold">Health: Medium</text>
+                            </g>
+                            <text x="0" y="70" text-anchor="middle" fill="#3a2010" font-family="Cinzel" font-size="12" font-weight="bold" class="city-label">Analytics Lab</text>
+                            <text x="0" y="83" text-anchor="middle" fill="#6b4226" font-size="9" font-family="Cinzel">ระบบรายงาน</text>
+                        </g>
+
+                        <!-- ============================================= -->
+                        <!-- CITY 6: Community Commons (Conquered) -->
+                        <!-- ============================================= -->
+                        <g class="city-node" transform="translate(320, 670)" onclick="window.location='city.html?id=7'">
+                            <circle cx="0" cy="0" r="45" fill="#2ecc71" opacity="0.06" class="city-glow"/>
+                            <ellipse cx="0" cy="40" rx="45" ry="12" fill="#6b4226" opacity="0.3"/>
+                            <!-- Market stalls -->
+                            <rect x="-38" y="0" width="28" height="35" fill="#a0a0a0"/>
+                            <rect x="-5" y="-5" width="30" height="40" fill="#a0a0a0"/>
+                            <rect x="28" y="5" width="20" height="30" fill="#a0a0a0"/>
+                            <!-- Awnings -->
+                            <path d="M-38 0 L-10 0 L-10 -8 L-38 -8 Z" fill="#c0392b" opacity="0.5"/>
+                            <path d="M-5 -5 L25 -5 L25 -12 L-5 -12 Z" fill="#2980b9" opacity="0.5"/>
+                            <!-- Victory banner -->
+                            <rect x="-8" y="-30" width="16" height="20" fill="#2ecc71" rx="2"/>
+                            <text x="0" y="-17" text-anchor="middle" fill="white" font-size="12" font-weight="bold">✓</text>
+                            <rect x="-50" y="-35" width="100" height="80" fill="none" stroke="#2ecc71" stroke-width="2" stroke-dasharray="4 3" rx="8" opacity="0.4"/>
+                            <!-- HP Label -->
+                            <g transform="translate(0, -42)">
+                                <rect x="-35" y="-8" width="70" height="16" rx="8" fill="rgba(46,204,113,0.2)" stroke="#2ecc71" stroke-width="1.5"/>
+                                <text x="0" y="3" text-anchor="middle" fill="#2ecc71" font-size="9" font-family="Cinzel" font-weight="bold">✓ Conquered</text>
+                            </g>
+                            <text x="0" y="60" text-anchor="middle" fill="#5a8a5a" font-family="Cinzel" font-size="11" font-weight="bold" class="city-label">Commons</text>
+                            <text x="0" y="73" text-anchor="middle" fill="#6b8a6b" font-size="9" font-family="Cinzel">ระบบ Dashboard</text>
+                        </g>
+
+                        <!-- ============================================= -->
+                        <!-- CITY 7: Payment Fortress — FOG OF WAR -->
+                        <!-- ============================================= -->
+                        <g class="city-node" transform="translate(750, 430)">
+                            <!-- Fog overlay -->
+                            <circle cx="0" cy="0" r="100" fill="url(#fogRad)" class="fog-move"/>
+                            <circle cx="20" cy="-20" r="60" fill="url(#fogRad)" class="fog-move" style="animation-delay:2s"/>
+                            <!-- Dark fortress (barely visible) -->
+                            <g opacity="0.35">
+                                <ellipse cx="0" cy="50" rx="50" ry="15" fill="#4a3218" opacity="0.4"/>
+                                <rect x="-40" y="-10" width="80" height="55" fill="#5a4a3a" rx="3"/>
+                                <rect x="-48" y="-30" width="20" height="75" fill="#4a3a2a"/>
+                                <rect x="28" y="-30" width="20" height="75" fill="#4a3a2a"/>
+                                <path d="M-48 -30 L-38 -50 L-28 -30 Z" fill="#3a2a1a"/>
+                                <path d="M28 -30 L38 -50 L48 -30 Z" fill="#3a2a1a"/>
+                                <!-- Fire/lava glow -->
+                                <circle cx="-10" cy="20" r="8" fill="#e74c3c" opacity="0.3"/>
+                                <circle cx="10" cy="25" r="6" fill="#e67e22" opacity="0.3"/>
+                            </g>
+                            <!-- Warning icon -->
+                            <g class="warning-pulse">
+                                <text x="0" y="5" text-anchor="middle" font-size="30">⚡</text>
+                            </g>
+                            <!-- Skull warning -->
+                            <g transform="translate(40, -30)">
+                                <text x="0" y="0" font-size="20">☠️</text>
+                            </g>
+                            <!-- HP Label -->
+                            <g transform="translate(0, -65)">
+                                <rect x="-35" y="-8" width="70" height="16" rx="8" fill="rgba(231,76,60,0.2)" stroke="#e74c3c" stroke-width="1.5"/>
+                                <text x="0" y="3" text-anchor="middle" fill="#e74c3c" font-size="9" font-family="Cinzel" font-weight="bold">Health: Low</text>
+                            </g>
+                            <g transform="translate(0, -45)">
+                                <rect x="-42" y="-7" width="84" height="14" rx="7" fill="rgba(149,165,166,0.3)" stroke="#95a5a6" stroke-width="1"/>
+                                <text x="0" y="3" text-anchor="middle" fill="#95a5a6" font-size="8" font-family="Cinzel">🌫️ Fog of War</text>
+                            </g>
+                            <text x="0" y="75" text-anchor="middle" fill="#8a7a6a" font-family="Cinzel" font-size="12" font-weight="bold" class="city-label">Payment Fortress</text>
+                            <text x="0" y="88" text-anchor="middle" fill="#7a6a5a" font-size="9" font-family="Cinzel">ระบบชำระเงิน</text>
+                        </g>
+
+                        <!-- ============================================= -->
+                        <!-- CITY 8: Bug Bastion — Health: Low (Warning!) -->
+                        <!-- ============================================= -->
+                        <g class="city-node" transform="translate(680, 300)" onclick="window.location='city.html?id=6'">
+                            <circle cx="0" cy="0" r="45" fill="#e74c3c" opacity="0.08" class="city-glow"/>
+                            <ellipse cx="0" cy="40" rx="35" ry="10" fill="#4a2218" opacity="0.5"/>
+                            <!-- Dark fortress -->
+                            <rect x="-30" y="-5" width="60" height="40" fill="#5a2a1a" rx="2"/>
+                            <rect x="-35" y="-20" width="15" height="55" fill="#4a2218"/>
+                            <rect x="20" y="-20" width="15" height="55" fill="#4a2218"/>
+                            <path d="M-35 -20 L-27 -35 L-20 -20 Z" fill="#3a1a0a"/>
+                            <path d="M20 -20 L27 -35 L35 -20 Z" fill="#3a1a0a"/>
+                            <!-- Lava/fire -->
+                            <circle cx="-10" cy="15" r="6" fill="#e74c3c" opacity="0.5"/>
+                            <circle cx="10" cy="20" r="5" fill="#e67e22" opacity="0.4"/>
+                            <circle cx="0" cy="10" r="4" fill="#f1c40f" opacity="0.3"/>
+                            <!-- Warning sign -->
+                            <g transform="translate(30, -30)" class="warning-pulse">
+                                <polygon points="0,-12 10,8 -10,8" fill="#e74c3c"/>
+                                <text x="0" y="5" text-anchor="middle" fill="white" font-size="10" font-weight="bold">!</text>
+                            </g>
+                            <!-- Bug icon -->
+                            <text x="0" y="5" text-anchor="middle" font-size="18">👹</text>
+                            <!-- HP Label -->
+                            <g transform="translate(0, -45)">
+                                <rect x="-32" y="-8" width="64" height="16" rx="8" fill="rgba(231,76,60,0.25)" stroke="#e74c3c" stroke-width="1.5"/>
+                                <text x="0" y="3" text-anchor="middle" fill="#e74c3c" font-size="9" font-family="Cinzel" font-weight="bold">Health: Low</text>
+                            </g>
+                            <text x="0" y="58" text-anchor="middle" fill="#8a3a2a" font-family="Cinzel" font-size="11" font-weight="bold" class="city-label">Bug Bastion</text>
+                        </g>
+
+                        <!-- ====== SCATTERED NPCs ====== -->
+                        <!-- Warrior NPC on road -->
+                        <g transform="translate(370, 240)" class="npc-idle" style="animation-delay:0.5s">
+                            <circle cx="0" cy="0" r="6" fill="#ffd5b5"/>
+                            <circle cx="-2" cy="-1" r="1" fill="#2d3748"/>
+                            <circle cx="2" cy="-1" r="1" fill="#2d3748"/>
+                            <rect x="-5" y="5" width="10" height="8" rx="1" fill="#718096"/>
+                            <rect x="6" y="3" width="2" height="10" fill="#a0aec0"/>
+                        </g>
+                        <!-- Mage NPC near crystals -->
+                        <g transform="translate(470, 340)" class="npc-idle" style="animation-delay:1.2s">
+                            <circle cx="0" cy="0" r="6" fill="#ffd5b5"/>
+                            <path d="M-5 -4 L0 -12 L5 -4 Z" fill="#9B59B6"/>
+                            <rect x="-4" y="5" width="8" height="8" rx="1" fill="#805ad5"/>
+                            <rect x="5" y="0" width="2" height="12" fill="#8B4513"/>
+                        </g>
+                        <!-- Scout NPC -->
+                        <g transform="translate(280, 430)" class="npc-idle" style="animation-delay:0.8s">
+                            <circle cx="0" cy="0" r="5" fill="#ffd5b5"/>
+                            <ellipse cx="0" cy="-4" rx="5" ry="2" fill="#5a8a3c"/>
+                            <rect x="-4" y="4" width="8" height="7" rx="1" fill="#3a6a2c"/>
+                        </g>
+
+                        <!-- ====== DECORATIVE ELEMENTS ====== -->
+                        <!-- Treasure chest -->
+                        <g transform="translate(490, 180)">
+                            <rect x="-6" y="-4" width="12" height="8" rx="2" fill="#c9a227"/>
+                            <rect x="-6" y="-4" width="12" height="4" rx="2" fill="#d4a906"/>
+                            <rect x="-2" y="-2" width="4" height="3" rx="1" fill="#6b4226"/>
+                        </g>
+                        <!-- Campfire -->
+                        <g transform="translate(350, 400)">
+                            <circle cx="0" cy="2" r="6" fill="#8b5e3c"/>
+                            <circle cx="-2" cy="-2" r="3" fill="#e67e22" opacity="0.7"/>
+                            <circle cx="1" cy="-4" r="2" fill="#f1c40f" opacity="0.8"/>
+                            <circle cx="0" cy="-6" r="1.5" fill="#f39c12" opacity="0.5" class="smoke-rise"/>
+                        </g>
+
+                        <!-- ====== MAP BORDER decorations ====== -->
+                        <!-- Top border line -->
+                        <line x1="60" y1="10" x2="940" y2="10" stroke="#6b4226" stroke-width="2" opacity="0.3"/>
+                        <line x1="60" y1="790" x2="940" y2="790" stroke="#6b4226" stroke-width="2" opacity="0.3"/>
+                        <line x1="10" y1="60" x2="10" y2="740" stroke="#6b4226" stroke-width="2" opacity="0.3"/>
+                        <line x1="990" y1="60" x2="990" y2="740" stroke="#6b4226" stroke-width="2" opacity="0.3"/>
+
+                    </svg>
+                </div>
+            </div>
+
+            <!-- MINI-MAP -->
+            <div class="absolute bottom-4 left-4 z-10" style="width: 90px; height: 70px; background: rgba(58,32,16,0.9); border: 2px solid #6b4226; border-radius: 6px; overflow: hidden;">
+                <svg width="90" height="70" viewBox="0 0 1000 800" preserveAspectRatio="xMidYMid meet">
+                    <rect width="1000" height="800" fill="#b89b6a" opacity="0.5"/>
+                    <!-- City dots -->
+                    <circle cx="230" cy="220" r="20" fill="#2ecc71"/><!-- Member -->
+                    <circle cx="550" cy="250" r="20" fill="#f1c40f"/><!-- Product -->
+                    <circle cx="420" cy="170" r="15" fill="#3498db"/><!-- Task -->
+                    <circle cx="200" cy="500" r="18" fill="#2ecc71" opacity="0.5"/><!-- Notification -->
+                    <circle cx="430" cy="520" r="18" fill="#f1c40f"/><!-- Analytics -->
+                    <circle cx="320" cy="670" r="18" fill="#2ecc71" opacity="0.5"/><!-- Commons -->
+                    <circle cx="750" cy="430" r="18" fill="#95a5a6"/><!-- Payment (fog) -->
+                    <circle cx="680" cy="300" r="15" fill="#e74c3c"/><!-- Bug -->
+                </svg>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        function worldMap() {
+            return {
+                zoom: 1,
+                zoomIn() { this.zoom = Math.min(this.zoom + 0.25, 2.5); },
+                zoomOut() { this.zoom = Math.max(this.zoom - 0.25, 0.5); },
+                resetView() {
+                    this.zoom = 1;
+                    if (this.$refs.mapContainer) this.$refs.mapContainer.scrollTo(0, 0);
+                },
+                updateMiniMap() {
+                    // Mini-map viewport tracking
+                }
+            }
+        }
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MCOP Quest - Isometric World Map Prototype</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Inter:wght@400;600&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --tile-width: 100px;
+            --tile-height: 50px;
+            /* 2:1 Ratio for Isometric */
+            --color-grass: #8ebf7b;
+            --color-grass-side: #6ea05b;
+            --color-water: #4a90e2;
+            --color-water-side: #357abd;
+            --color-road: #d6b88e;
+            --color-road-side: #b0926e;
+            --color-parchment: #f4e4bc;
+            --color-dark: #3a2e2a;
+        }
+
+        body {
+            background-color: #2c3e50;
+            background-image: radial-gradient(circle at center, #34495e 0%, #2c3e50 100%);
+            height: 100vh;
+            overflow: hidden;
+            font-family: 'Cinzel', serif;
+        }
+
+        /* Isometric Projection Container */
+        .iso-container {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100%;
+            height: 100%;
+            perspective: 2000px;
+            overflow: auto;
+            /* Enable zoom/pan via JS later, for now static centering */
+        }
+
+        .iso-world {
+            position: absolute;
+            top: 10%;
+            left: 50%;
+            transform-style: preserve-3d;
+            /* Standard Isometric Rotation */
+            transform: rotateX(60deg) rotateZ(-45deg) translateZ(-100px);
+            opacity: 0;
+            animation: fadeIn 1s forwards;
+            width: 1000px;
+            height: 1000px;
+            background: rgba(0, 0, 0, 0.1);
+            /* Debug Helper */
+            border-radius: 20px;
+        }
+
+        @keyframes fadeIn {
+            to {
+                opacity: 1;
+            }
+        }
+
+        /* Layers */
+        .layer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            transform-style: preserve-3d;
+            pointer-events: none;
+        }
+
+        .layer-terrain {
+            z-index: 10;
+        }
+
+        .layer-roads {
+            z-index: 20;
+        }
+
+        .layer-objects {
+            z-index: 30;
+        }
+
+        .layer-ui {
+            z-index: 100;
+            transform: rotateZ(45deg) rotateX(-60deg) translateZ(200px);
+            /* Counter-rotate for flat UI */
+            pointer-events: auto;
+        }
+
+        /* Generic Component Positioning Helpers */
+        .pos {
+            position: absolute;
+            transform-style: preserve-3d;
+        }
+
+        /* --- ASSETS (CSS Drawn for Crispnness or SVG wrappers) --- */
+
+        /* 1. Iso Tiles (CSS Cubes) */
+        .tile {
+            width: var(--tile-width);
+            height: var(--tile-width);
+            /* Square in raw space, squashed by projection */
+            position: absolute;
+            transform-style: preserve-3d;
+            transition: all 0.3s ease;
+        }
+
+        .tile:hover {
+            transform: translateZ(10px);
+            filter: brightness(1.1);
+        }
+
+        .tile-face {
+            position: absolute;
+            backface-visibility: hidden;
+        }
+
+        .tile-top {
+            width: 100%;
+            height: 100%;
+            background: var(--color-grass);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transform: translateZ(1px);
+        }
+
+        .tile-right {
+            width: 10px;
+            /* Thickness */
+            height: 100%;
+            background: var(--color-grass-side);
+            transform: rotateY(90deg) translateZ(99px);
+            /* Adjust based on width */
+            transform-origin: right;
+            filter: brightness(0.8);
+        }
+
+        .tile-front {
+            width: 100%;
+            height: 10px;
+            background: var(--color-grass-side);
+            transform: rotateX(-90deg) translateZ(1px);
+            transform-origin: bottom;
+            filter: brightness(0.9);
+        }
+
+        /* Tile Variants */
+        .tile.water .tile-top {
+            background: var(--color-water);
+            opacity: 0.8;
+            animation: pulseWater 3s infinite alternate;
+        }
+
+        .tile.water .tile-front,
+        .tile.water .tile-right {
+            background: var(--color-water-side);
+        }
+
+        .tile.road .tile-top {
+            background: var(--color-road);
+            box-shadow: inset 0 0 10px #b0926e;
+        }
+
+        @keyframes pulseWater {
+            0% {
+                opacity: 0.8;
+            }
+
+            100% {
+                opacity: 0.9;
+                box-shadow: inset 0 0 20px white;
+            }
+        }
+
+        /* 2. Structures (SVG billboards standing up) */
+        .structure {
+            position: absolute;
+            /* Stand up against the isometric tilt: 
+               Map is rotateX(60) rotateZ(-45).
+               To stand vertical, we need to counter-rotate.
+               Actually simpler: Use transform: rotateX(-90deg) relative to the floor? 
+               Wait, iso projection flattens Z. 
+               Top-down Isometric means Z is UP.
+               We just need to translateZ.
+               But SVG images are 2D. We want them to "face" the camera or look isometric.
+               Best approach for "Sprite" look: 
+               RotateZ(45deg) RotateX(-60deg) -> Faces screen directly (Billboarding).
+            */
+            transform: rotateZ(45deg) rotateX(-60deg) translateZ(40px) translateY(-50px);
+            transform-origin: bottom center;
+            pointer-events: auto;
+            cursor: pointer;
+            transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            filter: drop-shadow(0 10px 5px rgba(0, 0, 0, 0.3));
+        }
+
+        .structure:hover {
+            transform: rotateZ(45deg) rotateX(-60deg) translateZ(60px) scale(1.1) translateY(-60px);
+            z-index: 1000;
+        }
+
+        /* 3. Decor Overlay Details */
+        .decor {
+            position: absolute;
+            transform: rotateZ(45deg) rotateX(-60deg);
+            pointer-events: none;
+        }
+
+        /* UI Tooltip */
+        .tooltip {
+            position: absolute;
+            background: #fff;
+            border: 2px solid #3a2e2a;
+            border-radius: 8px;
+            padding: 8px 12px;
+            width: 200px;
+            font-family: 'Inter', sans-serif;
+            text-align: center;
+            opacity: 0;
+            transition: opacity 0.2s;
+            pointer-events: none;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            z-index: 999;
+            transform: translate(-50%, -120%);
+        }
+
+        .structure:hover .tooltip {
+            opacity: 1;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- SVG DEFS (Assets) -->
+    <svg style="display: none;">
+        <symbol id="castle" viewBox="0 0 100 100">
+            <path d="M20 90 L20 40 L50 20 L80 40 L80 90 Z" fill="#e74c3c" stroke="#3a2e2a" stroke-width="3" />
+            <rect x="30" y="50" width="40" height="40" fill="#c0392b" />
+            <path d="M20 40 L10 40 L10 60 L20 60" fill="#bdc3c7" stroke="#3a2e2a" stroke-width="2" />
+            <path d="M80 40 L90 40 L90 60 L80 60" fill="#bdc3c7" stroke="#3a2e2a" stroke-width="2" />
+            <path d="M50 20 L50 5" stroke="#3a2e2a" stroke-width="2" />
+            <rect x="50" y="5" width="20" height="12" fill="#f1c40f" stroke="#3a2e2a" stroke-width="1" />
+            <circle cx="50" cy="90" r="10" fill="#3a2e2a" opacity="0.3" />
+        </symbol>
+
+        <symbol id="market" viewBox="0 0 100 100">
+            <ellipse cx="50" cy="85" rx="40" ry="15" fill="#3a2e2a" opacity="0.2" />
+            <path d="M20 80 L20 40 L50 10 L80 40 L80 80 Z" fill="#f1c40f" stroke="#3a2e2a" stroke-width="3" />
+            <path d="M20 40 L50 10 L80 40" fill="none" stroke="#fff" stroke-width="5" stroke-dasharray="10,10" />
+            <rect x="30" y="60" width="40" height="20" fill="#e67e22" stroke="#3a2e2a" stroke-width="2" />
+        </symbol>
+
+        <symbol id="tower" viewBox="0 0 100 100">
+            <ellipse cx="50" cy="90" rx="25" ry="10" fill="#3a2e2a" opacity="0.2" />
+            <rect x="35" y="40" width="30" height="50" fill="#95a5a6" stroke="#3a2e2a" stroke-width="3" />
+            <path d="M30 40 L50 10 L70 40 Z" fill="#3498db" stroke="#3a2e2a" stroke-width="3" />
+            <circle cx="50" cy="25" r="5" fill="#fff" filter="drop-shadow(0 0 5px cyan)" />
+        </symbol>
+
+        <symbol id="tree" viewBox="0 0 60 80">
+            <ellipse cx="30" cy="75" rx="15" ry="5" fill="#3a2e2a" opacity="0.2" />
+            <path d="M30 70 L30 60" stroke="#5d4037" stroke-width="4" />
+            <path d="M30 10 L10 60 L50 60 Z" fill="#2ecc71" stroke="#27ae60" stroke-width="2" />
+            <path d="M30 10 L15 45 L45 45 Z" fill="#27ae60" opacity="0.3" />
+        </symbol>
+    </svg>
+
+    <div class="iso-container">
+        <div class="iso-world">
+            <!-- 1. BASE TERRAIN (A 10x10 Grid for simplicity) -->
+            <div class="layer layer-terrain" id="terrainGrid">
+                <!-- Javascript will populate this grid for cleanliness -->
+            </div>
+
+            <!-- 2. ROADS (Manual Placement for now to match flow) -->
+            <div class="layer layer-roads">
+                <!-- Roads are just colored tiles in the grid actually, or overlays -->
+            </div>
+
+            <!-- 3. OBJECTS & BUILDINGS (The meat) -->
+            <div class="layer layer-objects">
+
+                <!-- Central Hub -->
+                <div class="structure" style="top: 40%; left: 40%;">
+                    <svg width="120" height="120">
+                        <use href="#castle"></use>
+                    </svg>
+                    <div class="tooltip">
+                        <strong class="text-rose-600">Member City</strong><br>
+                        <span class="text-xs text-gray-500">System: Registration</span>
+                        <div class="mt-2 h-1 bg-gray-200 rounded">
+                            <div class="h-1 bg-green-500 w-3/4 rounded"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Market (Right) -->
+                <div class="structure" style="top: 20%; left: 70%;">
+                    <svg width="100" height="100">
+                        <use href="#market"></use>
+                    </svg>
+                    <div class="tooltip">
+                        <strong class="text-amber-600">Product Market</strong><br>
+                        <span class="text-xs text-gray-500">System: Stock/Loan</span>
+                    </div>
+                </div>
+
+                <!-- Support Tower (Top Left) -->
+                <div class="structure" style="top: 20%; left: 20%;">
+                    <svg width="80" height="120">
+                        <use href="#tower"></use>
+                    </svg>
+                    <div class="tooltip">
+                        <strong class="text-blue-600">Support Tower</strong><br>
+                        <span class="text-xs text-gray-500">System: Backup</span>
+                    </div>
+                </div>
+
+                <!-- Forest / Decor -->
+                <div class="structure"
+                    style="top: 10%; left: 10%; transform: rotateZ(45deg) rotateX(-60deg) translateZ(10px);">
+                    <svg width="60" height="80">
+                        <use href="#tree"></use>
+                    </svg>
+                </div>
+                <div class="structure"
+                    style="top: 15%; left: 12%; transform: rotateZ(45deg) rotateX(-60deg) translateZ(10px);">
+                    <svg width="60" height="80">
+                        <use href="#tree"></use>
+                    </svg>
+                </div>
+                <div class="structure"
+                    style="top: 60%; left: 80%; transform: rotateZ(45deg) rotateX(-60deg) translateZ(10px);">
+                    <svg width="60" height="80">
+                        <use href="#tree"></use>
+                    </svg>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- UI Overlay (HUD) -->
+    <div class="fixed top-4 left-4 z-50">
+        <div class="bg-[#f4e4bc] border-2 border-[#3a2e2a] px-4 py-2 rounded shadow-lg font-cinzel text-[#3a2e2a]">
+            Isometic Prototype v1
+        </div>
+    </div>
+
+    <script>
+        // Generate Terrain Grid
+        const grid = document.getElementById('terrainGrid');
+        const size = 10;
+
+        for (let x = 0; x < size; x++) {
+            for (let y = 0; y < size; y++) {
+                const tile = document.createElement('div');
+                tile.className = 'tile';
+
+                // Add water river in middle
+                if (x === 5 || x === 6) {
+                    // tile.className += ' water';
+                }
+
+                // Random variation
+                if (Math.random() > 0.9) tile.className += ' road'; // Just testing styling
+
+                tile.style.left = (x * 100) + 'px';
+                tile.style.top = (y * 100) + 'px';
+
+                tile.innerHTML = `
+                    <div class="tile-face tile-top"></div>
+                    <div class="tile-face tile-right"></div>
+                    <div class="tile-face tile-front"></div>
+                `;
+                grid.appendChild(tile);
+            }
+        }
+    </script>
+</body>
+
+</html>

@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('systems', function (Blueprint $table) {
             $table->id();
             $table->foreignId('project_id')->constrained()->cascadeOnDelete();
+            $table->string('external_id')->nullable()->index(); // CSV/Sheet ID
             $table->string('name');
             $table->integer('city_hp')->default(100);
             $table->integer('city_max_hp')->default(500);

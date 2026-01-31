@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('tasks', function (Blueprint $table) {
             $table->id();
             $table->foreignId('flow_id')->constrained()->cascadeOnDelete();
+            $table->string('external_id')->nullable()->index(); // CSV Task ID
             $table->string('title');
             $table->string('type'); // UI, API, FE
             $table->string('status')->default('todo'); // todo, doing, done

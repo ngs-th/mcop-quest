@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MCOP Quest - V5 Master Prototype</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=MedievalSharp&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background-color: #1a1a1a;
+            /* Subtle parchment texture backdrop */
+            background-image: url('https://www.transparenttextures.com/patterns/old-paper.png');
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'MedievalSharp', cursive;
+        }
+
+        .viewport {
+            position: relative;
+            width: 1400px;
+            height: 1000px;
+            /* transform: scale(0.8); */
+        }
+
+        .asset {
+            position: absolute;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: pointer;
+            /* Drop shadow for depth */
+            filter: drop-shadow(0 10px 10px rgba(0, 0, 0, 0.5));
+        }
+
+        .asset:hover {
+            transform: translateY(-15px) scale(1.05);
+            filter: drop-shadow(0 20px 20px rgba(0, 0, 0, 0.6)) brightness(1.1);
+            z-index: 9999 !important;
+        }
+
+        /* Tooltip */
+        .tooltip {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translate(-50%, -120%);
+            background: #2c1810;
+            border: 2px solid #d4af37;
+            color: #f3e5ab;
+            padding: 8px 12px;
+            border-radius: 4px;
+            opacity: 0;
+            pointer-events: none;
+            text-align: center;
+            min-width: 150px;
+            white-space: nowrap;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+            transition: opacity 0.2s;
+        }
+
+        .asset:hover .tooltip {
+            opacity: 1;
+        }
+
+        .tooltip::after {
+            content: '';
+            position: absolute;
+            bottom: -6px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-width: 6px 6px 0;
+            border-color: #2c1810 transparent transparent transparent;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="fixed top-8 left-8 text-[#f3e5ab] z-50">
+        <h1 class="text-4xl drop-shadow-lg">Kingdom Map</h1>
+        <p class="text-xl text-[#d4af37]">High-Fidelity Assembly (V5)</p>
+    </div>
+
+    <div class="viewport">
+        <!-- 
+           Z-INDEX STRATEGY: 
+           Background (Water) < Land < Foliage < Buildings (Back to Front)
+           Y-coordinate is main driver of Z-index.
+        -->
+
+        <!-- === TERRAIN LAYER === -->
+        <!-- Water Base -->
+        <img src="../../public/images/assets_v5/tile_water.png" class="asset"
+            style="top: 400px; left: 800px; z-index: 10;">
+        <img src="../../public/images/assets_v5/tile_water.png" class="asset"
+            style="top: 500px; left: 950px; z-index: 12;">
+        <img src="../../public/images/assets_v5/tile_water.png" class="asset"
+            style="top: 600px; left: 800px; z-index: 14;">
+
+        <!-- Grass Islands -->
+        <img src="../../public/images/assets_v5/tile_grass.png" class="asset"
+            style="top: 300px; left: 300px; z-index: 20;">
+        <img src="../../public/images/assets_v5/tile_grass.png" class="asset"
+            style="top: 350px; left: 450px; z-index: 25;">
+        <img src="../../public/images/assets_v5/tile_grass.png" class="asset"
+            style="top: 400px; left: 600px; z-index: 30;">
+
+        <img src="../../public/images/assets_v5/tile_grass.png" class="asset"
+            style="top: 400px; left: 300px; z-index: 35;">
+        <img src="../../public/images/assets_v5/tile_grass.png" class="asset"
+            style="top: 450px; left: 450px; z-index: 40;">
+        <img src="../../public/images/assets_v5/tile_grass.png" class="asset"
+            style="top: 500px; left: 600px; z-index: 45;">
+
+        <img src="../../public/images/assets_v5/tile_grass.png" class="asset"
+            style="top: 500px; left: 300px; z-index: 50;">
+        <img src="../../public/images/assets_v5/tile_grass.png" class="asset"
+            style="top: 550px; left: 450px; z-index: 55;">
+
+        <!-- === DECOR LAYER === -->
+        <img src="../../public/images/assets_v5/rock_moss.png" class="asset"
+            style="top: 450px; left: 250px; z-index: 60; width: 100px;">
+        <img src="../../public/images/assets_v5/tree_pine.png" class="asset"
+            style="top: 250px; left: 350px; z-index: 60; width: 120px;">
+        <img src="../../public/images/assets_v5/tree_pine.png" class="asset"
+            style="top: 550px; left: 650px; z-index: 60; width: 120px;">
+
+        <!-- === BUILDINGS LAYER === -->
+
+        <!-- Tower (Support) - Back Left -->
+        <div style="position: absolute; top: 180px; left: 200px; z-index: 70;">
+            <img src="../../public/images/assets_v5/tower_magic.png" class="asset" style="width: 180px;">
+            <div class="tooltip">
+                <span class="font-bold text-[#f3e5ab]">Wizard's Spire</span><br>
+                <span class="text-xs text-gray-400">System: Analytics</span>
+            </div>
+        </div>
+
+        <!-- Main Castle - Center -->
+        <div style="position: absolute; top: 150px; left: 350px; z-index: 100;">
+            <img src="../../public/images/assets_v5/castle_citadel.png" class="asset" style="width: 500px;">
+            <div class="tooltip">
+                <span class="font-bold text-[#f3e5ab]">Royal Citadel</span><br>
+                <span class="text-xs text-gray-400">System: Core Member</span>
+                <div class="mt-1 w-full bg-gray-800 h-1 rounded">
+                    <div class="bg-green-500 h-1 w-3/4 rounded"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Market - Front Right -->
+        <div style="position: absolute; top: 450px; left: 550px; z-index: 120;">
+            <img src="../../public/images/assets_v5/market_stall.png" class="asset" style="width: 250px;">
+            <div class="tooltip">
+                <span class="font-bold text-[#f3e5ab]">Trade Market</span><br>
+                <span class="text-xs text-gray-400">System: Payment</span>
+            </div>
+        </div>
+
+    </div>
+
+</body>
+
+</html>
