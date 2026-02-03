@@ -135,36 +135,32 @@
         }
 
         .hero-avatar {
-            width: 100px;
-            height: 100px;
+            width: 120px;
+            height: 140px;
             background: linear-gradient(145deg, #3d2418 0%, #2c1810 100%);
             border: 3px solid #d4a853;
-            border-radius: 50%;
+            border-radius: 16px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 50px;
             box-shadow: 0 0 20px rgba(212, 168, 83, 0.3);
             position: relative;
+            overflow: hidden;
         }
 
-        .hero-avatar::before {
-            content: '';
-            position: absolute;
-            inset: -6px;
-            border: 2px dashed #8b6914;
-            border-radius: 50%;
-            animation: rotate 20s linear infinite;
+        .hero-character {
+            animation: hero-breathe 2s ease-in-out infinite;
         }
 
-        @keyframes rotate {
-            to { transform: rotate(360deg); }
+        @keyframes hero-breathe {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.02); }
         }
 
         .hero-level-badge {
             position: absolute;
-            bottom: -5px;
-            right: -5px;
+            bottom: 5px;
+            right: 5px;
             background: #d4a853;
             color: #1a0f0a;
             font-size: 12px;
@@ -335,7 +331,8 @@
         }
 
         .hero-mini {
-            font-size: 50px;
+            width: 60px;
+            height: 70px;
             animation: float 2s ease-in-out infinite;
         }
 
@@ -968,9 +965,8 @@
             }
 
             .hero-avatar {
-                width: 80px;
-                height: 80px;
-                font-size: 40px;
+                width: 100px;
+                height: 120px;
             }
 
             .hero-name {
@@ -1018,7 +1014,42 @@
         <div class="hero-card">
             <div class="hero-header">
                 <div class="hero-avatar">
-                    ⚔️
+                    <!-- Hero Character SVG - Warrior -->
+                    <svg width="100" height="120" viewBox="0 0 100 120" class="hero-character">
+                        <!-- Shadow -->
+                        <ellipse cx="50" cy="112" rx="30" ry="5" fill="#000" opacity="0.3"/>
+                        <!-- Cape -->
+                        <path d="M25 45 Q15 80 20 105 L80 105 Q85 80 75 45 Z" fill="#8B4513"/>
+                        <path d="M25 45 Q20 75 23 100 L40 100 Q35 75 35 45 Z" fill="#A0522D"/>
+                        <!-- Body/Armor -->
+                        <path d="M30 40 L28 100 L72 100 L70 40 Z" fill="#C0C0C0"/>
+                        <path d="M30 40 L28 90 L45 90 L43 40 Z" fill="#A0A0A0"/>
+                        <!-- Chest Plate Detail -->
+                        <rect x="38" y="50" width="24" height="30" rx="3" fill="#D4A853"/>
+                        <rect x="45" y="55" width="10" height="20" rx="2" fill="#B8860B"/>
+                        <!-- Belt -->
+                        <rect x="30" y="85" width="40" height="8" fill="#8B4513"/>
+                        <rect x="46" y="83" width="8" height="12" fill="#D4A853"/>
+                        <!-- Head -->
+                        <circle cx="50" cy="28" r="15" fill="#F5DEB3"/>
+                        <!-- Helmet -->
+                        <path d="M32 20 L35 5 L50 0 L65 5 L68 20 Z" fill="#C0C0C0"/>
+                        <rect x="35" y="18" width="30" height="10" fill="#A0A0A0"/>
+                        <!-- Helmet Crest -->
+                        <rect x="48" y="-5" width="4" height="10" fill="#E74C3C"/>
+                        <!-- Eyes -->
+                        <circle cx="45" cy="28" r="2" fill="#2C1810"/>
+                        <circle cx="55" cy="28" r="2" fill="#2C1810"/>
+                        <!-- Sword (Right Hand) -->
+                        <rect x="75" y="30" width="4" height="60" fill="#8B4513"/>
+                        <rect x="72" y="25" width="10" height="6" fill="#D4A853"/>
+                        <rect x="75" y="15" width="4" height="15" fill="#C0C0C0"/>
+                        <circle cx="77" cy="12" r="5" fill="#E74C3C"/>
+                        <!-- Shield (Left Hand) -->
+                        <ellipse cx="22" cy="65" rx="10" ry="20" fill="#8B4513"/>
+                        <ellipse cx="22" cy="65" rx="7" ry="15" fill="#D4A853"/>
+                        <ellipse cx="22" cy="65" rx="4" ry="8" fill="#B8860B"/>
+                    </svg>
                     <span class="hero-level-badge">Lv.15</span>
                 </div>
                 <div class="hero-info">
@@ -1064,7 +1095,35 @@
             </div>
             <div class="battle-arena">
                 <div class="hero-side">
-                    <div class="hero-mini">⚔️</div>
+                    <!-- Mini Hero Character SVG -->
+                    <svg width="60" height="70" viewBox="0 0 100 120" class="hero-mini">
+                        <!-- Cape -->
+                        <path d="M25 45 Q15 80 20 105 L80 105 Q85 80 75 45 Z" fill="#8B4513"/>
+                        <path d="M25 45 Q20 75 23 100 L40 100 Q35 75 35 45 Z" fill="#A0522D"/>
+                        <!-- Body/Armor -->
+                        <path d="M30 40 L28 100 L72 100 L70 40 Z" fill="#C0C0C0"/>
+                        <path d="M30 40 L28 90 L45 90 L43 40 Z" fill="#A0A0A0"/>
+                        <!-- Chest Plate -->
+                        <rect x="38" y="50" width="24" height="30" rx="3" fill="#D4A853"/>
+                        <rect x="45" y="55" width="10" height="20" rx="2" fill="#B8860B"/>
+                        <!-- Belt -->
+                        <rect x="30" y="85" width="40" height="8" fill="#8B4513"/>
+                        <!-- Head -->
+                        <circle cx="50" cy="28" r="15" fill="#F5DEB3"/>
+                        <!-- Helmet -->
+                        <path d="M32 20 L35 5 L50 0 L65 5 L68 20 Z" fill="#C0C0C0"/>
+                        <rect x="35" y="18" width="30" height="10" fill="#A0A0A0"/>
+                        <!-- Helmet Crest -->
+                        <rect x="48" y="-5" width="4" height="10" fill="#E74C3C"/>
+                        <!-- Sword -->
+                        <rect x="75" y="30" width="4" height="60" fill="#8B4513"/>
+                        <rect x="72" y="25" width="10" height="6" fill="#D4A853"/>
+                        <rect x="75" y="15" width="4" height="15" fill="#C0C0C0"/>
+                        <circle cx="77" cy="12" r="5" fill="#E74C3C"/>
+                        <!-- Shield -->
+                        <ellipse cx="22" cy="65" rx="10" ry="20" fill="#8B4513"/>
+                        <ellipse cx="22" cy="65" rx="7" ry="15" fill="#D4A853"/>
+                    </svg>
                 </div>
                 <div style="font-size: 24px; color: #8b6914;">VS</div>
                 <div class="monster-side">
