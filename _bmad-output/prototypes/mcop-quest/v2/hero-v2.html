@@ -476,6 +476,35 @@
             background: rgba(212, 168, 83, 0.05);
         }
 
+        .equip-slot .equip-actions {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            display: none;
+            gap: 4px;
+        }
+
+        .equip-slot:hover .equip-actions {
+            display: flex;
+        }
+
+        .equip-action-btn {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            border: none;
+            font-size: 10px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .equip-action-btn.remove {
+            background: #e74c3c;
+            color: white;
+        }
+
         .equip-icon {
             font-size: 28px;
             margin-bottom: 5px;
@@ -491,6 +520,388 @@
             font-size: 11px;
             color: #2ecc71;
             margin-top: 2px;
+        }
+
+        .equip-stats {
+            font-size: 9px;
+            color: #3498db;
+            margin-top: 2px;
+        }
+
+        /* Item Bag */
+        .item-bag-card {
+            background: linear-gradient(145deg, #3d2418 0%, #2c1810 100%);
+            border: 2px solid #8b6914;
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 25px;
+        }
+
+        .item-bag-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .item-bag-tabs {
+            display: flex;
+            gap: 8px;
+        }
+
+        .item-bag-tab {
+            padding: 6px 12px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid #5c4018;
+            border-radius: 20px;
+            font-size: 12px;
+            color: #8b6914;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .item-bag-tab.active, .item-bag-tab:hover {
+            background: rgba(212, 168, 83, 0.2);
+            border-color: #d4a853;
+            color: #d4a853;
+        }
+
+        .item-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+        }
+
+        .item-slot {
+            aspect-ratio: 1;
+            background: rgba(0, 0, 0, 0.2);
+            border: 2px solid #5c4018;
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+            padding: 5px;
+        }
+
+        .item-slot:hover {
+            border-color: #d4a853;
+            background: rgba(212, 168, 83, 0.1);
+        }
+
+        .item-slot .item-icon {
+            font-size: 24px;
+            margin-bottom: 2px;
+        }
+
+        .item-slot .item-name {
+            font-size: 9px;
+            color: #f4e8d0;
+            text-align: center;
+            line-height: 1.2;
+        }
+
+        .item-slot .item-count {
+            position: absolute;
+            bottom: 2px;
+            right: 4px;
+            font-size: 10px;
+            color: #d4a853;
+            font-weight: bold;
+        }
+
+        .item-slot.empty {
+            opacity: 0.5;
+            cursor: default;
+        }
+
+        .item-slot.empty:hover {
+            border-color: #5c4018;
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        .item-slot.rare { border-color: #9b59b6; }
+        .item-slot.epic { border-color: #e74c3c; }
+        .item-slot.legendary { border-color: #f39c12; box-shadow: 0 0 10px rgba(243, 156, 18, 0.3); }
+
+        /* Equipment Modal */
+        .equip-modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.8);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 200;
+            padding: 20px;
+        }
+
+        .equip-modal.active {
+            display: flex;
+        }
+
+        .equip-modal-content {
+            background: linear-gradient(145deg, #3d2418 0%, #2c1810 100%);
+            border: 3px solid #8b6914;
+            border-radius: 16px;
+            padding: 24px;
+            max-width: 400px;
+            width: 100%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .equip-modal-title {
+            font-family: 'Cinzel', serif;
+            font-size: 20px;
+            color: #d4a853;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .equip-current {
+            background: rgba(0, 0, 0, 0.3);
+            border: 2px solid #5c4018;
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .equip-current-icon {
+            font-size: 48px;
+            margin-bottom: 10px;
+        }
+
+        .equip-current-name {
+            font-size: 18px;
+            color: #f4e8d0;
+            margin-bottom: 5px;
+        }
+
+        .equip-current-stats {
+            font-size: 14px;
+            color: #3498db;
+        }
+
+        .equip-actions-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .equip-action {
+            padding: 15px;
+            background: linear-gradient(145deg, #4d3428 0%, #3c2820 100%);
+            border: 2px solid #5c4018;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .equip-action:hover {
+            border-color: #d4a853;
+            background: linear-gradient(145deg, #5d4438 0%, #4c3830 100%);
+        }
+
+        .equip-action.remove {
+            border-color: #c0392b;
+            color: #e74c3c;
+        }
+
+        .equip-action.remove:hover {
+            background: rgba(192, 57, 43, 0.2);
+        }
+
+        .equip-action-icon {
+            font-size: 20px;
+        }
+
+        .equip-action-text {
+            flex: 1;
+        }
+
+        .equip-action-title {
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .equip-action-desc {
+            font-size: 12px;
+            color: #8b6914;
+        }
+
+        .equip-modal-close {
+            margin-top: 20px;
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(145deg, #8b6914 0%, #6b5010 100%);
+            border: 2px solid #d4a853;
+            color: #f4e8d0;
+            border-radius: 8px;
+            font-family: 'Cinzel', serif;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        /* Section Badge */
+        .section-badge {
+            font-size: 11px;
+            background: rgba(0, 0, 0, 0.3);
+            color: #8b6914;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-family: 'Crimson Text', Georgia, serif;
+            font-weight: 400;
+            margin-left: auto;
+        }
+
+        /* Damage Contribution Card */
+        .contribution-card {
+            background: linear-gradient(145deg, #3d2418 0%, #2c1810 100%);
+            border: 2px solid #8b6914;
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 25px;
+        }
+
+        .contribution-chart {
+            margin-bottom: 15px;
+        }
+
+        .chart-bar {
+            height: 24px;
+            background: #1a0f0a;
+            border: 2px solid #5c4018;
+            border-radius: 12px;
+            overflow: hidden;
+            display: flex;
+        }
+
+        .chart-segment {
+            height: 100%;
+            transition: all 0.3s ease;
+        }
+
+        .chart-segment:hover {
+            opacity: 0.9;
+        }
+
+        .chart-segment.design { background: #E67E22; }
+        .chart-segment.ac { background: #3498DB; }
+        .chart-segment.api { background: #9B59B6; }
+        .chart-segment.fe { background: #1ABC9C; }
+        .chart-segment.testing { background: #F1C40F; }
+
+        .contribution-legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            justify-content: center;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+        }
+
+        .legend-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+
+        .legend-dot.design { background: #E67E22; }
+        .legend-dot.ac { background: #3498DB; }
+        .legend-dot.api { background: #9B59B6; }
+        .legend-dot.fe { background: #1ABC9C; }
+        .legend-dot.testing { background: #F1C40F; }
+
+        .legend-label {
+            color: #8b6914;
+        }
+
+        .legend-value {
+            color: #d4a853;
+            font-weight: 600;
+        }
+
+        /* Recent Activity Card */
+        .activity-card {
+            background: linear-gradient(145deg, #3d2418 0%, #2c1810 100%);
+            border: 2px solid #8b6914;
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 25px;
+        }
+
+        .activity-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .activity-item {
+            display: flex;
+            gap: 12px;
+            align-items: flex-start;
+        }
+
+        .activity-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+
+        .activity-icon.victory {
+            background: rgba(46, 204, 113, 0.15);
+            border: 1px solid rgba(46, 204, 113, 0.3);
+        }
+
+        .activity-icon.levelup {
+            background: rgba(212, 168, 83, 0.15);
+            border: 1px solid rgba(212, 168, 83, 0.3);
+        }
+
+        .activity-icon.defeat {
+            background: rgba(155, 89, 182, 0.15);
+            border: 1px solid rgba(155, 89, 182, 0.3);
+        }
+
+        .activity-content {
+            flex: 1;
+        }
+
+        .activity-text {
+            color: #f4e8d0;
+            font-size: 14px;
+            margin-bottom: 3px;
+        }
+
+        .activity-highlight {
+            font-weight: 600;
+        }
+
+        .activity-highlight.api { color: #9B59B6; }
+        .activity-highlight.gold { color: #d4a853; }
+        .activity-highlight.success { color: #2ecc71; }
+
+        .activity-meta {
+            color: #8b6914;
+            font-size: 12px;
         }
 
         /* Bottom Navigation */
@@ -705,38 +1116,159 @@
         </div>
 
         <!-- Equipment -->
-        <div class="equipment-card">
+        <div class="equipment-card" x-data="equipmentManager()">
             <h3 class="section-title">🛡️ Equipment</h3>
             <div class="equipment-grid">
-                <div class="equip-slot occupied">
-                    <span class="equip-icon">🪖</span>
-                    <span class="equip-label">Head</span>
-                    <span class="equip-name">Iron Helm</span>
+                <template x-for="(slot, index) in slots" :key="index">
+                    <div class="equip-slot" :class="{ 'occupied': slot.item }" @click="openSlotModal(slot)">
+                        <div class="equip-actions" @click.stop v-if="slot.item">
+                            <button class="equip-action-btn remove" @click.stop="unequipItem(slot)" title="Unequip">×</button>
+                        </div>
+                        <span class="equip-icon" x-text="slot.item ? slot.item.icon : slot.emptyIcon"></span>
+                        <span class="equip-label" x-text="slot.label"></span>
+                        <span class="equip-name" x-text="slot.item ? slot.item.name : 'Empty'" x-show="slot.item"></span>
+                        <span class="equip-stats" x-text="slot.item ? slot.item.stats : ''" x-show="slot.item"></span>
+                    </div>
+                </template>
+            </div>
+
+            <!-- Equipment Modal -->
+            <div class="equip-modal" :class="{ 'active': showModal }" @click.self="showModal = false">
+                <div class="equip-modal-content" x-show="showModal" x-transition>
+                    <h3 class="equip-modal-title" x-text="activeSlot ? activeSlot.label + ' Slot' : 'Equipment'"></h3>
+
+                    <div class="equip-current" x-show="activeSlot && activeSlot.item">
+                        <div class="equip-current-icon" x-text="activeSlot?.item?.icon"></div>
+                        <div class="equip-current-name" x-text="activeSlot?.item?.name"></div>
+                        <div class="equip-current-stats" x-text="activeSlot?.item?.stats"></div>
+                    </div>
+
+                    <div class="equip-current" x-show="activeSlot && !activeSlot.item">
+                        <div class="equip-current-icon" x-text="activeSlot?.emptyIcon"></div>
+                        <div class="equip-current-name" style="color: #8b6914;">Empty Slot</div>
+                        <div class="equip-current-stats">No item equipped</div>
+                    </div>
+
+                    <div class="equip-actions-list">
+                        <!-- Unequip Action -->
+                        <div class="equip-action remove" @click="unequipItem(activeSlot); showModal = false;" x-show="activeSlot && activeSlot.item">
+                            <span class="equip-action-icon">🗑️</span>
+                            <div class="equip-action-text">
+                                <div class="equip-action-title">Unequip Item</div>
+                                <div class="equip-action-desc">Move to inventory</div>
+                            </div>
+                        </div>
+
+                        <!-- Equip from Inventory -->
+                        <template x-for="item in getItemsForSlot(activeSlot?.type)" :key="item.id">
+                            <div class="equip-action" @click="equipItem(activeSlot, item); showModal = false;">
+                                <span class="equip-action-icon" x-text="item.icon"></span>
+                                <div class="equip-action-text">
+                                    <div class="equip-action-title" x-text="'Equip ' + item.name"></div>
+                                    <div class="equip-action-desc" x-text="item.stats"></div>
+                                </div>
+                            </div>
+                        </template>
+                    </div>
+
+                    <button class="equip-modal-close" @click="showModal = false">Close</button>
                 </div>
-                <div class="equip-slot occupied">
-                    <span class="equip-icon">🛡️</span>
-                    <span class="equip-label">L.Hand</span>
-                    <span class="equip-name">Wood Shield</span>
+            </div>
+        </div>
+
+        <!-- Item Bag -->
+        <div class="item-bag-card" x-data="itemBag()">
+            <div class="item-bag-header">
+                <h3 class="section-title">🎒 Item Bag <span style="font-size: 14px; color: #8b6914;">(<span x-text="totalItems"></span>/50)</span></h3>
+                <div class="item-bag-tabs">
+                    <button class="item-bag-tab" :class="{ 'active': activeTab === 'all' }" @click="activeTab = 'all'">All</button>
+                    <button class="item-bag-tab" :class="{ 'active': activeTab === 'equip' }" @click="activeTab = 'equip'">Equip</button>
+                    <button class="item-bag-tab" :class="{ 'active': activeTab === 'consume' }" @click="activeTab = 'consume'">Use</button>
                 </div>
-                <div class="equip-slot occupied">
-                    <span class="equip-icon">🛡️</span>
-                    <span class="equip-label">Body</span>
-                    <span class="equip-name">Knight Armor</span>
+            </div>
+            <div class="item-grid">
+                <template x-for="(item, index) in filteredItems" :key="index">
+                    <div class="item-slot" :class="[item.rarity, { 'empty': !item }]" @click="item && useItem(item)">
+                        <span class="item-icon" x-text="item ? item.icon : ''"></span>
+                        <span class="item-name" x-text="item ? item.name : ''" x-show="item"></span>
+                        <span class="item-count" x-text="item ? 'x' + item.count : ''" x-show="item && item.count > 1"></span>
+                    </div>
+                </template>
+                <!-- Empty slots filler -->
+                <template x-for="i in emptySlots" :key="'empty-' + i">
+                    <div class="item-slot empty"></div>
+                </template>
+            </div>
+        </div>
+
+        <!-- Damage Contribution Chart -->
+        <div class="contribution-card">
+            <h3 class="section-title">📊 Damage Contribution</h3>
+            <div class="contribution-chart">
+                <div class="chart-bar">
+                    <div class="chart-segment design" style="width: 5%" title="Design: 5%"></div>
+                    <div class="chart-segment ac" style="width: 5%" title="AC: 5%"></div>
+                    <div class="chart-segment api" style="width: 70%" title="API: 70%"></div>
+                    <div class="chart-segment fe" style="width: 15%" title="FE: 15%"></div>
+                    <div class="chart-segment testing" style="width: 5%" title="Testing: 5%"></div>
                 </div>
-                <div class="equip-slot occupied">
-                    <span class="equip-icon">⚔️</span>
-                    <span class="equip-label">R.Hand</span>
-                    <span class="equip-name">Steel Sword</span>
+            </div>
+            <div class="contribution-legend">
+                <div class="legend-item">
+                    <span class="legend-dot design"></span>
+                    <span class="legend-label">Design</span>
+                    <span class="legend-value">5%</span>
                 </div>
-                <div class="equip-slot occupied">
-                    <span class="equip-icon">👖</span>
-                    <span class="equip-label">Legs</span>
-                    <span class="equip-name">Iron Greaves</span>
+                <div class="legend-item">
+                    <span class="legend-dot ac"></span>
+                    <span class="legend-label">AC</span>
+                    <span class="legend-value">5%</span>
                 </div>
-                <div class="equip-slot occupied">
-                    <span class="equip-icon">👢</span>
-                    <span class="equip-label">Feet</span>
-                    <span class="equip-name">Leather Boots</span>
+                <div class="legend-item">
+                    <span class="legend-dot api"></span>
+                    <span class="legend-label">API</span>
+                    <span class="legend-value">70%</span>
+                </div>
+                <div class="legend-item">
+                    <span class="legend-dot fe"></span>
+                    <span class="legend-label">FE</span>
+                    <span class="legend-value">15%</span>
+                </div>
+                <div class="legend-item">
+                    <span class="legend-dot testing"></span>
+                    <span class="legend-label">Testing</span>
+                    <span class="legend-value">5%</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Activity -->
+        <div class="activity-card">
+            <h3 class="section-title">
+                📜 Recent Activity
+                <span class="section-badge">This Week</span>
+            </h3>
+            <div class="activity-list">
+                <div class="activity-item">
+                    <div class="activity-icon victory">⚔️</div>
+                    <div class="activity-content">
+                        <p class="activity-text">Defeated Minion: <span class="activity-highlight api">POST /api/auth/login</span></p>
+                        <p class="activity-meta">2 hours ago • +50 Gold, +100 XP</p>
+                    </div>
+                </div>
+                <div class="activity-item">
+                    <div class="activity-icon levelup">🎉</div>
+                    <div class="activity-content">
+                        <p class="activity-text">Level Up! <span class="activity-highlight gold">Level 15</span></p>
+                        <p class="activity-meta">Yesterday • New skills unlocked</p>
+                    </div>
+                </div>
+                <div class="activity-item">
+                    <div class="activity-icon defeat">💀</div>
+                    <div class="activity-content">
+                        <p class="activity-text">Commander Defeated: <span class="activity-highlight success">Flow: Registration</span></p>
+                        <p class="activity-meta">2 days ago • +5 Gems</p>
+                    </div>
                 </div>
             </div>
         </div>
@@ -749,15 +1281,15 @@
                 <span class="nav-icon">⚔️</span>
                 <span class="nav-label">Hero</span>
             </a>
-            <a href="#" class="nav-item">
+            <a href="team-v2.html" class="nav-item">
                 <span class="nav-icon">👥</span>
-                <span class="nav-label">Party</span>
+                <span class="nav-label">Team</span>
             </a>
-            <a href="#" class="nav-item">
+            <a href="world-map-v2.html" class="nav-item">
                 <span class="nav-icon">🗺️</span>
                 <span class="nav-label">World</span>
             </a>
-            <a href="#" class="nav-item">
+            <a href="shop-v2.html" class="nav-item">
                 <span class="nav-icon">🛒</span>
                 <span class="nav-label">Shop</span>
             </a>
@@ -768,6 +1300,97 @@
         function heroV2Data() {
             return {
                 // Hero data
+            }
+        }
+
+        function equipmentManager() {
+            return {
+                showModal: false,
+                activeSlot: null,
+                slots: [
+                    { type: 'head', label: 'Head', emptyIcon: '🪖', item: { id: 1, name: 'Iron Helm', icon: '🪖', stats: '+15 DEF', rarity: 'common' } },
+                    { type: 'leftHand', label: 'L.Hand', emptyIcon: '🛡️', item: { id: 2, name: 'Wood Shield', icon: '🛡️', stats: '+10 DEF', rarity: 'common' } },
+                    { type: 'body', label: 'Body', emptyIcon: '🛡️', item: { id: 3, name: 'Knight Armor', icon: '🛡️', stats: '+25 DEF', rarity: 'rare' } },
+                    { type: 'rightHand', label: 'R.Hand', emptyIcon: '⚔️', item: { id: 4, name: 'Steel Sword', icon: '⚔️', stats: '+30 ATK', rarity: 'rare' } },
+                    { type: 'legs', label: 'Legs', emptyIcon: '👖', item: { id: 5, name: 'Iron Greaves', icon: '👖', stats: '+12 DEF', rarity: 'common' } },
+                    { type: 'feet', label: 'Feet', emptyIcon: '👢', item: { id: 6, name: 'Leather Boots', icon: '👢', stats: '+5 SPD', rarity: 'common' } }
+                ],
+                inventory: [
+                    { id: 7, name: 'Dragon Helm', icon: '🪖', stats: '+35 DEF, +10 STR', rarity: 'epic', slot: 'head' },
+                    { id: 8, name: 'Fire Sword', icon: '🔥', stats: '+50 ATK, +5 Fire', rarity: 'legendary', slot: 'rightHand' },
+                    { id: 9, name: 'Leather Cap', icon: '🧢', stats: '+5 DEF', rarity: 'common', slot: 'head' },
+                    { id: 10, name: 'Magic Shield', icon: '✨', stats: '+20 DEF, +10 MAG', rarity: 'epic', slot: 'leftHand' }
+                ],
+                openSlotModal(slot) {
+                    this.activeSlot = slot;
+                    this.showModal = true;
+                },
+                unequipItem(slot) {
+                    if (slot.item) {
+                        this.inventory.push({...slot.item, slot: slot.type});
+                        slot.item = null;
+                    }
+                },
+                equipItem(slot, item) {
+                    // Unequip current if any
+                    if (slot.item) {
+                        this.inventory.push({...slot.item, slot: slot.type});
+                    }
+                    // Equip new item
+                    slot.item = {...item};
+                    // Remove from inventory
+                    this.inventory = this.inventory.filter(i => i.id !== item.id);
+                },
+                getItemsForSlot(slotType) {
+                    return this.inventory.filter(item => item.slot === slotType);
+                }
+            }
+        }
+
+        function itemBag() {
+            return {
+                activeTab: 'all',
+                maxSlots: 20,
+                items: [
+                    { id: 1, name: 'Health Potion', icon: '🧪', count: 5, rarity: 'common', type: 'consume' },
+                    { id: 2, name: 'Dragon Helm', icon: '🪖', count: 1, rarity: 'epic', type: 'equip' },
+                    { id: 3, name: 'Fire Sword', icon: '🔥', count: 1, rarity: 'legendary', type: 'equip' },
+                    { id: 4, name: 'Mana Potion', icon: '💧', count: 3, rarity: 'common', type: 'consume' },
+                    { id: 5, name: 'Leather Cap', icon: '🧢', count: 1, rarity: 'common', type: 'equip' },
+                    { id: 6, name: 'Magic Shield', icon: '✨', count: 1, rarity: 'epic', type: 'equip' },
+                    { id: 7, name: 'Gold Coin', icon: '🪙', count: 2450, rarity: 'common', type: 'material' },
+                    { id: 8, name: 'Gem', icon: '💎', count: 15, rarity: 'rare', type: 'material' },
+                    { id: 9, name: 'XP Scroll', icon: '📜', count: 2, rarity: 'rare', type: 'consume' }
+                ],
+                get filteredItems() {
+                    let filtered = this.items;
+                    if (this.activeTab !== 'all') {
+                        filtered = this.items.filter(item => item.type === this.activeTab);
+                    }
+                    // Fill to maxSlots with null
+                    const filled = [...filtered];
+                    return filled;
+                },
+                get emptySlots() {
+                    return Math.max(0, this.maxSlots - this.filteredItems.length);
+                },
+                get totalItems() {
+                    return this.items.reduce((sum, item) => sum + item.count, 0);
+                },
+                useItem(item) {
+                    if (item.type === 'consume') {
+                        alert(`Using ${item.name}!`);
+                        item.count--;
+                        if (item.count <= 0) {
+                            this.items = this.items.filter(i => i.id !== item.id);
+                        }
+                    } else if (item.type === 'equip') {
+                        // Try to auto-equip
+                        const slotMap = { head: 0, leftHand: 1, body: 2, rightHand: 3, legs: 4, feet: 5 };
+                        // This would need to communicate with equipmentManager
+                        alert(`Click an equipment slot to equip ${item.name}`);
+                    }
+                }
             }
         }
     </script>

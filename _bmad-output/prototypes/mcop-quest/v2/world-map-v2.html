@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="th">
     <head>
         <meta charset="UTF-8" />
         <meta
@@ -7,11 +7,10 @@
             content="width=device-width, initial-scale=1.0, user-scalable=no"
         />
         <title>MCOP Quest - World Map</title>
-        <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏰</text></svg>">
-        <link rel="preload" href="assets-v2/castle.png" as="image">
+        <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🗺️</text></svg>">
         <script src="https://cdn.tailwindcss.com"></script>
         <link
-            href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=VT323&display=swap"
+            href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Text:ital,wght@0,400;0,600;1,400&family=VT323&display=swap"
             rel="stylesheet"
         />
         <style>
@@ -22,10 +21,34 @@
                 --text-dark: #2c2416;
             }
 
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+
             body {
-                font-family: "VT323", monospace;
-                background: #1a1510;
-                color: var(--text-dark);
+                font-family: 'Crimson Text', Georgia, serif;
+                background: linear-gradient(135deg, #1a0f0a 0%, #2c1810 50%, #1a0f0a 100%);
+                color: #f4e8d0;
+                min-height: 100vh;
+                overflow-x: hidden;
+                padding-bottom: 80px;
+            }
+
+            body::before {
+                content: '';
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background-image:
+                    radial-gradient(circle at 20% 30%, rgba(212, 168, 83, 0.08) 0%, transparent 50%),
+                    radial-gradient(circle at 80% 70%, rgba(192, 57, 43, 0.05) 0%, transparent 40%),
+                    url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23d4a853' fill-opacity='0.02'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+                pointer-events: none;
+                z-index: -1;
             }
 
             .font-fantasy {
@@ -48,828 +71,897 @@
                     0 0 20px rgba(201, 162, 39, 0.3);
             }
 
-            .parchment {
-                background: linear-gradient(
-                    135deg,
-                    #e8dcc0 0%,
-                    #d4c8a8 50%,
-                    #c9b896 100%
-                );
-                position: relative;
-            }
-
-            .parchment::before {
-                content: "";
-                position: absolute;
-                inset: 0;
-                background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%' height='100%' filter='url(%23noise)' opacity='0.15'/%3E%3C/svg%3E");
-                opacity: 0.4;
-                pointer-events: none;
-            }
-
-            .water-area {
-                background: linear-gradient(135deg, #4a90a4 0%, #2d5a6b 100%);
-                border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%;
-                position: absolute;
-            }
-
-            .location-marker {
-                position: absolute;
-                transform: translate(-50%, -50%);
-                cursor: pointer;
-                transition: all 0.2s;
-                z-index: 10;
-            }
-
-            .location-marker:hover {
-                transform: translate(-50%, -55%) scale(1.05);
-                z-index: 20;
-                filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.4));
-            }
-
-            .health-bar {
-                position: absolute;
-                width: 140px;
-                height: 18px;
-                left: 50%;
-                transform: translateX(-50%);
-                top: -28px;
-            }
-
-            .health-bar-bg {
-                width: 100%;
-                height: 100%;
-                background: #2a2015;
-                border-radius: 4px;
-                border: 2px solid #5a4a3a;
-                overflow: hidden;
-            }
-
-            .health-bar-fill {
-                height: 100%;
-                border-radius: 2px;
-            }
-
-            .health-full {
-                background: linear-gradient(180deg, #66bb6a 0%, #4cae4c 100%);
-            }
-            .health-stable {
-                background: linear-gradient(180deg, #5bc0de 0%, #46b8da 100%);
-            }
-            .health-medium {
-                background: linear-gradient(180deg, #f0ad4e 0%, #ec971f 100%);
-            }
-            .health-low {
-                background: linear-gradient(180deg, #d9534f 0%, #c9302c 100%);
-            }
-
-            .banner-label {
-                position: absolute;
-                background: linear-gradient(135deg, #5d4037 0%, #3e2723 100%);
-                border: 2px solid var(--border-gold);
-                padding: 6px 16px;
-                font-size: 11px;
-                letter-spacing: 0.5px;
-                color: #e8d478;
-                white-space: nowrap;
-                left: 50%;
-                transform: translateX(-50%);
-                clip-path: polygon(
-                    8% 0,
-                    92% 0,
-                    100% 50%,
-                    92% 100%,
-                    8% 100%,
-                    0% 50%
-                );
-                text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
-                z-index: 15;
-            }
-
-            .pixel-art {
-                image-rendering: pixelated;
-                image-rendering: -moz-crisp-edges;
-                image-rendering: crisp-edges;
+            /* Header */
+            .header {
+                background: linear-gradient(180deg, #2c1810 0%, #1a0f0a 100%);
+                border-bottom: 3px solid #8b6914;
+                padding: 15px 20px;
+                position: sticky;
+                top: 0;
+                z-index: 100;
+                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
             }
 
             .resource-counter {
-                background: linear-gradient(135deg, #2c2416 0%, #1a1510 100%);
-                border: 2px solid var(--border-gold);
-                padding: 6px 14px;
+                background: linear-gradient(145deg, #3d2418 0%, #2c1810 100%);
+                border: 2px solid #8b6914;
+                padding: 8px 16px;
                 display: flex;
                 align-items: center;
                 gap: 8px;
+                border-radius: 8px;
             }
 
-            .sidebar-btn {
-                background: linear-gradient(135deg, #4a4035 0%, #2d2820 100%);
-                border: 3px solid var(--border-gold);
-                transition: all 0.2s;
-            }
-
-            .sidebar-btn:hover {
-                transform: translateY(-2px);
-                box-shadow: 0 4px 12px rgba(201, 162, 39, 0.4);
-            }
-
-            .sidebar-btn.active {
-                background: linear-gradient(135deg, #6a6055 0%, #4a4035 100%);
-                box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.4);
-            }
-
-            .glow-green {
-                filter: drop-shadow(0 0 15px rgba(76, 175, 80, 0.6));
-            }
-            .glow-blue {
-                filter: drop-shadow(0 0 15px rgba(33, 150, 243, 0.6));
-            }
-            .glow-purple {
-                filter: drop-shadow(0 0 15px rgba(156, 39, 176, 0.6));
-            }
-            .glow-red {
-                filter: drop-shadow(0 0 20px rgba(244, 67, 54, 0.7));
-            }
-
-            /* ===== MAP SCROLL CONTAINER ===== */
-            .map-scroll-container {
-                overflow: auto;
-                -webkit-overflow-scrolling: touch;
-                cursor: grab;
+            /* Map Container */
+            #map-container {
                 position: relative;
-                scrollbar-width: thin;
-                scrollbar-color: var(--border-gold) rgba(0, 0, 0, 0.2);
+                background: linear-gradient(135deg, #2d5016 0%, #3d6b26 50%, #2d5016 100%);
+                overflow: hidden;
             }
 
-            .map-scroll-container:active {
+            canvas {
+                display: block;
+                cursor: grab;
+            }
+
+            canvas:active {
                 cursor: grabbing;
             }
 
-            .map-scroll-container::-webkit-scrollbar {
-                width: 10px;
-                height: 10px;
+            /* Loading Overlay */
+            .loading-overlay {
+                position: absolute;
+                inset: 0;
+                background: #1a1510;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                z-index: 50;
+                transition: opacity 0.5s;
             }
 
-            .map-scroll-container::-webkit-scrollbar-track {
-                background: rgba(0, 0, 0, 0.15);
-                border-radius: 5px;
+            .loading-overlay.hidden {
+                opacity: 0;
+                pointer-events: none;
             }
 
-            .map-scroll-container::-webkit-scrollbar-thumb {
-                background: linear-gradient(
-                    135deg,
-                    #bf953f 0%,
-                    #fcf6ba 50%,
-                    #b38728 100%
-                );
-                border-radius: 5px;
-                border: 2px solid rgba(0, 0, 0, 0.3);
+            .loading-spinner {
+                width: 60px;
+                height: 60px;
+                border: 4px solid #d4a853;
+                border-top-color: transparent;
+                border-radius: 50%;
+                animation: spin 1s linear infinite;
             }
 
-            .map-scroll-container::-webkit-scrollbar-thumb:hover {
-                background: linear-gradient(
-                    135deg,
-                    #e8c547 0%,
-                    #fff8d1 50%,
-                    #d4a840 100%
-                );
+            @keyframes spin {
+                to { transform: rotate(360deg); }
             }
 
-            /* Mobile optimizations */
+            /* Zoom Controls */
+            .zoom-controls {
+                position: absolute;
+                bottom: 20px;
+                right: 20px;
+                display: flex;
+                flex-direction: column;
+                gap: 8px;
+                z-index: 20;
+            }
+
+            .zoom-btn {
+                width: 44px;
+                height: 44px;
+                background: linear-gradient(145deg, #3d2418 0%, #2c1810 100%);
+                border: 2px solid #8b6914;
+                border-radius: 8px;
+                font-size: 24px;
+                font-weight: bold;
+                color: #d4a853;
+                cursor: pointer;
+                transition: all 0.2s;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-family: 'Cinzel', serif;
+            }
+
+            .zoom-btn:hover {
+                background: linear-gradient(145deg, #4d3428 0%, #3c2820 100%);
+                border-color: #d4a853;
+                transform: scale(1.05);
+            }
+
+            /* Mini Map */
+            .minimap-container {
+                position: absolute;
+                top: 16px;
+                left: 16px;
+                background: linear-gradient(145deg, #3d2418 0%, #2c1810 100%);
+                border: 2px solid #8b6914;
+                border-radius: 12px;
+                padding: 10px;
+                width: 180px;
+                height: 140px;
+                z-index: 20;
+            }
+
+            .minimap-title {
+                font-family: 'Cinzel', serif;
+                font-size: 11px;
+                color: #d4a853;
+                text-align: center;
+                margin-bottom: 6px;
+            }
+
+            .minimap-canvas {
+                width: 100%;
+                height: 100px;
+                background: #1a3320;
+                border-radius: 6px;
+                border: 1px solid #5c4018;
+            }
+
+            /* Location Modal */
+            .location-modal {
+                position: fixed;
+                inset: 0;
+                background: rgba(0, 0, 0, 0.8);
+                display: none;
+                align-items: center;
+                justify-content: center;
+                z-index: 100;
+                padding: 20px;
+            }
+
+            .location-modal.active {
+                display: flex;
+            }
+
+            .modal-content {
+                background: linear-gradient(145deg, #3d2418 0%, #2c1810 100%);
+                border: 3px solid #8b6914;
+                border-radius: 16px;
+                padding: 24px;
+                max-width: 400px;
+                width: 100%;
+                box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            }
+
+            .modal-title {
+                font-family: 'Cinzel', serif;
+                font-size: 24px;
+                color: #d4a853;
+                margin-bottom: 16px;
+                text-align: center;
+            }
+
+            .modal-info {
+                color: #f4e8d0;
+                font-size: 16px;
+                line-height: 1.8;
+            }
+
+            .modal-info strong {
+                color: #d4a853;
+            }
+
+            .health-indicator {
+                display: inline-block;
+                padding: 4px 12px;
+                border-radius: 4px;
+                font-weight: bold;
+                font-size: 14px;
+            }
+
+            .health-full { background: rgba(46, 204, 113, 0.2); color: #2ecc71; }
+            .health-stable { background: rgba(52, 152, 219, 0.2); color: #3498db; }
+            .health-medium { background: rgba(241, 196, 15, 0.2); color: #f1c40f; }
+            .health-low { background: rgba(231, 76, 60, 0.2); color: #e74c3c; }
+            .health-foggy { background: rgba(149, 165, 166, 0.2); color: #95a5a6; }
+
+            .modal-close-btn {
+                margin-top: 20px;
+                width: 100%;
+                background: linear-gradient(145deg, #8b6914 0%, #6b5010 100%);
+                border: 2px solid #d4a853;
+                color: #f4e8d0;
+                padding: 12px;
+                border-radius: 8px;
+                font-family: 'Cinzel', serif;
+                font-size: 16px;
+                cursor: pointer;
+                transition: all 0.2s;
+            }
+
+            .modal-close-btn:hover {
+                background: linear-gradient(145deg, #9b7924 0%, #7b6020 100%);
+            }
+
+            .modal-actions {
+                display: flex;
+                gap: 10px;
+                margin-top: 15px;
+            }
+
+            .modal-action-btn {
+                flex: 1;
+                padding: 12px;
+                border-radius: 8px;
+                font-family: 'Cinzel', serif;
+                font-size: 14px;
+                text-align: center;
+                text-decoration: none;
+                cursor: pointer;
+                transition: all 0.2s;
+            }
+
+            .modal-action-btn.primary {
+                background: linear-gradient(145deg, #c0392b 0%, #a93226 100%);
+                border: 2px solid #e74c3c;
+                color: #f4e8d0;
+            }
+
+            .modal-action-btn.primary:hover {
+                background: linear-gradient(145deg, #e74c3c 0%, #c0392b 100%);
+            }
+
+            /* Status Bar */
+            .status-bar {
+                background: linear-gradient(145deg, #2c1810 0%, #1a0f0a 100%);
+                border-top: 2px solid #8b6914;
+                padding: 12px 20px;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                flex-wrap: wrap;
+                gap: 10px;
+            }
+
+            /* Bottom Navigation */
+            .bottom-nav {
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                background: linear-gradient(180deg, #2c1810 0%, #1a0f0a 100%);
+                border-top: 3px solid #8b6914;
+                box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.5);
+                z-index: 100;
+            }
+
+            .nav-content {
+                max-width: 800px;
+                margin: 0 auto;
+                display: flex;
+                justify-content: space-around;
+                padding: 10px 0;
+            }
+
+            .nav-item {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 5px;
+                padding: 8px 20px;
+                color: #5c4018;
+                text-decoration: none;
+                transition: all 0.3s ease;
+                position: relative;
+            }
+
+            .nav-item:hover {
+                color: #d4a853;
+            }
+
+            .nav-item.active {
+                color: #d4a853;
+            }
+
+            .nav-item.active::before {
+                content: '';
+                position: absolute;
+                top: -13px;
+                width: 40px;
+                height: 3px;
+                background: #d4a853;
+                box-shadow: 0 0 10px rgba(212, 168, 83, 0.5);
+            }
+
+            .nav-icon {
+                font-size: 24px;
+            }
+
+            .nav-label {
+                font-size: 11px;
+                font-weight: 600;
+                font-family: 'Cinzel', serif;
+            }
+
+            /* Sidebar */
+            .sidebar {
+                width: 80px;
+                background: linear-gradient(180deg, #3d2418 0%, #2c1810 100%);
+                border-right: 3px solid #8b6914;
+                padding: 16px 8px;
+                display: flex;
+                flex-direction: column;
+                gap: 12px;
+            }
+
+            .sidebar-btn {
+                background: linear-gradient(145deg, #4d3428 0%, #3c2820 100%);
+                border: 2px solid #6b5010;
+                border-radius: 12px;
+                padding: 10px 6px;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 6px;
+                cursor: pointer;
+                transition: all 0.2s;
+                text-decoration: none;
+            }
+
+            .sidebar-btn:hover {
+                border-color: #d4a853;
+                transform: translateY(-2px);
+            }
+
+            .sidebar-btn.active {
+                background: linear-gradient(145deg, #5d4438 0%, #4c3830 100%);
+                border-color: #d4a853;
+                box-shadow: 0 0 15px rgba(212, 168, 83, 0.3);
+            }
+
+            .sidebar-icon {
+                width: 36px;
+                height: 36px;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 20px;
+            }
+
+            .sidebar-btn.world .sidebar-icon { background: rgba(52, 152, 219, 0.3); }
+            .sidebar-btn.party .sidebar-icon { background: rgba(155, 89, 182, 0.3); }
+            .sidebar-btn.hero .sidebar-icon { background: rgba(212, 168, 83, 0.3); }
+
+            .sidebar-label {
+                font-size: 9px;
+                color: #d4a853;
+                font-family: 'Cinzel', serif;
+                letter-spacing: 0.5px;
+            }
+
+            /* Compass */
+            .compass {
+                width: 56px;
+                height: 56px;
+                margin: 0 auto 8px;
+                background: linear-gradient(145deg, #4d3428 0%, #3c2820 100%);
+                border: 2px solid #8b6914;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 28px;
+            }
+
+            /* Responsive */
             @media (max-width: 768px) {
-                .map-scroll-container {
-                    min-height: 500px !important;
-                    max-height: 600px !important;
+                .sidebar {
+                    width: 60px;
+                    padding: 12px 4px;
                 }
 
-                #mapContent {
-                    width: 900px !important;
-                    height: 750px !important;
-                    transform-origin: top left;
+                .sidebar-icon {
+                    width: 28px;
+                    height: 28px;
+                    font-size: 16px;
                 }
 
-                .location-marker img {
-                    max-width: 60px !important;
-                    max-height: 60px !important;
+                .sidebar-label {
+                    font-size: 8px;
                 }
 
-                .health-bar {
-                    width: 70px !important;
-                    height: 10px !important;
-                    top: -18px !important;
+                .compass {
+                    width: 44px;
+                    height: 44px;
+                    font-size: 22px;
                 }
 
-                .banner-label {
-                    font-size: 7px !important;
-                    padding: 2px 8px !important;
+                .minimap-container {
+                    width: 140px;
+                    height: 110px;
+                    padding: 8px;
                 }
 
-                .sidebar-btn span {
-                    font-size: 8px !important;
+                .minimap-canvas {
+                    height: 70px;
+                }
+
+                .zoom-controls {
+                    bottom: 100px;
+                }
+
+                .zoom-btn {
+                    width: 40px;
+                    height: 40px;
                 }
             }
 
             @media (max-width: 480px) {
-                #mapContent {
-                    width: 750px !important;
-                    height: 625px !important;
+                .header h1 {
+                    font-size: 24px;
                 }
 
-                .location-marker img {
-                    max-width: 50px !important;
-                    max-height: 50px !important;
-                }
-            }
-
-            /* Pan hint animation */
-            .pan-hint {
-                animation: panHint 2s ease-in-out infinite;
-            }
-
-            @keyframes panHint {
-                0%,
-                100% {
-                    transform: translateX(0);
-                    opacity: 1;
-                }
-                50% {
-                    transform: translateX(8px);
-                    opacity: 0.7;
+                .resource-counter {
+                    padding: 6px 10px;
+                    font-size: 14px;
                 }
             }
         </style>
     </head>
-    <body class="min-h-screen p-4">
-        <div class="max-w-[1400px] mx-auto">
-            <!-- Header -->
-            <div class="flex items-center justify-between mb-4 px-4">
-                <h1
-                    class="font-fantasy text-5xl font-bold text-amber-400 drop-shadow-lg"
-                    style="text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5)"
-                >
+    <body>
+        <!-- Header -->
+        <header class="header">
+            <div class="max-w-[1400px] mx-auto flex items-center justify-between">
+                <h1 class="font-fantasy text-3xl md:text-4xl font-bold text-amber-400" style="text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5)">
                     MCOP Quest
                 </h1>
-                <div class="flex gap-4">
-                    <div class="resource-counter rounded-lg">
-                        <img
-                            src="assets-pixels/ui/coin.png"
-                            alt="Gold"
-                            class="w-6 h-6 pixel-art"
-                        />
-                        <span class="text-amber-300 text-xl">2,450</span>
+                <div class="flex gap-3">
+                    <div class="resource-counter">
+                        <span class="text-amber-400 text-lg">🪙</span>
+                        <span class="text-amber-200 text-xl font-bold">2,450</span>
                     </div>
-                    <div class="resource-counter rounded-lg">
-                        <img
-                            src="assets-pixels/ui/gem.png"
-                            alt="Gems"
-                            class="w-6 h-6 pixel-art"
-                        />
-                        <span class="text-cyan-300 text-xl">15</span>
+                    <div class="resource-counter">
+                        <span class="text-cyan-400 text-lg">💎</span>
+                        <span class="text-cyan-200 text-xl font-bold">15</span>
                     </div>
                 </div>
             </div>
+        </header>
 
-            <!-- Main Game Frame -->
-            <div class="golden-frame rounded-lg overflow-hidden">
-                <div class="parchment min-h-[800px] flex">
-                    <!-- Left Sidebar -->
-                    <div
-                        class="w-24 bg-gradient-to-b from-amber-900/40 via-amber-800/30 to-amber-950/40 p-2 flex flex-col gap-3 border-r-4 border-amber-700/50"
-                    >
-                        <!-- Compass -->
-                        <div
-                            class="w-16 h-16 mx-auto mb-2 bg-amber-100/20 rounded-full p-1"
-                        >
-                            <img
-                                src="assets-pixels/ui/compass.png"
-                                alt="Compass"
-                                class="w-full h-full pixel-art"
-                            />
-                        </div>
+        <!-- Main Content -->
+        <main class="p-4">
+            <div class="max-w-[1400px] mx-auto">
+                <!-- Map Frame -->
+                <div class="golden-frame rounded-lg overflow-hidden">
+                    <div class="flex" style="height: calc(100vh - 220px); min-height: 500px;">
+                        <!-- Map Area -->
+                        <div id="map-container" class="flex-1 relative">
+                            <canvas id="game-map"></canvas>
 
-                        <!-- World Button -->
-                        <button
-                            class="sidebar-btn rounded-lg p-2 flex flex-col items-center gap-1 active"
-                        >
-                            <div
-                                class="w-12 h-12 rounded-full bg-blue-500/30 border-2 border-blue-400 flex items-center justify-center overflow-hidden"
-                            >
-                                <img
-                                    src="assets-pixels/terrain/grass.png"
-                                    alt="World"
-                                    class="w-full h-full pixel-art opacity-80"
-                                />
-                            </div>
-                            <span
-                                class="text-amber-200 text-[10px] font-fantasy"
-                                >WORLD</span
-                            >
-                        </button>
-
-                        <!-- Party Button -->
-                        <button
-                            class="sidebar-btn rounded-lg p-2 flex flex-col items-center gap-1"
-                        >
-                            <div
-                                class="w-12 h-12 rounded-full bg-purple-500/30 border-2 border-purple-400 flex items-center justify-center overflow-hidden"
-                            >
-                                <img
-                                    src="assets-pixels/characters/party.png"
-                                    alt="Party"
-                                    class="w-full h-full pixel-art"
-                                />
-                            </div>
-                            <span
-                                class="text-amber-200 text-[10px] font-fantasy"
-                                >PARTY</span
-                            >
-                        </button>
-
-                        <!-- Hero Button -->
-                        <button
-                            class="sidebar-btn rounded-lg p-2 flex flex-col items-center gap-1"
-                        >
-                            <div
-                                class="w-12 h-12 rounded-full bg-amber-500/30 border-2 border-amber-400 flex items-center justify-center overflow-hidden"
-                            >
-                                <img
-                                    src="assets-pixels/characters/warrior.png"
-                                    alt="Hero"
-                                    class="w-full h-full pixel-art"
-                                />
-                            </div>
-                            <span
-                                class="text-amber-200 text-[10px] font-fantasy"
-                                >HERO</span
-                            >
-                        </button>
-                    </div>
-
-                    <!-- Map Area - Reference Layout -->
-                    <div
-                        class="map-scroll-container flex-1 relative"
-                        id="mapContainer"
-                        style="min-height: 800px; max-height: 800px"
-                    >
-                        <!-- Map Content Wrapper - ทำให้มีพื้นที่ scroll ได้ -->
-                        <div
-                            id="mapContent"
-                            style="
-                                width: 1200px;
-                                height: 1000px;
-                                position: relative;
-                            "
-                        >
-                            <!-- Water Areas - Based on reference -->
-                            <div
-                                class="water-area opacity-70"
-                                style="
-                                    left: 2%;
-                                    top: 8%;
-                                    width: 35%;
-                                    height: 40%;
-                                "
-                            ></div>
-                            <div
-                                class="water-area opacity-60"
-                                style="
-                                    right: 5%;
-                                    bottom: 10%;
-                                    width: 30%;
-                                    height: 35%;
-                                "
-                            ></div>
-
-                            <!-- ====== TOP LEFT AREA ====== -->
-                            <!-- Mountain (Top Left) -->
-                            <div
-                                class="location-marker"
-                                style="left: 8%; top: 12%"
-                            >
-                                <img
-                                    src="assets-pixels/terrain/mountain.png"
-                                    alt="Mountain"
-                                    class="w-32 h-24 pixel-art"
-                                />
+                            <!-- Loading Overlay -->
+                            <div id="loading" class="loading-overlay">
+                                <div class="loading-spinner mb-4"></div>
+                                <p class="text-amber-400 text-xl font-fantasy">Loading Kingdom...</p>
                             </div>
 
-                            <!-- Crystal Island -->
-                            <div
-                                class="location-marker"
-                                style="left: 15%; top: 22%"
-                            >
-                                <img
-                                    src="assets-pixels/terrain/island.png"
-                                    alt="Crystal Island"
-                                    class="w-28 h-20 pixel-art glow-blue"
-                                />
+                            <!-- Mini Map -->
+                            <div class="minimap-container">
+                                <p class="minimap-title">World Overview</p>
+                                <canvas id="minimap" class="minimap-canvas" width="160" height="100"></canvas>
                             </div>
 
-                            <!-- ====== CENTER - MAIN CASTLE ====== -->
-                            <div
-                                class="location-marker"
-                                style="left: 45%; top: 35%"
-                            >
-                                <!-- Health Bar -->
-                                <div class="health-bar">
-                                    <div class="health-bar-bg">
-                                        <div
-                                            class="health-bar-fill health-full"
-                                            style="width: 100%"
-                                        ></div>
-                                    </div>
-                                </div>
-                                <!-- Banner -->
-                                <div class="banner-label" style="top: -52px">
-                                    MEMBER CITY SYSTEM MODULE — HEALTH: FULL
-                                </div>
-                                <!-- Building -->
-                                <img
-                                    src="assets-v2/castle.png"
-                                    alt="Main Castle"
-                                    class="w-64 h-64 pixel-art glow-green drop-shadow-2xl"
-                                    fetchpriority="high"
-                                    style="
-                                        filter: drop-shadow(
-                                            0 10px 20px rgba(0, 0, 0, 0.5)
-                                        );
-                                    "
-                                />
-
-                                <!-- Character indicators around castle -->
-                                <div
-                                    class="absolute"
-                                    style="left: 40%; top: 60%"
-                                >
-                                    <img
-                                        src="assets-pixels/characters/map_char.png"
-                                        alt="Player"
-                                        class="w-6 h-6 pixel-art"
-                                    />
-                                </div>
-                                <div
-                                    class="absolute"
-                                    style="left: 55%; top: 65%"
-                                >
-                                    <img
-                                        src="assets-pixels/characters/map_char.png"
-                                        alt="Player"
-                                        class="w-6 h-6 pixel-art"
-                                    />
-                                </div>
-                                <div
-                                    class="absolute"
-                                    style="left: 48%; top: 70%"
-                                >
-                                    <img
-                                        src="assets-pixels/characters/map_char.png"
-                                        alt="Player"
-                                        class="w-6 h-6 pixel-art"
-                                    />
-                                </div>
-                            </div>
-
-                            <!-- Arrow: Castle -> Task Tower -->
-                            <div class="absolute" style="left: 58%; top: 28%">
-                                <img
-                                    src="assets-pixels/ui/arrow_right.png"
-                                    alt="Connection"
-                                    class="w-8 h-8 pixel-art rotate-45"
-                                />
-                            </div>
-
-                            <!-- ====== TOP RIGHT - TASK TOWER ====== -->
-                            <div
-                                class="location-marker"
-                                style="left: 75%; top: 22%"
-                            >
-                                <div class="health-bar">
-                                    <div class="health-bar-bg">
-                                        <div
-                                            class="health-bar-fill health-stable"
-                                            style="width: 85%"
-                                        ></div>
-                                    </div>
-                                </div>
-                                <div class="banner-label" style="top: -52px">
-                                    TASK TOWER
-                                </div>
-                                <img
-                                    src="assets-v2/task_tower.png"
-                                    alt="Task Tower"
-                                    class="w-40 h-52 pixel-art glow-blue drop-shadow-xl"
-                                />
-                                <div
-                                    class="absolute -right-20 top-12 text-xs text-blue-300 font-bold"
-                                >
-                                    HEALTH: STABLE
-                                </div>
-                            </div>
-
-                            <!-- Arrow: Task Tower -> Bug Bastion -->
-                            <div class="absolute" style="left: 82%; top: 42%">
-                                <img
-                                    src="assets-pixels/ui/arrow_down.png"
-                                    alt="Connection"
-                                    class="w-7 h-7 pixel-art"
-                                />
-                            </div>
-
-                            <!-- ====== RIGHT MIDDLE - BUG BASTION ====== -->
-                            <div
-                                class="location-marker"
-                                style="left: 85%; top: 48%"
-                            >
-                                <div class="banner-label" style="top: -36px">
-                                    BUG BASTION
-                                </div>
-                                <img
-                                    src="assets-v2/bug_bastion.png"
-                                    alt="Bug Bastion"
-                                    class="w-40 h-36 pixel-art drop-shadow-lg"
-                                />
-                            </div>
-
-                            <!-- Arrow: Castle -> Alchemy Lab -->
-                            <div class="absolute" style="left: 32%; top: 42%">
-                                <img
-                                    src="assets-pixels/ui/arrow_left.png"
-                                    alt="Connection"
-                                    class="w-7 h-7 pixel-art -rotate-45"
-                                />
-                            </div>
-
-                            <!-- ====== LEFT - ANALYTICS ALCHEMY LAB ====== -->
-                            <div
-                                class="location-marker"
-                                style="left: 22%; top: 45%"
-                            >
-                                <div class="health-bar">
-                                    <div class="health-bar-bg">
-                                        <div
-                                            class="health-bar-fill health-stable"
-                                            style="width: 75%"
-                                        ></div>
-                                    </div>
-                                </div>
-                                <div
-                                    class="banner-label"
-                                    style="top: -52px; font-size: 10px"
-                                >
-                                    ANALYTICS ALCHEMY LAB
-                                </div>
-                                <img
-                                    src="assets-v2/alchemy_lab.png"
-                                    alt="Alchemy Lab"
-                                    class="w-36 h-36 pixel-art glow-purple drop-shadow-lg"
-                                />
-                            </div>
-
-                            <!-- Bridge near Alchemy Lab -->
-                            <div class="absolute" style="left: 28%; top: 52%">
-                                <img
-                                    src="assets-pixels/terrain/bridge.png"
-                                    alt="Bridge"
-                                    class="w-20 h-10 pixel-art rotate-12"
-                                />
-                            </div>
-
-                            <!-- Arrow: Alchemy Lab -> Community Commons -->
-                            <div class="absolute" style="left: 34%; top: 60%">
-                                <img
-                                    src="assets-pixels/ui/arrow_down.png"
-                                    alt="Connection"
-                                    class="w-7 h-7 pixel-art rotate-45"
-                                />
-                            </div>
-
-                            <!-- ====== BOTTOM CENTER - COMMUNITY COMMONS ====== -->
-                            <div
-                                class="location-marker"
-                                style="left: 45%; top: 72%"
-                            >
-                                <img
-                                    src="assets-v2/community_commons.png"
-                                    alt="Community Commons"
-                                    class="w-36 h-32 pixel-art drop-shadow-lg"
-                                />
-                                <div class="banner-label" style="bottom: -28px">
-                                    COMMUNITY COMMONS
-                                </div>
-                            </div>
-
-                            <!-- Arrow: Community Commons -> Payment Fortress -->
-                            <div class="absolute" style="left: 58%; top: 68%">
-                                <img
-                                    src="assets-pixels/ui/arrow_right.png"
-                                    alt="Connection"
-                                    class="w-7 h-7 pixel-art -rotate-12"
-                                />
-                            </div>
-
-                            <!-- ====== BOTTOM RIGHT - PAYMENT FORTRESS ====== -->
-                            <div
-                                class="location-marker"
-                                style="left: 75%; top: 70%"
-                            >
-                                <div class="health-bar">
-                                    <div class="health-bar-bg">
-                                        <div
-                                            class="health-bar-fill health-low"
-                                            style="width: 25%"
-                                        ></div>
-                                    </div>
-                                </div>
-                                <div
-                                    class="banner-label"
-                                    style="
-                                        top: -56px;
-                                        font-size: 9px;
-                                        line-height: 1.2;
-                                        padding: 8px 20px;
-                                    "
-                                >
-                                    PAYMENT FORTRESS: BILLING & PAYMENTS<br />HEALTH:
-                                    LOW (FOG OF WAR)
-                                </div>
-
-                                <!-- Warning Icon -->
-                                <div
-                                    class="absolute -right-16 top-0 animate-pulse"
-                                >
-                                    <img
-                                        src="assets-pixels/ui/warning.png"
-                                        alt="Warning"
-                                        class="w-12 h-12 pixel-art"
-                                    />
-                                </div>
-
-                                <img
-                                    src="assets-v2/payment_fortress.png"
-                                    alt="Payment Fortress"
-                                    class="w-44 h-48 pixel-art glow-red drop-shadow-2xl"
-                                />
-
-                                <!-- Storm cloud effect -->
-                                <div
-                                    class="absolute -top-6 left-1/2 -translate-x-1/2 w-36 h-16 bg-purple-900/50 rounded-full blur-xl"
-                                ></div>
-                                <div
-                                    class="absolute -top-3 left-1/2 -translate-x-1/2 w-28 h-12 bg-purple-800/40 rounded-full blur-lg"
-                                ></div>
-                            </div>
-
-                            <!-- Arrow: Bug Bastion -> Payment Fortress -->
-                            <div class="absolute" style="left: 82%; top: 62%">
-                                <img
-                                    src="assets-pixels/ui/arrow_down.png"
-                                    alt="Connection"
-                                    class="w-7 h-7 pixel-art"
-                                />
+                            <!-- Zoom Controls -->
+                            <div class="zoom-controls">
+                                <button class="zoom-btn" id="zoom-in" title="Zoom In">+</button>
+                                <button class="zoom-btn" id="zoom-out" title="Zoom Out">−</button>
                             </div>
                         </div>
-                        <!-- /mapContent -->
                     </div>
-                    <!-- /mapContainer -->
+
+                    <!-- Status Bar -->
+                    <div class="status-bar">
+                        <div class="flex items-center gap-6">
+                            <span class="text-amber-200">Location: <span class="text-white font-bold" id="current-location">World Map</span></span>
+                            <span class="text-amber-700">|</span>
+                            <span class="text-amber-200">Active Tasks: <span class="text-green-400 font-bold">5</span></span>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <span class="text-amber-400 text-sm" id="hover-status">Drag to pan • Scroll to zoom • Click locations</span>
+                        </div>
+                    </div>
                 </div>
             </div>
+        </main>
 
-            <!-- Bottom Info Bar -->
-            <div
-                class="mt-4 flex items-center justify-between px-6 py-4 bg-gradient-to-r from-amber-900/60 via-amber-800/40 to-amber-900/60 rounded-lg border border-amber-700/50"
-            >
-                <div class="flex items-center gap-6">
-                    <span class="text-amber-200 text-lg"
-                        >Location:
-                        <span class="text-white font-bold"
-                            >World Map</span
-                        ></span
-                    >
-                    <span class="text-amber-600">|</span>
-                    <span class="text-amber-200 text-lg"
-                        >Active Tasks:
-                        <span class="text-green-400 font-bold">5</span></span
-                    >
+        <!-- Location Detail Modal -->
+        <div id="location-modal" class="location-modal">
+            <div class="modal-content">
+                <h2 id="modal-title" class="modal-title">Location Name</h2>
+                <div id="modal-content" class="modal-info">
+                    <!-- Dynamic content -->
                 </div>
-                <div class="flex items-center gap-3">
-                    <!-- Mobile pan hint -->
-                    <span
-                        class="text-amber-400 text-sm md:hidden flex items-center gap-1"
-                    >
-                        <svg
-                            class="w-4 h-4 pan-hint"
-                            fill="currentColor"
-                            viewBox="0 0 20 20"
-                        >
-                            <path
-                                fill-rule="evenodd"
-                                d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z"
-                                clip-rule="evenodd"
-                            />
-                        </svg>
-                        Drag to pan
-                    </span>
-                    <span class="text-amber-300 hidden md:inline"
-                        >Select a location to view tasks</span
-                    >
-                    <img
-                        src="assets-pixels/ui/arrow_right.png"
-                        alt="Hint"
-                        class="w-5 h-5 pixel-art opacity-60"
-                    />
+                <div id="modal-actions" class="modal-actions">
+                    <!-- Dynamic action buttons -->
                 </div>
+                <button id="close-modal" class="modal-close-btn">Close</button>
             </div>
         </div>
-        <!-- Map Pan/Drag Script -->
-        <script>
-            (function () {
-                const container = document.getElementById("mapContainer");
-                if (!container) return;
 
-                // Desktop: Mouse drag with threshold
-                let isMouseDown = false;
-                let startX, startY, scrollLeft, scrollTop;
-                let hasDragged = false;
+        <!-- Bottom Navigation -->
+        <nav class="bottom-nav">
+            <div class="nav-content">
+                <a href="hero-v2.html" class="nav-item">
+                    <span class="nav-icon">⚔️</span>
+                    <span class="nav-label">Hero</span>
+                </a>
+                <a href="team-v2.html" class="nav-item">
+                    <span class="nav-icon">👥</span>
+                    <span class="nav-label">Team</span>
+                </a>
+                <a href="world-map-v2.html" class="nav-item active">
+                    <span class="nav-icon">🗺️</span>
+                    <span class="nav-label">World</span>
+                </a>
+                <a href="shop-v2.html" class="nav-item">
+                    <span class="nav-icon">🛒</span>
+                    <span class="nav-label">Shop</span>
+                </a>
+            </div>
+        </nav>
 
-                container.addEventListener("mousedown", (e) => {
-                    // อนุญาตให้ลากได้ทุกที่ใน container ยกเว้นการ click บนปุ่มหรือ interactive elements
-                    if (e.target.closest("button, a, input, select")) return;
+        <!-- Scripts -->
+        <script type="module">
+            import initMap from '../../../../public/js/map/index.js?v=2';
 
-                    isMouseDown = true;
-                    hasDragged = false;
-                    startX = e.pageX;
-                    startY = e.pageY;
-                    scrollLeft = container.scrollLeft;
-                    scrollTop = container.scrollTop;
-                    container.style.cursor = "grabbing";
-                });
-
-                container.addEventListener("mousemove", (e) => {
-                    if (!isMouseDown) return;
-
-                    const dx = Math.abs(e.pageX - startX);
-                    const dy = Math.abs(e.pageY - startY);
-
-                    // Only drag if moved more than 3px
-                    if (dx > 3 || dy > 3) {
-                        hasDragged = true;
-                        e.preventDefault();
-
-                        const walkX = (e.pageX - startX) * 1.2;
-                        const walkY = (e.pageY - startY) * 1.2;
-                        container.scrollLeft = scrollLeft - walkX;
-                        container.scrollTop = scrollTop - walkY;
+            // Map data with 8 locations
+            const mapData = {
+                width: 40,
+                height: 30,
+                tileSize: 128,
+                layers: [
+                    {
+                        name: 'terrain',
+                        data: generateTerrainLayer(40, 30)
+                    },
+                    {
+                        name: 'roads',
+                        data: generateRoadsLayer(40, 30)
                     }
-                });
-
-                container.addEventListener("mouseup", () => {
-                    isMouseDown = false;
-                    container.style.cursor = "grab";
-                });
-
-                container.addEventListener("mouseleave", () => {
-                    isMouseDown = false;
-                    container.style.cursor = "grab";
-                });
-
-                // Mobile touch support
-                let touchStartX, touchStartY, touchScrollLeft, touchScrollTop;
-
-                container.addEventListener(
-                    "touchstart",
-                    (e) => {
-                        if (e.target.closest("button, a, input, select"))
-                            return;
-
-                        const touch = e.touches[0];
-                        touchStartX = touch.pageX;
-                        touchStartY = touch.pageY;
-                        touchScrollLeft = container.scrollLeft;
-                        touchScrollTop = container.scrollTop;
+                ],
+                locations: [
+                    {
+                        id: 'member_city',
+                        name: 'Member City',
+                        nameTh: 'เมืองสมาชิก',
+                        x: 1536,
+                        y: 1024,
+                        type: 'castle',
+                        health: 100,
+                        maxHealth: 100,
+                        status: 'full',
+                        isFoggy: false,
+                        boss: 'King of Members',
+                        bossTitle: 'Master of User Management'
                     },
-                    { passive: true },
-                );
-
-                container.addEventListener(
-                    "touchmove",
-                    (e) => {
-                        const touch = e.touches[0];
-                        const dx = touchStartX - touch.pageX;
-                        const dy = touchStartY - touch.pageY;
-
-                        container.scrollLeft = touchScrollLeft + dx;
-                        container.scrollTop = touchScrollTop + dy;
+                    {
+                        id: 'task_tower',
+                        name: 'Task Tower',
+                        nameTh: 'หอคอยภารกิจ',
+                        x: 2560,
+                        y: 640,
+                        type: 'tower',
+                        health: 75,
+                        maxHealth: 100,
+                        status: 'stable',
+                        isFoggy: false,
+                        boss: 'Task Master',
+                        bossTitle: 'Keeper of Quests'
                     },
-                    { passive: true },
-                );
+                    {
+                        id: 'bug_bastion',
+                        name: 'Bug Bastion',
+                        nameTh: 'ป้อมบั๊ก',
+                        x: 3840,
+                        y: 1280,
+                        type: 'bastion',
+                        health: 45,
+                        maxHealth: 100,
+                        status: 'medium',
+                        isFoggy: false,
+                        boss: 'Bug King',
+                        bossTitle: 'Lord of Defects'
+                    },
+                    {
+                        id: 'alchemy_lab',
+                        name: 'Analytics Lab',
+                        nameTh: 'ห้องแล็บวิเคราะห์',
+                        x: 1792,
+                        y: 2048,
+                        type: 'lab',
+                        health: 85,
+                        maxHealth: 100,
+                        status: 'stable',
+                        isFoggy: false,
+                        boss: 'Analytics Wizard',
+                        bossTitle: 'Master of Data'
+                    },
+                    {
+                        id: 'community_commons',
+                        name: 'Community Commons',
+                        nameTh: 'ลานชุมชน',
+                        x: 1024,
+                        y: 2816,
+                        type: 'market',
+                        health: 90,
+                        maxHealth: 100,
+                        status: 'full',
+                        isFoggy: false,
+                        boss: 'Community Elder',
+                        bossTitle: 'Guardian of Knowledge'
+                    },
+                    {
+                        id: 'payment_fortress',
+                        name: 'Payment Fortress',
+                        nameTh: 'ป้อมการเงิน',
+                        x: 3200,
+                        y: 2560,
+                        type: 'fortress',
+                        health: 20,
+                        maxHealth: 100,
+                        status: 'low',
+                        isFoggy: true,
+                        boss: '???',
+                        bossTitle: 'Unknown Entity'
+                    },
+                    {
+                        id: 'product_city',
+                        name: 'Product City',
+                        nameTh: 'เมืองสินค้า',
+                        x: 512,
+                        y: 512,
+                        type: 'merchant',
+                        health: 80,
+                        maxHealth: 100,
+                        status: 'stable',
+                        isFoggy: false,
+                        boss: 'Product Queen',
+                        bossTitle: 'Director of Features'
+                    },
+                    {
+                        id: 'notification_tower',
+                        name: 'Notification Tower',
+                        nameTh: 'หอสัญญาณ',
+                        x: 4224,
+                        y: 512,
+                        type: 'bell_tower',
+                        health: 95,
+                        maxHealth: 100,
+                        status: 'full',
+                        isFoggy: false,
+                        boss: 'Bell Keeper',
+                        bossTitle: 'Herald of Messages'
+                    }
+                ]
+            };
 
-                // Center the map on load
-                window.addEventListener("load", () => {
-                    // Center the map content
-                    const centerX =
-                        (container.scrollWidth - container.clientWidth) / 2;
-                    container.scrollLeft = centerX;
-                });
-            })();
+            // Generate terrain layer with varied grass
+            function generateTerrainLayer(width, height) {
+                const data = [];
+                for (let y = 0; y < height; y++) {
+                    for (let x = 0; x < width; x++) {
+                        // Random grass variation
+                        const grassType = Math.floor(Math.random() * 3) + 1;
+                        data.push(grassType);
+                    }
+                }
+                return data;
+            }
+
+            // Generate roads layer connecting locations
+            function generateRoadsLayer(width, height) {
+                const data = new Array(width * height).fill(0);
+
+                function setRoad(x, y, type) {
+                    if (x >= 0 && x < width && y >= 0 && y < height) {
+                        data[y * width + x] = type;
+                    }
+                }
+
+                // Road paths between locations
+                const roads = [
+                    { from: { x: 4, y: 4 }, to: { x: 12, y: 8 } },      // Product City to Member City
+                    { from: { x: 12, y: 8 }, to: { x: 14, y: 16 } },    // Member City to Alchemy Lab
+                    { from: { x: 14, y: 16 }, to: { x: 8, y: 22 } },    // Alchemy Lab to Community Commons
+                    { from: { x: 12, y: 8 }, to: { x: 20, y: 5 } },     // Member City to Task Tower
+                    { from: { x: 20, y: 5 }, to: { x: 30, y: 10 } },    // Task Tower to Bug Bastion
+                    { from: { x: 30, y: 10 }, to: { x: 25, y: 20 } },   // Bug Bastion to Payment Fortress
+                    { from: { x: 8, y: 22 }, to: { x: 25, y: 20 } },    // Community Commons to Payment Fortress
+                    { from: { x: 20, y: 5 }, to: { x: 33, y: 4 } },     // Task Tower to Notification Tower
+                ];
+
+                for (const road of roads) {
+                    const dx = road.to.x - road.from.x;
+                    const dy = road.to.y - road.from.y;
+                    const steps = Math.max(Math.abs(dx), Math.abs(dy));
+
+                    for (let i = 0; i <= steps; i++) {
+                        const t = i / steps;
+                        const x = Math.round(road.from.x + dx * t);
+                        const y = Math.round(road.from.y + dy * t);
+                        setRoad(x, y, 5); // dirt road
+                    }
+                }
+
+                return data;
+            }
+
+            // Initialize map
+            let mapRenderer = null;
+
+            async function init() {
+                try {
+                    mapRenderer = await initMap('game-map', mapData, {
+                        exposeRenderer: (r) => { window.mapRenderer = r; },
+                        onLocationClick: (location) => {
+                            showLocationModal(location);
+                        },
+                        onLocationHover: (location) => {
+                            const statusEl = document.getElementById('hover-status');
+                            if (location) {
+                                statusEl.textContent = `${location.name} - Health: ${location.health}%`;
+                            } else {
+                                statusEl.textContent = 'Drag to pan • Scroll to zoom • Click locations';
+                            }
+                        }
+                    });
+
+                    // Setup zoom buttons
+                    document.getElementById('zoom-in').addEventListener('click', () => {
+                        mapRenderer.zoomIn();
+                    });
+                    document.getElementById('zoom-out').addEventListener('click', () => {
+                        mapRenderer.zoomOut();
+                    });
+
+                    // Hide loading
+                    setTimeout(() => {
+                        document.getElementById('loading').classList.add('hidden');
+                    }, 1000);
+
+                    // Setup minimap
+                    setupMinimap();
+
+                } catch (error) {
+                    console.error('Failed to initialize map:', error);
+                    document.getElementById('loading').innerHTML = `
+                        <p class="text-red-400">Failed to load map</p>
+                        <p class="text-amber-600 text-sm mt-2">${error.message}</p>
+                    `;
+                }
+            }
+
+            // Setup minimap
+            function setupMinimap() {
+                const minimap = document.getElementById('minimap');
+                const ctx = minimap.getContext('2d');
+                const width = minimap.width;
+                const height = minimap.height;
+
+                // Scale factors
+                const scaleX = width / (mapData.width * mapData.tileSize);
+                const scaleY = height / (mapData.height * mapData.tileSize);
+
+                function drawMinimap() {
+                    // Clear
+                    ctx.fillStyle = '#2d5016';
+                    ctx.fillRect(0, 0, width, height);
+
+                    // Draw locations
+                    for (const loc of mapData.locations) {
+                        const x = loc.x * scaleX;
+                        const y = loc.y * scaleY;
+                        const size = 8;
+
+                        // Get color based on health
+                        let color = '#2ecc71';
+                        if (loc.isFoggy) color = '#95a5a6';
+                        else if (loc.health < 30) color = '#e74c3c';
+                        else if (loc.health < 60) color = '#f1c40f';
+                        else if (loc.health < 90) color = '#3498db';
+
+                        ctx.fillStyle = color;
+                        ctx.beginPath();
+                        ctx.arc(x, y, size / 2, 0, Math.PI * 2);
+                        ctx.fill();
+
+                        // Border
+                        ctx.strokeStyle = '#f1c40f';
+                        ctx.lineWidth = 1;
+                        ctx.stroke();
+                    }
+
+                    // Draw viewport rectangle if renderer is ready
+                    if (mapRenderer && mapRenderer.camera) {
+                        const cam = mapRenderer.camera;
+                        const vpX = (cam.x - cam.viewportWidth / 2 / cam.zoom) * scaleX;
+                        const vpY = (cam.y - cam.viewportHeight / 2 / cam.zoom) * scaleY;
+                        const vpW = (cam.viewportWidth / cam.zoom) * scaleX;
+                        const vpH = (cam.viewportHeight / cam.zoom) * scaleY;
+
+                        ctx.strokeStyle = '#f1c40f';
+                        ctx.lineWidth = 2;
+                        ctx.strokeRect(vpX, vpY, vpW, vpH);
+                    }
+                }
+
+                // Initial draw
+                drawMinimap();
+
+                // Update on animation frame
+                function updateMinimap() {
+                    drawMinimap();
+                    requestAnimationFrame(updateMinimap);
+                }
+                updateMinimap();
+            }
+
+            // Modal functions
+            function showLocationModal(location) {
+                const modal = document.getElementById('location-modal');
+                const title = document.getElementById('modal-title');
+                const content = document.getElementById('modal-content');
+                const actions = document.getElementById('modal-actions');
+
+                title.textContent = location.name;
+
+                const statusClass = location.isFoggy ? 'health-foggy' :
+                    location.health >= 90 ? 'health-full' :
+                    location.health >= 60 ? 'health-stable' :
+                    location.health >= 30 ? 'health-medium' : 'health-low';
+
+                const statusText = location.isFoggy ? 'FOG OF WAR' :
+                    location.health >= 90 ? 'FULL' :
+                    location.health >= 60 ? 'STABLE' :
+                    location.health >= 30 ? 'MEDIUM' : 'LOW';
+
+                content.innerHTML = `
+                    <p><strong>Thai Name:</strong> ${location.nameTh}</p>
+                    <p><strong>Health:</strong> ${location.health}/${location.maxHealth}</p>
+                    <p><strong>Status:</strong> <span class="health-indicator ${statusClass}">${statusText}</span></p>
+                    <p><strong>Type:</strong> ${location.type.replace('_', ' ').toUpperCase()}</p>
+                    ${location.isFoggy ? '<p style="color: #e74c3c; margin-top: 10px;">⚠️ Fog of War - Requirements unclear</p>' : ''}
+                `;
+
+                // Add action buttons based on location type
+                let actionButtons = '';
+                if (!location.isFoggy) {
+                    actionButtons += `<a href="city-v2.html?location=${location.id}" class="modal-action-btn primary">View City</a>`;
+                }
+                actions.innerHTML = actionButtons;
+
+                // Add boss info if available
+                if (location.boss) {
+                    content.innerHTML += `
+                        <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #5c4018;">
+                            <p><strong>👑 City Boss:</strong> <span style="color: #e74c3c;">${location.boss}</span></p>
+                            <p style="font-size: 14px; color: #8b6914; margin-top: 4px;">${location.bossTitle || 'Ruler of this domain'}</p>
+                        </div>
+                    `;
+                }
+
+                modal.classList.add('active');
+            }
+
+            // Close modal
+            document.getElementById('close-modal').addEventListener('click', () => {
+                document.getElementById('location-modal').classList.remove('active');
+            });
+
+            document.getElementById('location-modal').addEventListener('click', (e) => {
+                if (e.target.id === 'location-modal') {
+                    document.getElementById('location-modal').classList.remove('active');
+                }
+            });
+
+            // Start
+            init();
         </script>
     </body>
 </html>

@@ -11,8 +11,9 @@ class Camera {
         this.viewportHeight = canvasHeight;
 
         // Camera position (center of viewport in world coords)
-        this.x = this.mapWidth / 2;
-        this.y = this.mapHeight / 2;
+        // Start at member_city location instead of map center for better UX
+        this.x = 1536;
+        this.y = 1024;
 
         // Zoom settings
         this.zoom = 1;

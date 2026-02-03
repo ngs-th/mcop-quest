@@ -13,6 +13,7 @@ class Location {
         this.maxHealth = data.maxHealth || 100;
         this.status = data.status || 'full';
         this.isFoggy = data.isFoggy || false;
+        this.isCurrent = data.isCurrent || false;
 
         // Visual properties
         this.width = 256;
@@ -23,6 +24,7 @@ class Location {
         this.hoverScale = 1;
         this.targetScale = 1;
         this.pulsePhase = Math.random() * Math.PI * 2;
+        this.glowPhase = Math.random() * Math.PI * 2;
     }
 
     /**
@@ -36,6 +38,11 @@ class Location {
         // Pulse animation for low health
         if (this.health < 30) {
             this.pulsePhase += deltaTime * 3;
+        }
+
+        // Glow animation for current location
+        if (this.isCurrent) {
+            this.glowPhase += deltaTime * 2;
         }
     }
 
@@ -88,8 +95,38 @@ class Location {
         ctx.translate(centerX, centerY);
         ctx.scale(scale, scale);
 
+        // Draw glow effect for current location
+        if (this.isCurrent) {
+            const glowRadius = 100 + Math.sin(this.glowPhase) * 15;
+            const gradient = ctx.createRadialGradient(0, 0, 40, 0, 0, glowRadius);
+            gradient.addColorStop(0, 'rgba(46, 204, 113, 0.4)');
+            gradient.addColorStop(0.5, 'rgba(46, 204, 113, 0.2)');
+            gradient.addColorStop(1, 'rgba(46, 204, 113, 0)');
+            ctx.fillStyle = gradient;
+            ctx.beginPath();
+            ctx.arc(0, 0, glowRadius, 0, Math.PI * 2);
+            ctx.fill();
+        }
+
+        // Draw outer ring for visibility
+        const ringColor = this.getStatusColor();
+        ctx.strokeStyle = ringColor;
+        ctx.lineWidth = 4;
+        ctx.beginPath();
+        ctx.arc(0, 0, 70, 0, Math.PI * 2);
+        ctx.stroke();
+
+        // Draw inner dashed ring
+        ctx.setLineDash([10, 10]);
+        ctx.lineWidth = 2;
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.5)';
+        ctx.beginPath();
+        ctx.arc(0, 0, 75, 0, Math.PI * 2);
+        ctx.stroke();
+        ctx.setLineDash([]);
+
         // Draw shadow
-        ctx.fillStyle = 'rgba(0, 0, 0, 0.3)';
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.4)';
         ctx.beginPath();
         ctx.ellipse(0, 60, 80, 30, 0, 0, Math.PI * 2);
         ctx.fill();
@@ -104,24 +141,79 @@ class Location {
                 this.height
             );
         } else {
-            // Fallback: draw colored rectangle
+            // Fallback: draw colored circle with icon
             ctx.fillStyle = this.getStatusColor();
-            ctx.fillRect(-this.width / 2, -this.height / 2, this.width, this.height);
+            ctx.beginPath();
+            ctx.arc(0, 0, 50, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Draw building icon
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+            ctx.font = 'bold 40px serif';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            const icon = this.getTypeIcon();
+            ctx.fillText(icon, 0, 0);
         }
 
         // Draw fog overlay
         if (this.isFoggy) {
             ctx.fillStyle = 'rgba(100, 100, 100, 0.6)';
             ctx.fillRect(-this.width / 2, -this.height / 2, this.width, this.height);
+
+            // Draw fog icon
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+            ctx.font = 'bold 30px serif';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('🌫️', 0, 0);
+        }
+
+        // Draw "YOU ARE HERE" badge for current location
+        if (this.isCurrent) {
+            ctx.save();
+            ctx.translate(0, -90);
+
+            // Badge background
+            ctx.fillStyle = '#2ecc71';
+            ctx.beginPath();
+            ctx.roundRect(-60, -12, 120, 24, 12);
+            ctx.fill();
+
+            // Badge text
+            ctx.fillStyle = '#fff';
+            ctx.font = 'bold 11px sans-serif';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('📍 YOU ARE HERE', 0, 0);
+
+            ctx.restore();
         }
 
         ctx.restore();
 
         // Draw health bar (above structure)
-        this.drawHealthBar(ctx, centerX, this.y - 20);
+        this.drawHealthBar(ctx, centerX, this.y - 40);
 
         // Draw label
         this.drawLabel(ctx, centerX, this.y + this.height + 10);
+    }
+
+    /**
+     * Get icon for location type
+     */
+    getTypeIcon() {
+        const icons = {
+            'castle': '🏰',
+            'tower': '🗼',
+            'bastion': '🏯',
+            'lab': '🔬',
+            'market': '🏪',
+            'fortress': '🏛️',
+            'merchant': '⚖️',
+            'bell_tower': '🔔'
+        };
+        return icons[this.type] || '📍';
     }
 
     /**

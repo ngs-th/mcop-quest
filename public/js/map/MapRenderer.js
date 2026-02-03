@@ -136,8 +136,8 @@ class MapRenderer {
         const ctx = this.ctx;
         const { width, height } = this.canvas;
 
-        // Clear canvas
-        ctx.fillStyle = '#1a1510';
+        // Clear canvas with darker background for better contrast
+        ctx.fillStyle = '#0d1a0f';
         ctx.fillRect(0, 0, width, height);
 
         // Apply camera transform
@@ -152,10 +152,61 @@ class MapRenderer {
             this.renderLayer(ctx, layer, visible);
         }
 
+        // Render roads/paths between locations
+        this.renderRoads(ctx);
+
         // Render locations
         for (const location of this.locations) {
             const image = this.structures[location.type];
             location.draw(ctx, image, this.lastTime);
+        }
+
+        ctx.restore();
+    }
+
+    /**
+     * Render roads connecting locations
+     */
+    renderRoads(ctx) {
+        if (!this.mapData.roads || this.mapData.roads.length === 0) return;
+
+        const tileSize = this.tileSize;
+
+        ctx.save();
+
+        // Draw main road paths
+        for (const road of this.mapData.roads) {
+            const x1 = road.from.x * tileSize + tileSize / 2;
+            const y1 = road.from.y * tileSize + tileSize / 2;
+            const x2 = road.to.x * tileSize + tileSize / 2;
+            const y2 = road.to.y * tileSize + tileSize / 2;
+
+            // Draw road shadow/outline
+            ctx.strokeStyle = 'rgba(0, 0, 0, 0.5)';
+            ctx.lineWidth = 24;
+            ctx.lineCap = 'round';
+            ctx.beginPath();
+            ctx.moveTo(x1, y1);
+            ctx.lineTo(x2, y2);
+            ctx.stroke();
+
+            // Draw main road
+            ctx.strokeStyle = '#a0826d';
+            ctx.lineWidth = 16;
+            ctx.beginPath();
+            ctx.moveTo(x1, y1);
+            ctx.lineTo(x2, y2);
+            ctx.stroke();
+
+            // Draw road center line
+            ctx.strokeStyle = '#c4a882';
+            ctx.lineWidth = 8;
+            ctx.setLineDash([20, 15]);
+            ctx.beginPath();
+            ctx.moveTo(x1, y1);
+            ctx.lineTo(x2, y2);
+            ctx.stroke();
+            ctx.setLineDash([]);
         }
 
         ctx.restore();

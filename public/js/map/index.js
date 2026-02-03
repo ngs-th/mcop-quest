@@ -1,9 +1,9 @@
 /**
  * Kingdom Rush Map - Main Entry Point
  */
-import MapRenderer from './MapRenderer.js';
-import Camera from './Camera.js';
-import Location from './Location.js';
+import MapRenderer from './MapRenderer.js?v=2';
+import Camera from './Camera.js?v=2';
+import Location from './Location.js?v=2';
 
 // Make available globally for debugging
 window.KingdomRushMap = { MapRenderer, Camera, Location };
