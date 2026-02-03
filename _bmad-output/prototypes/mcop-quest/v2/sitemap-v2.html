@@ -1,0 +1,719 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sitemap - MCOP Quest Prototype v2</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Crimson Text', Georgia, serif;
+            background: linear-gradient(135deg, #1a0f0a 0%, #2c1810 50%, #1a0f0a 100%);
+            min-height: 100vh;
+            color: #f4e8d0;
+            padding-bottom: 80px;
+        }
+
+        /* Background Pattern */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image:
+                radial-gradient(circle at 20% 30%, rgba(212, 168, 83, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 80% 70%, rgba(192, 57, 43, 0.05) 0%, transparent 40%),
+                url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23d4a853' fill-opacity='0.02'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(180deg, #2c1810 0%, #1a0f0a 100%);
+            border-bottom: 3px solid #8b6914;
+            padding: 20px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+        }
+
+        .header-content {
+            max-width: 800px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .header-title {
+            font-family: 'Cinzel', serif;
+            font-size: 24px;
+            color: #d4a853;
+            margin-bottom: 5px;
+        }
+
+        .header-subtitle {
+            font-size: 14px;
+            color: #8b6914;
+        }
+
+        /* Main Content */
+        .main-content {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Stats Section */
+        .stats-section {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            margin-bottom: 25px;
+        }
+
+        .stat-card {
+            background: linear-gradient(145deg, #3d2418 0%, #2c1810 100%);
+            border: 2px solid #5c4018;
+            border-radius: 12px;
+            padding: 15px 10px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-family: 'Cinzel', serif;
+            font-size: 28px;
+            color: #d4a853;
+            margin-bottom: 5px;
+        }
+
+        .stat-value.complete {
+            color: #2ecc71;
+        }
+
+        .stat-label {
+            font-size: 11px;
+            color: #8b6914;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        /* Section Title */
+        .section-title {
+            font-family: 'Cinzel', serif;
+            font-size: 18px;
+            color: #d4a853;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-title::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: linear-gradient(90deg, #8b6914, transparent);
+        }
+
+        /* Category Cards */
+        .category-section {
+            margin-bottom: 25px;
+        }
+
+        .page-grid {
+            display: grid;
+            gap: 12px;
+        }
+
+        .page-grid.main {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .page-grid.secondary {
+            grid-template-columns: 1fr;
+        }
+
+        .page-grid.utility {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .page-card {
+            background: linear-gradient(145deg, #3d2418 0%, #2c1810 100%);
+            border: 2px solid #5c4018;
+            border-radius: 12px;
+            padding: 15px;
+            text-decoration: none;
+            color: inherit;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .page-card:hover {
+            border-color: #d4a853;
+            box-shadow: 0 0 20px rgba(212, 168, 83, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .page-card.main {
+            border-left: 4px solid #d4a853;
+        }
+
+        .page-card.secondary {
+            border-left: 4px solid #9b59b6;
+        }
+
+        .page-card.utility {
+            border-left: 4px solid #7f8c8d;
+        }
+
+        .page-card.auth {
+            border-left: 4px solid #e74c3c;
+        }
+
+        .page-card.sitemap {
+            border-left: 4px solid #2ecc71;
+        }
+
+        .page-card-content {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .page-card.main .page-card-content {
+            flex-direction: column;
+            text-align: center;
+        }
+
+        .page-card.utility .page-card-content {
+            flex-direction: column;
+            text-align: center;
+        }
+
+        .page-icon {
+            font-size: 32px;
+        }
+
+        .page-card.main .page-icon,
+        .page-card.utility .page-icon {
+            font-size: 36px;
+        }
+
+        .page-info {
+            flex: 1;
+        }
+
+        .page-name {
+            font-family: 'Cinzel', serif;
+            font-size: 16px;
+            color: #f4e8d0;
+            margin-bottom: 3px;
+        }
+
+        .page-desc {
+            font-size: 12px;
+            color: #8b6914;
+        }
+
+        .page-status {
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+            white-space: nowrap;
+        }
+
+        .page-status.complete {
+            background: rgba(46, 204, 113, 0.2);
+            color: #2ecc71;
+            border: 1px solid #2ecc71;
+        }
+
+        .page-status.optional {
+            background: rgba(127, 140, 141, 0.2);
+            color: #7f8c8d;
+            border: 1px solid #7f8c8d;
+        }
+
+        /* Checklist Section */
+        .checklist-card {
+            background: linear-gradient(145deg, #3d2418 0%, #2c1810 100%);
+            border: 2px solid #8b6914;
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 25px;
+        }
+
+        .checklist-title {
+            font-family: 'Cinzel', serif;
+            font-size: 16px;
+            color: #d4a853;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .checklist-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #5c4018;
+        }
+
+        .checklist-item:last-child {
+            border-bottom: none;
+        }
+
+        .checklist-name {
+            font-size: 14px;
+            color: #f4e8d0;
+        }
+
+        .checklist-status {
+            font-size: 12px;
+            color: #2ecc71;
+            font-weight: 600;
+        }
+
+        .completion-banner {
+            margin-top: 15px;
+            padding: 15px;
+            background: rgba(46, 204, 113, 0.1);
+            border: 1px solid rgba(46, 204, 113, 0.3);
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .completion-text {
+            font-family: 'Cinzel', serif;
+            font-size: 14px;
+            color: #2ecc71;
+        }
+
+        /* Legend */
+        .legend-card {
+            background: linear-gradient(145deg, #3d2418 0%, #2c1810 100%);
+            border: 2px solid #5c4018;
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 25px;
+        }
+
+        .legend-title {
+            font-family: 'Cinzel', serif;
+            font-size: 14px;
+            color: #d4a853;
+            margin-bottom: 12px;
+        }
+
+        .legend-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+            color: #8b6914;
+        }
+
+        .legend-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+
+        .legend-dot.main { background: #d4a853; }
+        .legend-dot.secondary { background: #9b59b6; }
+        .legend-dot.utility { background: #7f8c8d; }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 20px;
+            color: #5c4018;
+            font-size: 12px;
+        }
+
+        .footer-title {
+            font-family: 'Cinzel', serif;
+            margin-bottom: 5px;
+        }
+
+        /* Bottom Navigation */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(180deg, #2c1810 0%, #1a0f0a 100%);
+            border-top: 3px solid #8b6914;
+            box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.5);
+            z-index: 100;
+        }
+
+        .nav-content {
+            max-width: 800px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-around;
+            padding: 10px 0;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+            padding: 8px 20px;
+            color: #5c4018;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .nav-item:hover {
+            color: #d4a853;
+        }
+
+        .nav-item.active {
+            color: #d4a853;
+        }
+
+        .nav-item.active::before {
+            content: '';
+            position: absolute;
+            top: -13px;
+            width: 40px;
+            height: 3px;
+            background: #d4a853;
+            box-shadow: 0 0 10px rgba(212, 168, 83, 0.5);
+        }
+
+        .nav-icon {
+            font-size: 24px;
+        }
+
+        .nav-label {
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .stats-section {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .page-grid.main {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .page-grid.utility {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .legend-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .page-card-content {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body x-data="sitemapV2Data()">
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <h1 class="header-title">🗺️ Prototype Sitemap</h1>
+            <p class="header-subtitle">MCOP Quest v2 - Complete Page Index</p>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Quick Stats -->
+        <div class="stats-section">
+            <div class="stat-card">
+                <div class="stat-value complete">11</div>
+                <div class="stat-label">Total Pages</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value complete">4</div>
+                <div class="stat-label">Main Views</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value complete">3</div>
+                <div class="stat-label">Secondary</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value complete">10</div>
+                <div class="stat-label">Complete</div>
+            </div>
+        </div>
+
+        <!-- Main Navigation Pages -->
+        <div class="category-section">
+            <h2 class="section-title">⚔️ Main Navigation</h2>
+            <div class="page-grid main">
+                <a href="hero-v2.html" class="page-card main">
+                    <div class="page-card-content">
+                        <span class="page-icon">⚔️</span>
+                        <div class="page-info">
+                            <div class="page-name">Hero</div>
+                            <div class="page-desc">Personal Dashboard</div>
+                        </div>
+                        <span class="page-status complete">✅ Complete</span>
+                    </div>
+                </a>
+                <a href="team-v2.html" class="page-card main">
+                    <div class="page-card-content">
+                        <span class="page-icon">👥</span>
+                        <div class="page-info">
+                            <div class="page-name">Team</div>
+                            <div class="page-desc">Team Camp View</div>
+                        </div>
+                        <span class="page-status complete">✅ Complete</span>
+                    </div>
+                </a>
+                <a href="world-map-v2.html" class="page-card main">
+                    <div class="page-card-content">
+                        <span class="page-icon">🗺️</span>
+                        <div class="page-info">
+                            <div class="page-name">World Map</div>
+                            <div class="page-desc">Project Overview</div>
+                        </div>
+                        <span class="page-status complete">✅ Complete</span>
+                    </div>
+                </a>
+                <a href="shop-v2.html" class="page-card main">
+                    <div class="page-card-content">
+                        <span class="page-icon">🛒</span>
+                        <div class="page-info">
+                            <div class="page-name">Shop</div>
+                            <div class="page-desc">Reward Store</div>
+                        </div>
+                        <span class="page-status complete">✅ Complete</span>
+                    </div>
+                </a>
+            </div>
+        </div>
+
+        <!-- Secondary Pages -->
+        <div class="category-section">
+            <h2 class="section-title">📄 Secondary Pages</h2>
+            <div class="page-grid secondary">
+                <a href="activity-log-v2.html" class="page-card secondary">
+                    <div class="page-card-content">
+                        <span class="page-icon">📜</span>
+                        <div class="page-info">
+                            <div class="page-name">Activity Log</div>
+                            <div class="page-desc">Timeline & Events</div>
+                        </div>
+                        <span class="page-status complete">✅ Complete</span>
+                    </div>
+                </a>
+                <a href="city-v2.html" class="page-card secondary">
+                    <div class="page-card-content">
+                        <span class="page-icon">🏰</span>
+                        <div class="page-info">
+                            <div class="page-name">City Detail</div>
+                            <div class="page-desc">System/Boss View</div>
+                        </div>
+                        <span class="page-status complete">✅ Complete</span>
+                    </div>
+                </a>
+                <a href="commander-v2.html" class="page-card secondary">
+                    <div class="page-card-content">
+                        <span class="page-icon">⚔️</span>
+                        <div class="page-info">
+                            <div class="page-name">Commander Detail</div>
+                            <div class="page-desc">Flow/Epic View</div>
+                        </div>
+                        <span class="page-status complete">✅ Complete</span>
+                    </div>
+                </a>
+            </div>
+        </div>
+
+        <!-- Utility Pages -->
+        <div class="category-section">
+            <h2 class="section-title">🛠️ Utility Pages</h2>
+            <div class="page-grid utility">
+                <a href="components-v2.html" class="page-card utility">
+                    <div class="page-card-content">
+                        <span class="page-icon">🧩</span>
+                        <div class="page-info">
+                            <div class="page-name">Components</div>
+                            <div class="page-desc">UI Reference</div>
+                        </div>
+                        <span class="page-status complete">✅ Complete</span>
+                    </div>
+                </a>
+                <a href="states-v2.html" class="page-card utility">
+                    <div class="page-card-content">
+                        <span class="page-icon">🎨</span>
+                        <div class="page-info">
+                            <div class="page-name">States</div>
+                            <div class="page-desc">State Demos</div>
+                        </div>
+                        <span class="page-status optional">Optional</span>
+                    </div>
+                </a>
+            </div>
+        </div>
+
+        <!-- Authentication Pages -->
+        <div class="category-section">
+            <h2 class="section-title">🔐 Authentication</h2>
+            <div class="page-grid secondary">
+                <a href="login-v2.html" class="page-card auth">
+                    <div class="page-card-content">
+                        <span class="page-icon">🔐</span>
+                        <div class="page-info">
+                            <div class="page-name">Login / Entry</div>
+                            <div class="page-desc">Google OAuth + Hero Creation</div>
+                        </div>
+                        <span class="page-status complete">✅ Complete</span>
+                    </div>
+                </a>
+            </div>
+        </div>
+
+        <!-- Navigation Hub -->
+        <div class="category-section">
+            <h2 class="section-title">🏠 Navigation Hub</h2>
+            <div class="page-grid secondary">
+                <div class="page-card sitemap">
+                    <div class="page-card-content">
+                        <span class="page-icon">🗺️</span>
+                        <div class="page-info">
+                            <div class="page-name">Sitemap v2</div>
+                            <div class="page-desc">You are here - Navigation Hub</div>
+                        </div>
+                        <span class="page-status complete">✅ Current</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Legend -->
+        <div class="legend-card">
+            <h3 class="legend-title">Category Legend</h3>
+            <div class="legend-grid">
+                <div class="legend-item">
+                    <span class="legend-dot main"></span>
+                    <span>Main Navigation</span>
+                </div>
+                <div class="legend-item">
+                    <span class="legend-dot secondary"></span>
+                    <span>Secondary Pages</span>
+                </div>
+                <div class="legend-item">
+                    <span class="legend-dot utility"></span>
+                    <span>Utility Pages</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- PRD Requirements Checklist -->
+        <div class="checklist-card">
+            <h3 class="checklist-title">📋 PRD Requirements Checklist</h3>
+            <div class="checklist-item">
+                <span class="checklist-name">1. Login / Profile</span>
+                <span class="checklist-status">✅ login-v2.html</span>
+            </div>
+            <div class="checklist-item">
+                <span class="checklist-name">2. Hero Dashboard (Personal)</span>
+                <span class="checklist-status">✅ hero-v2.html</span>
+            </div>
+            <div class="checklist-item">
+                <span class="checklist-name">3. Team Camp (Team)</span>
+                <span class="checklist-status">✅ team-v2.html</span>
+            </div>
+            <div class="checklist-item">
+                <span class="checklist-name">4. World Map (Project)</span>
+                <span class="checklist-status">✅ world-map-v2.html</span>
+            </div>
+            <div class="checklist-item">
+                <span class="checklist-name">5. City View (Epic/Boss)</span>
+                <span class="checklist-status">✅ city-v2.html</span>
+            </div>
+            <div class="checklist-item">
+                <span class="checklist-name">6. Reward Shop</span>
+                <span class="checklist-status">✅ shop-v2.html</span>
+            </div>
+            <div class="checklist-item">
+                <span class="checklist-name">7. Activity Log (Shared)</span>
+                <span class="checklist-status">✅ activity-log-v2.html</span>
+            </div>
+            <div class="checklist-item">
+                <span class="checklist-name">8. Commander Detail</span>
+                <span class="checklist-status">✅ commander-v2.html</span>
+            </div>
+            <div class="checklist-item">
+                <span class="checklist-name">9. Components Library</span>
+                <span class="checklist-status">✅ components-v2.html</span>
+            </div>
+            <div class="completion-banner">
+                <p class="completion-text">✅ All v2 pages completed (10/11 - states-v2.html optional)</p>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <p class="footer-title">MCOP Quest Prototype v2</p>
+            <p>Fantasy RPG Theme with Dark Aesthetics</p>
+        </div>
+    </main>
+
+    <!-- Bottom Navigation -->
+    <nav class="bottom-nav">
+        <div class="nav-content">
+            <a href="hero-v2.html" class="nav-item">
+                <span class="nav-icon">⚔️</span>
+                <span class="nav-label">Hero</span>
+            </a>
+            <a href="team-v2.html" class="nav-item">
+                <span class="nav-icon">👥</span>
+                <span class="nav-label">Team</span>
+            </a>
+            <a href="world-map-v2.html" class="nav-item">
+                <span class="nav-icon">🗺️</span>
+                <span class="nav-label">World</span>
+            </a>
+            <a href="shop-v2.html" class="nav-item">
+                <span class="nav-icon">🛒</span>
+                <span class="nav-label">Shop</span>
+            </a>
+        </div>
+    </nav>
+
+    <script>
+        function sitemapV2Data() {
+            return {
+                // Sitemap data
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,1281 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Activity Log - MCOP Quest</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Crimson Text', Georgia, serif;
+            background: linear-gradient(135deg, #1a0f0a 0%, #2c1810 50%, #1a0f0a 100%);
+            min-height: 100vh;
+            color: #f4e8d0;
+            padding-bottom: 80px;
+        }
+
+        /* Background Pattern */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image:
+                radial-gradient(circle at 20% 30%, rgba(212, 168, 83, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 80% 70%, rgba(192, 57, 43, 0.05) 0%, transparent 40%),
+                url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23d4a853' fill-opacity='0.02'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(180deg, #2c1810 0%, #1a0f0a 100%);
+            border-bottom: 3px solid #8b6914;
+            padding: 15px 20px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+        }
+
+        .header-content {
+            max-width: 800px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-title {
+            font-family: 'Cinzel', serif;
+            font-size: 20px;
+            color: #d4a853;
+        }
+
+        .header-subtitle {
+            font-size: 12px;
+            color: #8b6914;
+            margin-top: 2px;
+        }
+
+        .live-indicator {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(46, 204, 113, 0.15);
+            padding: 6px 12px;
+            border-radius: 20px;
+            border: 1px solid rgba(46, 204, 113, 0.3);
+        }
+
+        .live-dot {
+            width: 8px;
+            height: 8px;
+            background: #2ecc71;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(0.8); }
+        }
+
+        .live-text {
+            font-size: 12px;
+            color: #2ecc71;
+            font-weight: 600;
+        }
+
+        /* Filter Section */
+        .filter-section {
+            background: linear-gradient(180deg, #2c1810 0%, #1a0f0a 100%);
+            border-bottom: 2px solid #5c4018;
+            padding: 15px 20px;
+            position: sticky;
+            top: 70px;
+            z-index: 90;
+        }
+
+        .filter-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        /* Filter Tabs */
+        .filter-tabs {
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            padding-bottom: 5px;
+            scrollbar-width: none;
+        }
+
+        .filter-tabs::-webkit-scrollbar {
+            display: none;
+        }
+
+        .filter-tab {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 14px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            white-space: nowrap;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+            background: rgba(0, 0, 0, 0.3);
+            color: #8b6914;
+        }
+
+        .filter-tab:hover {
+            border-color: #5c4018;
+            color: #d4a853;
+        }
+
+        .filter-tab.active {
+            background: linear-gradient(145deg, #d4a853 0%, #8b6914 100%);
+            color: #1a0f0a;
+            border-color: #d4a853;
+            box-shadow: 0 0 15px rgba(212, 168, 83, 0.3);
+        }
+
+        .filter-tab.combat.active {
+            background: linear-gradient(145deg, #e74c3c 0%, #c0392b 100%);
+            border-color: #e74c3c;
+            color: #fff;
+            box-shadow: 0 0 15px rgba(231, 76, 60, 0.3);
+        }
+
+        .filter-tab.exploration.active {
+            background: linear-gradient(145deg, #3498db 0%, #2980b9 100%);
+            border-color: #3498db;
+            color: #fff;
+            box-shadow: 0 0 15px rgba(52, 152, 219, 0.3);
+        }
+
+        .filter-tab.social.active {
+            background: linear-gradient(145deg, #9b59b6 0%, #8e44ad 100%);
+            border-color: #9b59b6;
+            color: #fff;
+            box-shadow: 0 0 15px rgba(155, 89, 182, 0.3);
+        }
+
+        .filter-tab.achievement.active {
+            background: linear-gradient(145deg, #f1c40f 0%, #d4a853 100%);
+            border-color: #f1c40f;
+            color: #1a0f0a;
+            box-shadow: 0 0 15px rgba(241, 196, 15, 0.3);
+        }
+
+        .filter-tab.system.active {
+            background: linear-gradient(145deg, #95a5a6 0%, #7f8c8d 100%);
+            border-color: #95a5a6;
+            color: #fff;
+            box-shadow: 0 0 15px rgba(149, 165, 166, 0.3);
+        }
+
+        /* Stats Summary */
+        .stats-summary {
+            display: flex;
+            gap: 15px;
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid #5c4018;
+            flex-wrap: wrap;
+        }
+
+        /* Search Box */
+        .search-box {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 12px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 2px solid #5c4018;
+            border-radius: 25px;
+            padding: 8px 16px;
+            transition: all 0.3s ease;
+        }
+
+        .search-box:focus-within {
+            border-color: #d4a853;
+            box-shadow: 0 0 15px rgba(212, 168, 83, 0.2);
+        }
+
+        .search-icon {
+            font-size: 16px;
+            color: #8b6914;
+        }
+
+        .search-input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: #f4e8d0;
+            font-family: 'Crimson Text', Georgia, serif;
+            font-size: 15px;
+            outline: none;
+        }
+
+        .search-input::placeholder {
+            color: #5c4018;
+        }
+
+        .search-clear {
+            background: none;
+            border: none;
+            color: #8b6914;
+            cursor: pointer;
+            font-size: 14px;
+            padding: 4px;
+            transition: color 0.2s;
+        }
+
+        .search-clear:hover {
+            color: #d4a853;
+        }
+
+        /* Date Filters */
+        .date-filters {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .date-filter-btn {
+            padding: 6px 14px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid #5c4018;
+            border-radius: 20px;
+            color: #8b6914;
+            font-family: 'Crimson Text', Georgia, serif;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .date-filter-btn:hover {
+            border-color: #8b6914;
+            color: #d4a853;
+        }
+
+        .date-filter-btn.active {
+            background: linear-gradient(145deg, #d4a853 0%, #8b6914 100%);
+            color: #1a0f0a;
+            border-color: #d4a853;
+        }
+
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+            color: #8b6914;
+        }
+
+        .stat-value {
+            color: #d4a853;
+            font-weight: 600;
+        }
+
+        /* Main Content */
+        .main-content {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Timeline */
+        .timeline {
+            position: relative;
+            padding-left: 30px;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 10px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: linear-gradient(to bottom, #d4a853 0%, #5c4018 50%, #5c4018 100%);
+        }
+
+        /* Activity Item */
+        .activity-item {
+            position: relative;
+            margin-bottom: 20px;
+            animation: fadeIn 0.5s ease forwards;
+            opacity: 0;
+        }
+
+        @keyframes fadeIn {
+            to { opacity: 1; }
+        }
+
+        .activity-dot {
+            position: absolute;
+            left: -26px;
+            top: 20px;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            border: 3px solid #1a0f0a;
+            z-index: 10;
+        }
+
+        .activity-dot.combat { background: #e74c3c; box-shadow: 0 0 10px rgba(231, 76, 60, 0.5); }
+        .activity-dot.exploration { background: #3498db; box-shadow: 0 0 10px rgba(52, 152, 219, 0.5); }
+        .activity-dot.social { background: #9b59b6; box-shadow: 0 0 10px rgba(155, 89, 182, 0.5); }
+        .activity-dot.achievement { background: #f1c40f; box-shadow: 0 0 10px rgba(241, 196, 15, 0.5); }
+        .activity-dot.system { background: #95a5a6; box-shadow: 0 0 10px rgba(149, 165, 166, 0.5); }
+
+        .activity-card {
+            background: linear-gradient(145deg, #3d2418 0%, #2c1810 100%);
+            border: 2px solid #5c4018;
+            border-radius: 16px;
+            padding: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .activity-card:hover {
+            border-color: #8b6914;
+            transform: translateX(5px);
+            box-shadow: -5px 0 20px rgba(212, 168, 83, 0.1);
+        }
+
+        .activity-card.combat { border-left: 4px solid #e74c3c; }
+        .activity-card.exploration { border-left: 4px solid #3498db; }
+        .activity-card.social { border-left: 4px solid #9b59b6; }
+        .activity-card.achievement { border-left: 4px solid #f1c40f; }
+        .activity-card.system { border-left: 4px solid #95a5a6; }
+
+        .activity-header {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            margin-bottom: 10px;
+        }
+
+        .activity-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            flex-shrink: 0;
+        }
+
+        .activity-icon.combat {
+            background: rgba(231, 76, 60, 0.15);
+            border: 2px solid rgba(231, 76, 60, 0.3);
+        }
+
+        .activity-icon.exploration {
+            background: rgba(52, 152, 219, 0.15);
+            border: 2px solid rgba(52, 152, 219, 0.3);
+        }
+
+        .activity-icon.social {
+            background: rgba(155, 89, 182, 0.15);
+            border: 2px solid rgba(155, 89, 182, 0.3);
+        }
+
+        .activity-icon.achievement {
+            background: rgba(241, 196, 15, 0.15);
+            border: 2px solid rgba(241, 196, 15, 0.3);
+        }
+
+        .activity-icon.system {
+            background: rgba(149, 165, 166, 0.15);
+            border: 2px solid rgba(149, 165, 166, 0.3);
+        }
+
+        .activity-info {
+            flex: 1;
+        }
+
+        .activity-title {
+            font-family: 'Cinzel', serif;
+            font-size: 15px;
+            color: #f4e8d0;
+            margin-bottom: 3px;
+        }
+
+        .activity-subtitle {
+            font-size: 13px;
+            color: #8b6914;
+        }
+
+        .activity-time {
+            font-size: 12px;
+            color: #5c4018;
+            white-space: nowrap;
+        }
+
+        .activity-description {
+            font-size: 14px;
+            color: #a08060;
+            line-height: 1.5;
+            margin-bottom: 12px;
+            padding-left: 56px;
+        }
+
+        /* Rewards */
+        .activity-rewards {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            padding-left: 56px;
+        }
+
+        .reward-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .reward-badge.xp {
+            background: rgba(243, 156, 18, 0.15);
+            border: 1px solid rgba(243, 156, 18, 0.3);
+            color: #f39c12;
+        }
+
+        .reward-badge.gold {
+            background: rgba(241, 196, 15, 0.15);
+            border: 1px solid rgba(241, 196, 15, 0.3);
+            color: #f1c40f;
+        }
+
+        .reward-badge.gem {
+            background: rgba(52, 152, 219, 0.15);
+            border: 1px solid rgba(52, 152, 219, 0.3);
+            color: #3498db;
+        }
+
+        .reward-badge.item {
+            background: rgba(46, 204, 113, 0.15);
+            border: 1px solid rgba(46, 204, 113, 0.3);
+            color: #2ecc71;
+        }
+
+        .reward-badge.buff {
+            background: rgba(155, 89, 182, 0.15);
+            border: 1px solid rgba(155, 89, 182, 0.3);
+            color: #9b59b6;
+        }
+
+        /* Actor Info */
+        .activity-actor {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid #5c4018;
+            padding-left: 56px;
+        }
+
+        .actor-avatar {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            border: 2px solid #5c4018;
+        }
+
+        .actor-name {
+            font-size: 13px;
+            color: #d4a853;
+        }
+
+        .actor-team {
+            margin-left: auto;
+            font-size: 11px;
+            padding: 3px 10px;
+            border-radius: 20px;
+            background: rgba(92, 64, 24, 0.3);
+            color: #8b6914;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+        }
+
+        .empty-icon {
+            font-size: 60px;
+            margin-bottom: 15px;
+            opacity: 0.5;
+        }
+
+        .empty-title {
+            font-family: 'Cinzel', serif;
+            font-size: 18px;
+            color: #8b6914;
+            margin-bottom: 8px;
+        }
+
+        .empty-text {
+            font-size: 14px;
+            color: #5c4018;
+        }
+
+        /* Load More Button */
+        .load-more {
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        .load-more-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 30px;
+            background: linear-gradient(145deg, #3d2418 0%, #2c1810 100%);
+            border: 2px solid #5c4018;
+            border-radius: 25px;
+            color: #8b6914;
+            font-family: 'Cinzel', serif;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .load-more-btn:hover {
+            border-color: #d4a853;
+            color: #d4a853;
+            box-shadow: 0 0 20px rgba(212, 168, 83, 0.2);
+        }
+
+        /* Date Divider */
+        .date-divider {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin: 25px 0 20px;
+            padding-left: 30px;
+        }
+
+        .date-divider::before {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: linear-gradient(90deg, #5c4018, transparent);
+        }
+
+        .date-label {
+            font-family: 'Cinzel', serif;
+            font-size: 13px;
+            color: #5c4018;
+            white-space: nowrap;
+        }
+
+        /* Bottom Navigation */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(180deg, #2c1810 0%, #1a0f0a 100%);
+            border-top: 3px solid #8b6914;
+            box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.5);
+            z-index: 100;
+        }
+
+        .nav-content {
+            max-width: 800px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-around;
+            padding: 10px 0;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+            padding: 8px 20px;
+            color: #5c4018;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .nav-item.active,
+        .nav-item:hover {
+            color: #d4a853;
+        }
+
+        .nav-item.active::before {
+            content: '';
+            position: absolute;
+            top: -13px;
+            width: 40px;
+            height: 3px;
+            background: #d4a853;
+            box-shadow: 0 0 10px rgba(212, 168, 83, 0.5);
+        }
+
+        .nav-icon {
+            font-size: 24px;
+        }
+
+        .nav-label {
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .filter-tab {
+                padding: 6px 12px;
+                font-size: 12px;
+            }
+
+            .activity-description,
+            .activity-rewards,
+            .activity-actor {
+                padding-left: 0;
+            }
+
+            .activity-header {
+                margin-bottom: 12px;
+            }
+
+            .timeline {
+                padding-left: 25px;
+            }
+
+            .activity-dot {
+                left: -21px;
+                width: 12px;
+                height: 12px;
+            }
+        }
+    </style>
+</head>
+<body x-data="activityLogV2Data()">
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <div>
+                <h1 class="header-title">📜 Activity Log</h1>
+                <p class="header-subtitle">Quest Chronicle & Events</p>
+            </div>
+            <div class="live-indicator">
+                <span class="live-dot"></span>
+                <span class="live-text">Live</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Filter Section -->
+    <div class="filter-section">
+        <div class="filter-content">
+            <!-- Search Box -->
+            <div class="search-box">
+                <span class="search-icon">🔍</span>
+                <input
+                    type="text"
+                    class="search-input"
+                    placeholder="Search activities, tasks, or team members..."
+                    x-model="searchQuery"
+                    @input="handleSearch()"
+                >
+                <button
+                    class="search-clear"
+                    x-show="searchQuery.length > 0"
+                    @click="searchQuery = ''; handleSearch()"
+                >✕</button>
+            </div>
+
+            <!-- Date Filters -->
+            <div class="date-filters">
+                <button
+                    @click="dateFilter = 'all'; filterActivities()"
+                    :class="dateFilter === 'all' ? 'active' : ''"
+                    class="date-filter-btn"
+                >
+                    All Time
+                </button>
+                <button
+                    @click="dateFilter = 'today'; filterActivities()"
+                    :class="dateFilter === 'today' ? 'active' : ''"
+                    class="date-filter-btn"
+                >
+                    Today
+                </button>
+                <button
+                    @click="dateFilter = 'week'; filterActivities()"
+                    :class="dateFilter === 'week' ? 'active' : ''"
+                    class="date-filter-btn"
+                >
+                    This Week
+                </button>
+                <button
+                    @click="dateFilter = 'month'; filterActivities()"
+                    :class="dateFilter === 'month' ? 'active' : ''"
+                    class="date-filter-btn"
+                >
+                    This Month
+                </button>
+            </div>
+
+            <!-- Filter Tabs -->
+            <div class="filter-tabs" style="margin-top: 12px;">
+                <button
+                    @click="activeFilter = 'all'; filterActivities()"
+                    :class="activeFilter === 'all' ? 'active' : ''"
+                    class="filter-tab">
+                    <span>📜</span>
+                    <span>All</span>
+                </button>
+                <button
+                    @click="activeFilter = 'combat'; filterActivities()"
+                    :class="activeFilter === 'combat' ? 'active combat' : ''"
+                    class="filter-tab combat">
+                    <span>⚔️</span>
+                    <span>Combat</span>
+                </button>
+                <button
+                    @click="activeFilter = 'exploration'; filterActivities()"
+                    :class="activeFilter === 'exploration' ? 'active exploration' : ''"
+                    class="filter-tab exploration">
+                    <span>🗺️</span>
+                    <span>Exploration</span>
+                </button>
+                <button
+                    @click="activeFilter = 'social'; filterActivities()"
+                    :class="activeFilter === 'social' ? 'active social' : ''"
+                    class="filter-tab social">
+                    <span>👥</span>
+                    <span>Social</span>
+                </button>
+                <button
+                    @click="activeFilter = 'achievement'; filterActivities()"
+                    :class="activeFilter === 'achievement' ? 'active achievement' : ''"
+                    class="filter-tab achievement">
+                    <span>🏆</span>
+                    <span>Achievement</span>
+                </button>
+                <button
+                    @click="activeFilter = 'system'; filterActivities()"
+                    :class="activeFilter === 'system' ? 'active system' : ''"
+                    class="filter-tab system">
+                    <span>⚙️</span>
+                    <span>System</span>
+                </button>
+            </div>
+
+            <!-- Stats Summary -->
+            <div class="stats-summary">
+                <div class="stat-item">
+                    <span>Events:</span>
+                    <span class="stat-value" x-text="filteredActivities.length"></span>
+                </div>
+                <div class="stat-item">
+                    <span>Today:</span>
+                    <span class="stat-value" x-text="todayCount"></span>
+                </div>
+                <div class="stat-item">
+                    <span>XP Gained:</span>
+                    <span class="stat-value" x-text="totalXp + ' XP'"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Timeline -->
+        <div class="timeline" x-show="filteredActivities.length > 0">
+            <template x-for="(group, date) in groupedActivities" :key="date">
+                <div>
+                    <!-- Date Divider -->
+                    <div class="date-divider">
+                        <span class="date-label" x-text="formatDate(date)"></span>
+                    </div>
+
+                    <!-- Activities for this date -->
+                    <template x-for="activity in group" :key="activity.id">
+                        <div class="activity-item" :style="'animation-delay: ' + (activity.id * 0.05) + 's'">
+                            <!-- Timeline Dot -->
+                            <div class="activity-dot" :class="activity.category"></div>
+
+                            <!-- Activity Card -->
+                            <div class="activity-card" :class="activity.category">
+                                <div class="activity-header">
+                                    <div class="activity-icon" :class="activity.category" x-text="activity.icon"></div>
+                                    <div class="activity-info">
+                                        <h3 class="activity-title" x-text="activity.title"></h3>
+                                        <p class="activity-subtitle" x-text="activity.subtitle"></p>
+                                    </div>
+                                    <span class="activity-time" x-text="activity.time"></span>
+                                </div>
+
+                                <p class="activity-description" x-text="activity.description"></p>
+
+                                <!-- Rewards -->
+                                <div class="activity-rewards" x-show="activity.rewards && activity.rewards.length > 0">
+                                    <template x-for="reward in activity.rewards" :key="reward.type">
+                                        <span class="reward-badge" :class="reward.type">
+                                            <span x-text="reward.icon"></span>
+                                            <span x-text="reward.value"></span>
+                                        </span>
+                                    </template>
+                                </div>
+
+                                <!-- Actor Info -->
+                                <div class="activity-actor">
+                                    <div class="actor-avatar" :style="'background: ' + activity.actorColor + '20; border-color: ' + activity.actorColor" x-text="activity.actorIcon"></div>
+                                    <span class="actor-name" x-text="activity.actorName"></span>
+                                    <span class="actor-team" x-text="activity.team"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </template>
+                </div>
+            </template>
+        </div>
+
+        <!-- Empty State -->
+        <div class="empty-state" x-show="filteredActivities.length === 0">
+            <div class="empty-icon">📭</div>
+            <h3 class="empty-title">No Activities Found</h3>
+            <p class="empty-text">Try adjusting your filters to see more events</p>
+        </div>
+
+        <!-- Load More -->
+        <div class="load-more" x-show="filteredActivities.length > 0">
+            <button class="load-more-btn" @click="loadMore()">
+                <span>📜</span>
+                <span>Load More History</span>
+            </button>
+        </div>
+    </main>
+
+    <!-- Bottom Navigation -->
+    <nav class="bottom-nav">
+        <div class="nav-content">
+            <a href="hero-v2.html" class="nav-item">
+                <span class="nav-icon">⚔️</span>
+                <span class="nav-label">Hero</span>
+            </a>
+            <a href="team-v2.html" class="nav-item">
+                <span class="nav-icon">👥</span>
+                <span class="nav-label">Team</span>
+            </a>
+            <a href="world-map-v2.html" class="nav-item">
+                <span class="nav-icon">🗺️</span>
+                <span class="nav-label">World</span>
+            </a>
+            <a href="shop-v2.html" class="nav-item">
+                <span class="nav-icon">🛒</span>
+                <span class="nav-label">Shop</span>
+            </a>
+        </div>
+    </nav>
+
+    <script>
+        function activityLogV2Data() {
+            return {
+                activeFilter: 'all',
+                searchQuery: '',
+                dateFilter: 'all',
+                filteredResults: [],
+
+                activities: [
+                    // Today
+                    {
+                        id: 1,
+                        category: 'combat',
+                        icon: '⚔️',
+                        title: 'Task Completed',
+                        subtitle: 'JWT Token refresh mechanism',
+                        description: 'Ken defeated the API Minion in Flow: Login with a critical strike!',
+                        time: '2 hours ago',
+                        date: '2026-02-01',
+                        actorName: 'Ken',
+                        actorIcon: '⚔️',
+                        actorColor: '#9B59B6',
+                        team: 'BE Team',
+                        rewards: [
+                            { type: 'xp', icon: '⭐', value: '+100 XP' },
+                            { type: 'gold', icon: '🪙', value: '+50 Gold' }
+                        ]
+                    },
+                    {
+                        id: 2,
+                        category: 'system',
+                        icon: '👑',
+                        title: 'Boss HP Decreased',
+                        subtitle: 'Flow: Login Commander',
+                        description: 'Boss HP dropped from 68% to 63% after task completion',
+                        time: '2 hours ago',
+                        date: '2026-02-01',
+                        actorName: 'System',
+                        actorIcon: '⚙️',
+                        actorColor: '#95a5a6',
+                        team: 'Auto',
+                        rewards: []
+                    },
+                    {
+                        id: 3,
+                        category: 'combat',
+                        icon: '👹',
+                        title: 'Demon Spawned!',
+                        subtitle: 'Critical Bug Reported',
+                        description: 'New bug discovered: Login หน้าขาวเมื่อ token หมดอายุ',
+                        time: '3 hours ago',
+                        date: '2026-02-01',
+                        actorName: 'Nat (QA)',
+                        actorIcon: '💊',
+                        actorColor: '#F1C40F',
+                        team: 'QA Team',
+                        rewards: [
+                            { type: 'gem', icon: '💎', value: '+1 Gem (Bug Hunter)' }
+                        ]
+                    },
+                    {
+                        id: 4,
+                        category: 'exploration',
+                        icon: '💻',
+                        title: 'Task Completed',
+                        subtitle: 'Login form component',
+                        description: 'May finished the FE implementation with smooth animations',
+                        time: '4 hours ago',
+                        date: '2026-02-01',
+                        actorName: 'May',
+                        actorIcon: '🧙',
+                        actorColor: '#1ABC9C',
+                        team: 'FE Team',
+                        rewards: [
+                            { type: 'xp', icon: '⭐', value: '+80 XP' },
+                            { type: 'gold', icon: '🪙', value: '+40 Gold' }
+                        ]
+                    },
+                    {
+                        id: 5,
+                        category: 'social',
+                        icon: '🛡️',
+                        title: 'Support Buff Applied',
+                        subtitle: 'Flow: Registration',
+                        description: 'Sarah completed AC review - Damage +10% for FE tasks',
+                        time: '5 hours ago',
+                        date: '2026-02-01',
+                        actorName: 'Sarah',
+                        actorIcon: '🔍',
+                        actorColor: '#3498DB',
+                        team: 'BA Team',
+                        rewards: [
+                            { type: 'buff', icon: '⚡', value: 'Damage Boost Active' }
+                        ]
+                    },
+                    {
+                        id: 6,
+                        category: 'achievement',
+                        icon: '💀',
+                        title: 'Commander Defeated!',
+                        subtitle: 'Flow: Registration',
+                        description: 'All minions defeated! City Boss ระบบสมาชิก is 75% complete.',
+                        time: '6 hours ago',
+                        date: '2026-02-01',
+                        actorName: 'Team',
+                        actorIcon: '👥',
+                        actorColor: '#f1c40f',
+                        team: 'MCOP Guild',
+                        rewards: [
+                            { type: 'xp', icon: '⭐', value: '+500 XP (Team)' },
+                            { type: 'gem', icon: '💎', value: '+5 Gems' }
+                        ]
+                    },
+                    // Yesterday
+                    {
+                        id: 7,
+                        category: 'exploration',
+                        icon: '🎨',
+                        title: 'Task Completed',
+                        subtitle: 'Wireframe Password Reset',
+                        description: 'Ton delivered the UI design with all edge cases covered',
+                        time: 'Yesterday',
+                        date: '2026-01-31',
+                        actorName: 'Ton',
+                        actorIcon: '🔨',
+                        actorColor: '#E67E22',
+                        team: 'UX Team',
+                        rewards: [
+                            { type: 'xp', icon: '⭐', value: '+60 XP' },
+                            { type: 'gold', icon: '🪙', value: '+30 Gold' }
+                        ]
+                    },
+                    {
+                        id: 8,
+                        category: 'combat',
+                        icon: '✅',
+                        title: 'Demon Cleared!',
+                        subtitle: 'Bug Fixed',
+                        description: 'Email validation bug on Safari has been resolved',
+                        time: 'Yesterday',
+                        date: '2026-01-31',
+                        actorName: 'May',
+                        actorIcon: '🧙',
+                        actorColor: '#1ABC9C',
+                        team: 'FE Team',
+                        rewards: [
+                            { type: 'xp', icon: '⭐', value: '+50 XP' }
+                        ]
+                    },
+                    {
+                        id: 9,
+                        category: 'achievement',
+                        icon: '🎉',
+                        title: 'Level Up!',
+                        subtitle: 'Ken reached Level 15',
+                        description: 'Congratulations! New skills and equipment slots unlocked',
+                        time: 'Yesterday',
+                        date: '2026-01-31',
+                        actorName: 'Ken',
+                        actorIcon: '⚔️',
+                        actorColor: '#9B59B6',
+                        team: 'BE Team',
+                        rewards: [
+                            { type: 'xp', icon: '🆙', value: 'Lv.14 → Lv.15' }
+                        ]
+                    },
+                    {
+                        id: 10,
+                        category: 'system',
+                        icon: '🛡️',
+                        title: 'Equipment Equipped',
+                        subtitle: 'Knight Armor',
+                        description: 'Ken equipped the rare armor from shop',
+                        time: 'Yesterday',
+                        date: '2026-01-31',
+                        actorName: 'Ken',
+                        actorIcon: '⚔️',
+                        actorColor: '#9B59B6',
+                        team: 'BE Team',
+                        rewards: [
+                            { type: 'item', icon: '🛡️', value: 'DEF +25' }
+                        ]
+                    },
+                    // 2 days ago
+                    {
+                        id: 11,
+                        category: 'system',
+                        icon: '👑',
+                        title: 'Boss HP Decreased',
+                        subtitle: 'Flow: Product List',
+                        description: 'Multiple tasks completed - Boss HP dropped to 45%',
+                        time: '2 days ago',
+                        date: '2026-01-30',
+                        actorName: 'System',
+                        actorIcon: '⚙️',
+                        actorColor: '#95a5a6',
+                        team: 'Auto',
+                        rewards: []
+                    },
+                    {
+                        id: 12,
+                        category: 'combat',
+                        icon: '🧪',
+                        title: 'Task Completed',
+                        subtitle: 'Unit tests for auth module',
+                        description: 'Nat completed comprehensive test coverage with 95% success',
+                        time: '2 days ago',
+                        date: '2026-01-30',
+                        actorName: 'Nat',
+                        actorIcon: '💊',
+                        actorColor: '#F1C40F',
+                        team: 'QA Team',
+                        rewards: [
+                            { type: 'xp', icon: '⭐', value: '+70 XP' },
+                            { type: 'gold', icon: '🪙', value: '+35 Gold' }
+                        ]
+                    },
+                    {
+                        id: 13,
+                        category: 'social',
+                        icon: '🤝',
+                        title: 'Party Formed',
+                        subtitle: 'New Team Alliance',
+                        description: 'The FE and BE teams formed an alliance for the Login Flow quest',
+                        time: '2 days ago',
+                        date: '2026-01-30',
+                        actorName: 'Sarah',
+                        actorIcon: '👑',
+                        actorColor: '#3498DB',
+                        team: 'BA Team',
+                        rewards: [
+                            { type: 'buff', icon: '🤝', value: 'Teamwork Bonus' }
+                        ]
+                    },
+                    {
+                        id: 14,
+                        category: 'exploration',
+                        icon: '🗺️',
+                        title: 'New Area Discovered',
+                        subtitle: 'Flow: Password Reset',
+                        description: 'The team unlocked a new quest line in the Authentication region',
+                        time: '3 days ago',
+                        date: '2026-01-29',
+                        actorName: 'Team',
+                        actorIcon: '🧭',
+                        actorColor: '#f1c40f',
+                        team: 'MCOP Guild',
+                        rewards: [
+                            { type: 'xp', icon: '⭐', value: '+200 XP (Team)' }
+                        ]
+                    },
+                    {
+                        id: 15,
+                        category: 'achievement',
+                        icon: '🏆',
+                        title: 'Achievement Unlocked',
+                        subtitle: 'First Blood',
+                        description: 'Ken completed the first task of the project!',
+                        time: '3 days ago',
+                        date: '2026-01-29',
+                        actorName: 'Ken',
+                        actorIcon: '⚔️',
+                        actorColor: '#9B59B6',
+                        team: 'BE Team',
+                        rewards: [
+                            { type: 'gem', icon: '💎', value: '+2 Gems' },
+                            { type: 'item', icon: '🎖️', value: 'Pioneer Badge' }
+                        ]
+                    }
+                ],
+
+                init() {
+                    this.filterActivities();
+                },
+
+                handleSearch() {
+                    this.filterActivities();
+                },
+
+                filterActivities() {
+                    let results = this.activities;
+
+                    // Category filter
+                    if (this.activeFilter !== 'all') {
+                        results = results.filter(a => a.category === this.activeFilter);
+                    }
+
+                    // Search filter
+                    if (this.searchQuery.trim()) {
+                        const query = this.searchQuery.toLowerCase();
+                        results = results.filter(a =>
+                            a.title.toLowerCase().includes(query) ||
+                            a.subtitle.toLowerCase().includes(query) ||
+                            a.description.toLowerCase().includes(query) ||
+                            a.actorName.toLowerCase().includes(query) ||
+                            a.team.toLowerCase().includes(query)
+                        );
+                    }
+
+                    // Date filter
+                    const today = new Date('2026-02-01');
+                    const oneDay = 24 * 60 * 60 * 1000;
+
+                    if (this.dateFilter === 'today') {
+                        results = results.filter(a => a.date === '2026-02-01');
+                    } else if (this.dateFilter === 'week') {
+                        const weekAgo = new Date(today - 7 * oneDay);
+                        results = results.filter(a => {
+                            const actDate = new Date(a.date);
+                            return actDate >= weekAgo;
+                        });
+                    } else if (this.dateFilter === 'month') {
+                        results = results.filter(a => a.date.startsWith('2026-01'));
+                    }
+
+                    this.filteredResults = results;
+                },
+
+                get filteredActivities() {
+                    return this.filteredResults;
+                },
+
+                get groupedActivities() {
+                    const grouped = {};
+                    this.filteredActivities.forEach(activity => {
+                        if (!grouped[activity.date]) {
+                            grouped[activity.date] = [];
+                        }
+                        grouped[activity.date].push(activity);
+                    });
+                    return grouped;
+                },
+
+                get todayCount() {
+                    const today = '2026-02-01';
+                    return this.filteredResults.filter(a => a.date === today).length;
+                },
+
+                get totalXp() {
+                    let total = 0;
+                    this.filteredResults.forEach(activity => {
+                        if (activity.rewards) {
+                            activity.rewards.forEach(reward => {
+                                if (reward.type === 'xp') {
+                                    const match = reward.value.match(/\+(\d+)/);
+                                    if (match) {
+                                        total += parseInt(match[1]);
+                                    }
+                                }
+                            });
+                        }
+                    });
+                    return total;
+                },
+
+                formatDate(dateStr) {
+                    const today = '2026-02-01';
+                    const yesterday = '2026-01-31';
+
+                    if (dateStr === today) return 'Today';
+                    if (dateStr === yesterday) return 'Yesterday';
+
+                    const date = new Date(dateStr);
+                    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+                },
+
+                loadMore() {
+                    // Simulate loading more activities
+                    alert('Loading more history... (Demo)');
+                }
+            }
+        }
+    </script>
+</body>
+</html>

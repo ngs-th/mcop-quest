@@ -1,0 +1,1522 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Team View - MCOP Quest</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Crimson Text', Georgia, serif;
+            background: linear-gradient(135deg, #1a0f0a 0%, #2c1810 50%, #1a0f0a 100%);
+            min-height: 100vh;
+            color: #f4e8d0;
+            padding-bottom: 80px;
+        }
+
+        /* Background Pattern */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image:
+                radial-gradient(circle at 20% 30%, rgba(212, 168, 83, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 80% 70%, rgba(192, 57, 43, 0.05) 0%, transparent 40%),
+                url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23d4a853' fill-opacity='0.02'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(180deg, #2c1810 0%, #1a0f0a 100%);
+            border-bottom: 3px solid #8b6914;
+            padding: 15px 20px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+        }
+
+        .header-content {
+            max-width: 800px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-title {
+            font-family: 'Cinzel', serif;
+            font-size: 20px;
+            color: #d4a853;
+        }
+
+        .header-subtitle {
+            font-size: 12px;
+            color: #8b6914;
+            margin-top: 2px;
+        }
+
+        /* Team Selector */
+        .team-selector {
+            position: relative;
+        }
+
+        .team-dropdown-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: linear-gradient(145deg, #3d2418 0%, #2c1810 100%);
+            border: 2px solid #8b6914;
+            border-radius: 12px;
+            padding: 10px 16px;
+            color: #f4e8d0;
+            font-family: 'Cinzel', serif;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .team-dropdown-btn:hover {
+            border-color: #d4a853;
+            box-shadow: 0 0 15px rgba(212, 168, 83, 0.2);
+        }
+
+        .team-dropdown-menu {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            margin-top: 8px;
+            background: linear-gradient(145deg, #3d2418 0%, #2c1810 100%);
+            border: 2px solid #8b6914;
+            border-radius: 12px;
+            min-width: 200px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            z-index: 200;
+            overflow: hidden;
+        }
+
+        .team-option {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 16px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border-bottom: 1px solid #5c4018;
+        }
+
+        .team-option:last-child {
+            border-bottom: none;
+        }
+
+        .team-option:hover {
+            background: rgba(212, 168, 83, 0.1);
+        }
+
+        .team-option.active {
+            background: rgba(212, 168, 83, 0.2);
+            color: #d4a853;
+        }
+
+        .team-icon {
+            font-size: 20px;
+        }
+
+        /* Main Content */
+        .main-content {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Section Card */
+        .section-card {
+            background: linear-gradient(145deg, #3d2418 0%, #2c1810 100%);
+            border: 2px solid #8b6914;
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .section-title {
+            font-family: 'Cinzel', serif;
+            font-size: 18px;
+            color: #d4a853;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-title::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: linear-gradient(90deg, #8b6914, transparent);
+        }
+
+        /* Member Avatars Grid */
+        .members-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+        }
+
+        .member-card {
+            text-align: center;
+            position: relative;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+
+        .member-card:hover {
+            transform: translateY(-3px);
+        }
+
+        .member-avatar {
+            width: 70px;
+            height: 70px;
+            margin: 0 auto 8px;
+            border-radius: 50%;
+            border: 3px solid;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .member-card:hover .member-avatar {
+            box-shadow: 0 0 20px rgba(212, 168, 83, 0.4);
+        }
+
+        .task-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: #c0392b;
+            color: white;
+            font-size: 11px;
+            font-weight: bold;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid #2c1810;
+        }
+
+        .member-name {
+            font-family: 'Cinzel', serif;
+            font-size: 13px;
+            color: #f4e8d0;
+            margin-bottom: 2px;
+        }
+
+        .member-level {
+            font-size: 11px;
+            margin-bottom: 4px;
+        }
+
+        .member-tasks {
+            display: flex;
+            justify-content: center;
+            gap: 4px;
+            font-size: 10px;
+        }
+
+        .task-pill {
+            padding: 2px 6px;
+            border-radius: 10px;
+            font-weight: 600;
+        }
+
+        .task-pill.doing {
+            background: rgba(243, 156, 18, 0.2);
+            color: #f39c12;
+            border: 1px solid #f39c12;
+        }
+
+        .task-pill.pending {
+            background: rgba(127, 140, 141, 0.2);
+            color: #7f8c8d;
+            border: 1px solid #7f8c8d;
+        }
+
+        /* Guild Stats */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .stat-box {
+            text-align: center;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 12px;
+            border: 1px solid #5c4018;
+        }
+
+        .stat-value {
+            font-family: 'Cinzel', serif;
+            font-size: 28px;
+            font-weight: bold;
+            margin-bottom: 4px;
+        }
+
+        .stat-value.success { color: #2ecc71; }
+        .stat-value.warning { color: #f39c12; }
+        .stat-value.info { color: #9b59b6; }
+
+        .stat-label {
+            font-size: 11px;
+            color: #8b6914;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        /* Progress Bar */
+        .progress-section {
+            margin-top: 15px;
+        }
+
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 13px;
+        }
+
+        .progress-label {
+            color: #8b6914;
+        }
+
+        .progress-value {
+            color: #f39c12;
+            font-weight: 600;
+        }
+
+        .progress-bar {
+            height: 12px;
+            background: #1a0f0a;
+            border: 2px solid #5c4018;
+            border-radius: 6px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #f39c12 0%, #2ecc71 100%);
+            border-radius: 4px;
+            transition: width 0.5s ease;
+        }
+
+        /* Battle Status */
+        .battle-card {
+            background: linear-gradient(145deg, #3d2418 0%, #2c1810 100%);
+            border: 2px solid #c0392b;
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .battle-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+            color: #e74c3c;
+        }
+
+        .battle-title {
+            font-family: 'Cinzel', serif;
+            font-size: 16px;
+        }
+
+        .battle-count {
+            background: rgba(192, 57, 43, 0.2);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            margin-left: auto;
+            border: 1px solid #c0392b;
+        }
+
+        .battle-member {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 12px;
+            border: 1px solid #5c4018;
+        }
+
+        .battle-member-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .battle-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            border: 2px solid;
+        }
+
+        .battle-info {
+            flex: 1;
+        }
+
+        .battle-name {
+            font-family: 'Cinzel', serif;
+            font-size: 14px;
+            color: #f4e8d0;
+        }
+
+        .battle-meta {
+            font-size: 11px;
+            color: #8b6914;
+        }
+
+        .battle-status {
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 10px;
+            font-weight: 600;
+            background: rgba(243, 156, 18, 0.2);
+            color: #f39c12;
+            border: 1px solid #f39c12;
+        }
+
+        .battle-arena {
+            background: linear-gradient(180deg, #1a0f0a 0%, #0d0705 100%);
+            border-radius: 10px;
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            min-height: 80px;
+            border: 1px solid #5c4018;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .battle-arena::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 30%;
+            background: linear-gradient(to top, rgba(46, 204, 113, 0.1), transparent);
+        }
+
+        .hero-side {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .hero-mini {
+            font-size: 36px;
+            animation: float 2s ease-in-out infinite;
+        }
+
+        .monster-side {
+            display: flex;
+            gap: 8px;
+        }
+
+        .monster {
+            text-align: center;
+            animation: shake 2s ease-in-out infinite;
+        }
+
+        .monster:nth-child(2) { animation-delay: 0.3s; }
+        .monster:nth-child(3) { animation-delay: 0.6s; }
+        .monster:nth-child(4) { animation-delay: 0.9s; }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-2px) rotate(-1deg); }
+            75% { transform: translateX(2px) rotate(1deg); }
+        }
+
+        .monster-icon {
+            font-size: 28px;
+        }
+
+        .monster-type {
+            font-size: 9px;
+            color: #9b59b6;
+        }
+
+        .more-monsters {
+            font-size: 11px;
+            color: #8b6914;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 4px 8px;
+            border-radius: 10px;
+        }
+
+        .task-list-mini {
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid #5c4018;
+        }
+
+        .task-mini-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 4px 0;
+            font-size: 12px;
+        }
+
+        .task-type-icon {
+            width: 18px;
+            height: 18px;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            font-weight: bold;
+        }
+
+        .task-type-api { background: rgba(155, 89, 182, 0.3); color: #9b59b6; }
+        .task-type-fe { background: rgba(26, 188, 156, 0.3); color: #1abc9c; }
+        .task-type-ui { background: rgba(230, 126, 34, 0.3); color: #e67e22; }
+        .task-type-ac { background: rgba(52, 152, 219, 0.3); color: #3498db; }
+        .task-type-testing { background: rgba(241, 196, 15, 0.3); color: #f1c40f; }
+
+        /* Resting Members */
+        .resting-section {
+            text-align: center;
+            padding: 15px;
+            border-top: 1px solid #5c4018;
+            margin-top: 10px;
+        }
+
+        .resting-label {
+            font-size: 11px;
+            color: #5c4018;
+            margin-bottom: 8px;
+        }
+
+        .resting-list {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .resting-member {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+        }
+
+        .resting-member .check {
+            color: #2ecc71;
+        }
+
+        /* Equipment/Skills Section */
+        .skills-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+        }
+
+        .skill-card {
+            background: rgba(0, 0, 0, 0.3);
+            border: 2px solid #5c4018;
+            border-radius: 12px;
+            padding: 15px 10px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .skill-card:hover {
+            border-color: #d4a853;
+            transform: translateY(-2px);
+        }
+
+        .skill-icon {
+            font-size: 28px;
+            margin-bottom: 8px;
+        }
+
+        .skill-name {
+            font-size: 11px;
+            color: #8b6914;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .skill-value {
+            font-family: 'Cinzel', serif;
+            font-size: 14px;
+            color: #d4a853;
+            margin-top: 4px;
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            z-index: 300;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-content {
+            background: linear-gradient(145deg, #3d2418 0%, #2c1810 100%);
+            border: 3px solid #d4a853;
+            border-radius: 20px;
+            width: 100%;
+            max-width: 400px;
+            max-height: 80vh;
+            overflow-y: auto;
+            transform: scale(0.9);
+            transition: transform 0.3s ease;
+        }
+
+        .modal-overlay.active .modal-content {
+            transform: scale(1);
+        }
+
+        .modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px;
+            border-bottom: 1px solid #5c4018;
+        }
+
+        .modal-title {
+            font-family: 'Cinzel', serif;
+            font-size: 18px;
+            color: #d4a853;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            color: #8b6914;
+            font-size: 24px;
+            cursor: pointer;
+            transition: color 0.2s ease;
+        }
+
+        .modal-close:hover {
+            color: #d4a853;
+        }
+
+        .modal-body {
+            padding: 20px;
+        }
+
+        .modal-avatar {
+            width: 100px;
+            height: 100px;
+            margin: 0 auto 20px;
+            border-radius: 50%;
+            border: 4px solid #d4a853;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 50px;
+        }
+
+        .modal-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .modal-stat {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid #5c4018;
+            border-radius: 10px;
+            padding: 12px;
+            text-align: center;
+        }
+
+        .modal-stat-value {
+            font-family: 'Cinzel', serif;
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .modal-stat-label {
+            font-size: 10px;
+            color: #8b6914;
+            text-transform: uppercase;
+        }
+
+        /* XP Bar in Modal */
+        .xp-bar-modal {
+            margin-bottom: 20px;
+        }
+
+        .xp-header-modal {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 6px;
+            font-size: 12px;
+        }
+
+        /* Equipment Grid in Modal */
+        .equipment-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+        }
+
+        .equip-slot {
+            aspect-ratio: 1;
+            background: rgba(0, 0, 0, 0.3);
+            border: 2px solid #5c4018;
+            border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 8px;
+        }
+
+        .equip-icon {
+            font-size: 24px;
+            margin-bottom: 4px;
+        }
+
+        .equip-label {
+            font-size: 9px;
+            color: #5c4018;
+            text-transform: uppercase;
+        }
+
+        .equip-name {
+            font-size: 10px;
+            color: #2ecc71;
+            text-align: center;
+        }
+
+        /* Bottom Navigation */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(180deg, #2c1810 0%, #1a0f0a 100%);
+            border-top: 3px solid #8b6914;
+            box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.5);
+            z-index: 100;
+        }
+
+        .nav-content {
+            max-width: 800px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-around;
+            padding: 10px 0;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+            padding: 8px 20px;
+            color: #5c4018;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .nav-item.active,
+        .nav-item:hover {
+            color: #d4a853;
+        }
+
+        .nav-item.active::before {
+            content: '';
+            position: absolute;
+            top: -13px;
+            width: 40px;
+            height: 3px;
+            background: #d4a853;
+            box-shadow: 0 0 10px rgba(212, 168, 83, 0.5);
+        }
+
+        .nav-icon {
+            font-size: 24px;
+        }
+
+        .nav-label {
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .members-grid {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 10px;
+            }
+
+            .member-avatar {
+                width: 60px;
+                height: 60px;
+                font-size: 28px;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+
+            .skills-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .monster-side {
+                flex-wrap: wrap;
+                justify-content: flex-end;
+                max-width: 120px;
+            }
+
+            .nav-item {
+                padding: 8px 15px;
+            }
+
+            .nav-icon {
+                font-size: 20px;
+            }
+        }
+    </style>
+</head>
+<body x-data="teamV2Data()">
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <div>
+                <h1 class="header-title">Team View</h1>
+                <p class="header-subtitle" x-text="currentTeam.name"></p>
+            </div>
+
+            <!-- Team Selector Dropdown -->
+            <div class="team-selector" x-data="{ open: false }">
+                <button class="team-dropdown-btn" @click="open = !open">
+                    <span x-text="currentTeam.icon"></span>
+                    <span x-text="currentTeam.name"></span>
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M6 9l6 6 6-6"/>
+                    </svg>
+                </button>
+
+                <div class="team-dropdown-menu" x-show="open" @click.away="open = false" x-transition>
+                    <template x-for="team in teams" :key="team.id">
+                        <div class="team-option"
+                             :class="{ 'active': currentTeam.id === team.id }"
+                             @click="switchTeam(team.id); open = false">
+                            <span class="team-icon" x-text="team.icon"></span>
+                            <span x-text="team.name"></span>
+                            <span x-show="currentTeam.id === team.id" style="margin-left: auto; color: #d4a853;">✓</span>
+                        </div>
+                    </template>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Team Members Grid -->
+        <div class="section-card">
+            <h3 class="section-title">
+                <span>👥</span>
+                <span>Guild Members</span>
+                <span style="margin-left: auto; font-size: 12px; color: #8b6914;" x-text="currentTeam.members.length + ' Heroes'"></span>
+            </h3>
+            <p style="font-size: 12px; color: #5c4018; margin-bottom: 15px; text-align: center;">Tap avatar to view equipment & skills</p>
+
+            <div class="members-grid">
+                <template x-for="member in currentTeam.members" :key="member.id">
+                    <div class="member-card" @click="openModal(member.id)">
+                        <div class="member-avatar"
+                             :style="'background: ' + member.color + '20; border-color: ' + member.color">
+                            <span x-text="member.icon"></span>
+                            <span class="task-badge" x-text="member.tasks.doing + member.tasks.pending" x-show="member.tasks.doing + member.tasks.pending > 0"></span>
+                        </div>
+                        <div class="member-name" x-text="member.name"></div>
+                        <div class="member-level" :style="'color: ' + member.color">
+                            Lv.<span x-text="member.level"></span> <span x-text="member.role"></span>
+                        </div>
+                        <div class="member-tasks">
+                            <span class="task-pill doing" x-text="member.tasks.doing + '⚔️'" x-show="member.tasks.doing > 0"></span>
+                            <span class="task-pill pending" x-text="member.tasks.pending + '📋'" x-show="member.tasks.pending > 0"></span>
+                        </div>
+                    </div>
+                </template>
+            </div>
+        </div>
+
+        <!-- Guild Progress Stats -->
+        <div class="section-card">
+            <h3 class="section-title">
+                <span>📊</span>
+                <span>Guild Progress This Sprint</span>
+            </h3>
+
+            <div class="stats-grid">
+                <div class="stat-box">
+                    <div class="stat-value success" x-text="currentTeam.progress + '%'"></div>
+                    <div class="stat-label">Overall</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-value warning" x-text="currentTeam.tasksDone"></div>
+                    <div class="stat-label">Tasks Done</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-value info" x-text="currentTeam.commanders"></div>
+                    <div class="stat-label">Commanders</div>
+                </div>
+            </div>
+
+            <!-- Sprint Progress Bar -->
+            <div class="progress-section">
+                <div class="progress-header">
+                    <span class="progress-label">Sprint Progress</span>
+                    <span class="progress-value">Day 8/14</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" :style="'width: ' + currentTeam.progress + '%'"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Battle Status -->
+        <div class="battle-card">
+            <div class="battle-header">
+                <span>⚔️</span>
+                <span class="battle-title">Battle Status</span>
+                <span class="battle-count">
+                    <span x-text="getTotalActiveTasks()"></span> Active Battles
+                </span>
+            </div>
+
+            <div>
+                <template x-for="member in currentTeam.members" :key="member.id">
+                    <div class="battle-member" x-show="member.tasks.doing > 0">
+                        <div class="battle-member-header">
+                            <div class="battle-avatar"
+                                 :style="'background: ' + member.color + '20; border-color: ' + member.color">
+                                <span x-text="member.icon"></span>
+                            </div>
+                            <div class="battle-info">
+                                <div class="battle-name" x-text="member.name"></div>
+                                <div class="battle-meta">Fighting <span x-text="member.tasks.doing"></span> monster(s)</div>
+                            </div>
+                            <span class="battle-status">⚔️ In Battle</span>
+                        </div>
+
+                        <!-- Battle Arena -->
+                        <div class="battle-arena">
+                            <div class="hero-side">
+                                <div class="hero-mini" x-text="member.icon"></div>
+                            </div>
+                            <div style="font-size: 18px; color: #8b6914;">VS</div>
+                            <div class="monster-side">
+                                <template x-for="(task, idx) in member.activeTasks.slice(0, 3)" :key="idx">
+                                    <div class="monster">
+                                        <div class="monster-icon" x-text="getMonsterEmoji(task.type)"></div>
+                                        <div class="monster-type" x-text="task.type"></div>
+                                    </div>
+                                </template>
+                                <div class="more-monsters" x-show="member.tasks.doing > 3">
+                                    +<span x-text="member.tasks.doing - 3"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Task List -->
+                        <div class="task-list-mini">
+                            <template x-for="(task, idx) in member.activeTasks" :key="idx">
+                                <div class="task-mini-item">
+                                    <span class="task-type-icon" :class="'task-type-' + task.type.toLowerCase()" x-text="task.type.charAt(0)"></span>
+                                    <span style="color: #8b6914;" x-text="task.name"></span>
+                                </div>
+                            </template>
+                        </div>
+                    </div>
+                </template>
+
+                <!-- Resting Members -->
+                <div class="resting-section">
+                    <div class="resting-label">Members at rest:</div>
+                    <div class="resting-list">
+                        <template x-for="member in currentTeam.members.filter(m => m.tasks.doing === 0)" :key="member.id">
+                            <div class="resting-member">
+                                <span x-text="member.icon"></span>
+                                <span style="color: #8b6914;" x-text="member.name"></span>
+                                <span class="check">✓</span>
+                            </div>
+                        </template>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Team Skills/Equipment Overview -->
+        <div class="section-card">
+            <h3 class="section-title">
+                <span>🛡️</span>
+                <span>Team Equipment Overview</span>
+            </h3>
+
+            <div class="skills-grid">
+                <div class="skill-card">
+                    <div class="skill-icon">⚔️</div>
+                    <div class="skill-name">Warriors</div>
+                    <div class="skill-value" x-text="getClassCount('Warrior')"></div>
+                </div>
+                <div class="skill-card">
+                    <div class="skill-icon">🧙</div>
+                    <div class="skill-name">Mages</div>
+                    <div class="skill-value" x-text="getClassCount('Mage')"></div>
+                </div>
+                <div class="skill-card">
+                    <div class="skill-icon">💊</div>
+                    <div class="skill-name">Healers</div>
+                    <div class="skill-value" x-text="getClassCount('Healer')"></div>
+                </div>
+                <div class="skill-card">
+                    <div class="skill-icon">🔍</div>
+                    <div class="skill-name">Scouts</div>
+                    <div class="skill-value" x-text="getClassCount('Scout')"></div>
+                </div>
+                <div class="skill-card">
+                    <div class="skill-icon">🔨</div>
+                    <div class="skill-name">Smiths</div>
+                    <div class="skill-value" x-text="getClassCount('Smith')"></div>
+                </div>
+                <div class="skill-card">
+                    <div class="skill-icon">👑</div>
+                    <div class="skill-name">Leaders</div>
+                    <div class="skill-value" x-text="getClassCount('Leader')"></div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Member Detail Modal -->
+    <div class="modal-overlay" :class="{ 'active': modalOpen }" @click.self="modalOpen = false">
+        <div class="modal-content" x-show="modalOpen">
+            <div class="modal-header">
+                <h3 class="modal-title" x-text="selectedMember?.name"></h3>
+                <button class="modal-close" @click="modalOpen = false">&times;</button>
+            </div>
+            <div class="modal-body" x-show="selectedMember">
+                <!-- Avatar -->
+                <div class="modal-avatar"
+                     :style="'background: ' + selectedMember?.color + '20; border-color: ' + selectedMember?.color">
+                    <span x-text="selectedMember?.icon"></span>
+                </div>
+
+                <!-- Info -->
+                <div style="text-align: center; margin-bottom: 20px;">
+                    <p style="font-family: Cinzel, serif; font-size: 16px; color: #f4e8d0;" x-text="selectedMember?.class"></p>
+                    <p style="font-size: 12px; color: #8b6914;">Level <span x-text="selectedMember?.level"></span></p>
+                </div>
+
+                <!-- Task Stats -->
+                <div class="modal-stats">
+                    <div class="modal-stat">
+                        <div class="modal-stat-value" style="color: #f39c12;" x-text="selectedMember?.tasks?.doing || 0"></div>
+                        <div class="modal-stat-label">Doing</div>
+                    </div>
+                    <div class="modal-stat">
+                        <div class="modal-stat-value" style="color: #3498db;" x-text="selectedMember?.tasks?.pending || 0"></div>
+                        <div class="modal-stat-label">Pending</div>
+                    </div>
+                    <div class="modal-stat">
+                        <div class="modal-stat-value" style="color: #2ecc71;" x-text="selectedMember?.tasks?.done || 0"></div>
+                        <div class="modal-stat-label">Done</div>
+                    </div>
+                </div>
+
+                <!-- XP Bar -->
+                <div class="xp-bar-modal">
+                    <div class="xp-header-modal">
+                        <span style="color: #8b6914;">Experience</span>
+                        <span style="color: #d4a853;"><span x-text="selectedMember?.xp"></span> / <span x-text="selectedMember?.xpMax"></span> XP</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" :style="'width: ' + ((selectedMember?.xp / selectedMember?.xpMax) * 100) + '%'"></div>
+                    </div>
+                </div>
+
+                <!-- Equipment -->
+                <h4 style="font-family: Cinzel, serif; font-size: 14px; color: #d4a853; margin-bottom: 12px;">Equipment</h4>
+                <div class="equipment-grid">
+                    <template x-for="(item, slot) in selectedMember?.equipment" :key="slot">
+                        <div class="equip-slot">
+                            <div class="equip-icon" x-text="item.icon"></div>
+                            <div class="equip-label" x-text="slot"></div>
+                            <div class="equip-name" x-text="item.name"></div>
+                        </div>
+                    </template>
+                </div>
+
+                <!-- Combat Stats -->
+                <h4 style="font-family: Cinzel, serif; font-size: 14px; color: #d4a853; margin: 20px 0 12px;">Combat Stats</h4>
+                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px;">
+                    <div class="modal-stat">
+                        <div class="modal-stat-value" style="color: #e74c3c;" x-text="selectedMember?.kills || 0"></div>
+                        <div class="modal-stat-label">Kills</div>
+                    </div>
+                    <div class="modal-stat">
+                        <div class="modal-stat-value" style="color: #d4a853;" x-text="selectedMember?.gold || 0"></div>
+                        <div class="modal-stat-label">Gold</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bottom Navigation -->
+    <nav class="bottom-nav">
+        <div class="nav-content">
+            <a href="hero-v2.html" class="nav-item">
+                <span class="nav-icon">⚔️</span>
+                <span class="nav-label">Hero</span>
+            </a>
+            <a href="team-v2.html" class="nav-item active">
+                <span class="nav-icon">👥</span>
+                <span class="nav-label">Team</span>
+            </a>
+            <a href="world-map-v2.html" class="nav-item">
+                <span class="nav-icon">🗺️</span>
+                <span class="nav-label">World</span>
+            </a>
+            <a href="shop-v2.html" class="nav-item">
+                <span class="nav-icon">🛒</span>
+                <span class="nav-label">Shop</span>
+            </a>
+        </div>
+    </nav>
+
+    <script>
+        function teamV2Data() {
+            return {
+                modalOpen: false,
+                selectedMember: null,
+                currentTeamId: 'mcop',
+
+                teams: [
+                    { id: 'mcop', name: 'MCOP Guild', icon: '🏰' },
+                    { id: 'phoenix', name: 'Phoenix Squad', icon: '🔥' },
+                    { id: 'dragon', name: 'Dragon Team', icon: '🐉' },
+                ],
+
+                teamData: {
+                    mcop: {
+                        id: 'mcop',
+                        name: 'MCOP Guild',
+                        icon: '🏰',
+                        progress: 54,
+                        tasksDone: 127,
+                        commanders: 5,
+                        members: [
+                            {
+                                id: 'ken',
+                                name: 'Ken',
+                                icon: '⚔️',
+                                role: 'Warrior',
+                                color: '#9B59B6',
+                                level: 15,
+                                xp: 850,
+                                xpMax: 1000,
+                                kills: 47,
+                                gold: 2450,
+                                class: '⚔️ Warrior (Backend Dev)',
+                                tasks: { doing: 3, pending: 2, done: 15 },
+                                activeTasks: [
+                                    { name: 'JWT Token refresh mechanism', type: 'API' },
+                                    { name: 'Database migration scripts', type: 'API' },
+                                    { name: 'Redis cache implementation', type: 'API' }
+                                ],
+                                equipment: {
+                                    head: { icon: '🪖', name: 'Iron Helm' },
+                                    body: { icon: '🛡️', name: 'Knight Armor' },
+                                    weapon: { icon: '⚔️', name: 'Steel Sword' },
+                                    offhand: { icon: '🛡️', name: 'Wood Shield' },
+                                    legs: { icon: '🦿', name: 'Iron Greaves' },
+                                    feet: { icon: '👢', name: 'Leather Boots' }
+                                }
+                            },
+                            {
+                                id: 'may',
+                                name: 'May',
+                                icon: '🧙',
+                                role: 'Mage',
+                                color: '#1ABC9C',
+                                level: 12,
+                                xp: 600,
+                                xpMax: 800,
+                                kills: 38,
+                                gold: 1890,
+                                class: '🧙 Mage (Frontend Dev)',
+                                tasks: { doing: 2, pending: 3, done: 12 },
+                                activeTasks: [
+                                    { name: 'Connect to auth API', type: 'FE' },
+                                    { name: 'Login form validation', type: 'FE' }
+                                ],
+                                equipment: {
+                                    head: { icon: '🎩', name: 'Wizard Hat' },
+                                    body: { icon: '🧥', name: 'Mystic Robe' },
+                                    weapon: { icon: '🪄', name: 'Magic Staff' },
+                                    offhand: { icon: '📖', name: 'Spell Book' },
+                                    legs: { icon: '👖', name: 'Cloth Pants' },
+                                    feet: { icon: '🥿', name: 'Soft Shoes' }
+                                }
+                            },
+                            {
+                                id: 'ton',
+                                name: 'Ton',
+                                icon: '🔨',
+                                role: 'Smith',
+                                color: '#E67E22',
+                                level: 10,
+                                xp: 450,
+                                xpMax: 600,
+                                kills: 24,
+                                gold: 3200,
+                                class: '🔨 Blacksmith (UX Designer)',
+                                tasks: { doing: 1, pending: 4, done: 8 },
+                                activeTasks: [
+                                    { name: 'Wireframe Password Reset', type: 'UI' }
+                                ],
+                                equipment: {
+                                    head: { icon: '🪖', name: 'Bandana' },
+                                    body: { icon: '👕', name: 'Work Apron' },
+                                    weapon: { icon: '🔨', name: 'Forge Hammer' },
+                                    offhand: { icon: '🧤', name: 'Heat Gloves' },
+                                    legs: { icon: '👖', name: 'Thick Pants' },
+                                    feet: { icon: '👢', name: 'Steel Boots' }
+                                }
+                            },
+                            {
+                                id: 'sarah',
+                                name: 'Sarah',
+                                icon: '🔍',
+                                role: 'Scout',
+                                color: '#3498DB',
+                                level: 14,
+                                xp: 700,
+                                xpMax: 900,
+                                kills: 18,
+                                gold: 1650,
+                                class: '🔍 Scout (Business Analyst)',
+                                tasks: { doing: 2, pending: 1, done: 20 },
+                                activeTasks: [
+                                    { name: 'AC for Payment Gateway', type: 'AC' },
+                                    { name: 'User story refinement', type: 'AC' }
+                                ],
+                                equipment: {
+                                    head: { icon: '🎭', name: 'Scout Hood' },
+                                    body: { icon: '🧥', name: 'Travel Cloak' },
+                                    weapon: { icon: '🔍', name: 'Magnifier' },
+                                    offhand: { icon: '📜', name: 'Scroll Case' },
+                                    legs: { icon: '👖', name: 'Light Pants' },
+                                    feet: { icon: '👟', name: 'Swift Boots' }
+                                }
+                            },
+                            {
+                                id: 'nat',
+                                name: 'Nat',
+                                icon: '💊',
+                                role: 'Healer',
+                                color: '#F1C40F',
+                                level: 11,
+                                xp: 550,
+                                xpMax: 700,
+                                kills: 32,
+                                gold: 1420,
+                                class: '💊 Healer (QA Tester)',
+                                tasks: { doing: 4, pending: 2, done: 25 },
+                                activeTasks: [
+                                    { name: 'Registration flow regression', type: 'Testing' },
+                                    { name: 'Login edge cases', type: 'Testing' },
+                                    { name: 'Password reset E2E', type: 'Testing' },
+                                    { name: 'API response validation', type: 'Testing' }
+                                ],
+                                equipment: {
+                                    head: { icon: '⛑️', name: 'Nurse Cap' },
+                                    body: { icon: '🥼', name: 'White Robe' },
+                                    weapon: { icon: '💉', name: 'Healing Syringe' },
+                                    offhand: { icon: '🧪', name: 'Potion Bag' },
+                                    legs: { icon: '👖', name: 'Clean Pants' },
+                                    feet: { icon: '👟', name: 'Soft Shoes' }
+                                }
+                            },
+                            {
+                                id: 'om',
+                                name: 'Om',
+                                icon: '👑',
+                                role: 'Leader',
+                                color: '#f1c40f',
+                                level: 20,
+                                xp: 900,
+                                xpMax: 1000,
+                                kills: 999,
+                                gold: 9999,
+                                class: '👑 Guild Master (PM)',
+                                tasks: { doing: 0, pending: 5, done: 50 },
+                                activeTasks: [],
+                                equipment: {
+                                    head: { icon: '👑', name: 'Royal Crown' },
+                                    body: { icon: '👘', name: 'Royal Robe' },
+                                    weapon: { icon: '🏆', name: 'Royal Scepter' },
+                                    offhand: { icon: '📋', name: 'Project Scroll' },
+                                    legs: { icon: '👖', name: 'Royal Pants' },
+                                    feet: { icon: '👢', name: 'Golden Boots' }
+                                }
+                            }
+                        ]
+                    },
+                    phoenix: {
+                        id: 'phoenix',
+                        name: 'Phoenix Squad',
+                        icon: '🔥',
+                        progress: 72,
+                        tasksDone: 85,
+                        commanders: 3,
+                        members: [
+                            {
+                                id: 'anna',
+                                name: 'Anna',
+                                icon: '🔥',
+                                role: 'Mage',
+                                color: '#E74C3C',
+                                level: 18,
+                                xp: 800,
+                                xpMax: 1000,
+                                kills: 62,
+                                gold: 3100,
+                                class: '🔥 Fire Mage (Tech Lead)',
+                                tasks: { doing: 2, pending: 1, done: 30 },
+                                activeTasks: [
+                                    { name: 'Architecture review', type: 'AC' },
+                                    { name: 'Code review backlog', type: 'API' }
+                                ],
+                                equipment: {
+                                    head: { icon: '🔥', name: 'Flame Crown' },
+                                    body: { icon: '🧥', name: 'Fire Robe' },
+                                    weapon: { icon: '🪄', name: 'Fire Staff' },
+                                    offhand: { icon: '📕', name: 'Spell Tome' },
+                                    legs: { icon: '👖', name: 'Ash Pants' },
+                                    feet: { icon: '👢', name: 'Ember Boots' }
+                                }
+                            },
+                            {
+                                id: 'bob',
+                                name: 'Bob',
+                                icon: '🛡️',
+                                role: 'Warrior',
+                                color: '#95A5A6',
+                                level: 14,
+                                xp: 650,
+                                xpMax: 900,
+                                kills: 35,
+                                gold: 2200,
+                                class: '🛡️ Tank (DevOps)',
+                                tasks: { doing: 1, pending: 3, done: 18 },
+                                activeTasks: [
+                                    { name: 'CI/CD pipeline fix', type: 'API' }
+                                ],
+                                equipment: {
+                                    head: { icon: '🪖', name: 'Steel Helm' },
+                                    body: { icon: '🛡️', name: 'Plate Armor' },
+                                    weapon: { icon: '🛡️', name: 'Tower Shield' },
+                                    offhand: { icon: '⚔️', name: 'Short Sword' },
+                                    legs: { icon: '🦿', name: 'Plate Legs' },
+                                    feet: { icon: '👢', name: 'Heavy Boots' }
+                                }
+                            },
+                            {
+                                id: 'clara',
+                                name: 'Clara',
+                                icon: '🎯',
+                                role: 'Scout',
+                                color: '#9B59B6',
+                                level: 13,
+                                xp: 580,
+                                xpMax: 850,
+                                kills: 28,
+                                gold: 1950,
+                                class: '🎯 Archer (Frontend)',
+                                tasks: { doing: 3, pending: 2, done: 22 },
+                                activeTasks: [
+                                    { name: 'Dashboard charts', type: 'FE' },
+                                    { name: 'Mobile responsive', type: 'FE' },
+                                    { name: 'Animation polish', type: 'UI' }
+                                ],
+                                equipment: {
+                                    head: { icon: '🎀', name: 'Hunter Hood' },
+                                    body: { icon: '🧥', name: 'Leather Vest' },
+                                    weapon: { icon: '🏹', name: 'Long Bow' },
+                                    offhand: { icon: '🎯', name: 'Quiver' },
+                                    legs: { icon: '👖', name: 'Scout Pants' },
+                                    feet: { icon: '👟', name: 'Silent Boots' }
+                                }
+                            }
+                        ]
+                    },
+                    dragon: {
+                        id: 'dragon',
+                        name: 'Dragon Team',
+                        icon: '🐉',
+                        progress: 45,
+                        tasksDone: 63,
+                        commanders: 4,
+                        members: [
+                            {
+                                id: 'drake',
+                                name: 'Drake',
+                                icon: '🐉',
+                                role: 'Warrior',
+                                color: '#27AE60',
+                                level: 16,
+                                xp: 720,
+                                xpMax: 950,
+                                kills: 55,
+                                gold: 2800,
+                                class: '🐉 Dragon Knight (Full Stack)',
+                                tasks: { doing: 2, pending: 4, done: 28 },
+                                activeTasks: [
+                                    { name: 'GraphQL API', type: 'API' },
+                                    { name: 'React Query setup', type: 'FE' }
+                                ],
+                                equipment: {
+                                    head: { icon: '🐉', name: 'Dragon Helm' },
+                                    body: { icon: '🛡️', name: 'Scale Mail' },
+                                    weapon: { icon: '⚔️', name: 'Dragon Blade' },
+                                    offhand: { icon: '🛡️', name: 'Wing Shield' },
+                                    legs: { icon: '🦿', name: 'Scale Legs' },
+                                    feet: { icon: '👢', name: 'Claw Boots' }
+                                }
+                            },
+                            {
+                                id: 'ember',
+                                name: 'Ember',
+                                icon: '✨',
+                                role: 'Smith',
+                                color: '#F39C12',
+                                level: 12,
+                                xp: 520,
+                                xpMax: 750,
+                                kills: 22,
+                                gold: 1600,
+                                class: '✨ Enchanter (UX/UI)',
+                                tasks: { doing: 1, pending: 2, done: 15 },
+                                activeTasks: [
+                                    { name: 'Design system tokens', type: 'UI' }
+                                ],
+                                equipment: {
+                                    head: { icon: '✨', name: 'Starlight Tiara' },
+                                    body: { icon: '🧥', name: 'Shimmer Dress' },
+                                    weapon: { icon: '🪄', name: 'Star Wand' },
+                                    offhand: { icon: '📖', name: 'Design Book' },
+                                    legs: { icon: '👖', name: 'Silk Pants' },
+                                    feet: { icon: '👠', name: 'Glass Slippers' }
+                                }
+                            }
+                        ]
+                    }
+                },
+
+                get currentTeam() {
+                    return this.teamData[this.currentTeamId];
+                },
+
+                switchTeam(teamId) {
+                    this.currentTeamId = teamId;
+                },
+
+                getTotalActiveTasks() {
+                    return this.currentTeam.members.reduce((sum, m) => sum + m.tasks.doing, 0);
+                },
+
+                openModal(memberId) {
+                    this.selectedMember = this.currentTeam.members.find(m => m.id === memberId);
+                    this.modalOpen = true;
+                },
+
+                getMonsterEmoji(type) {
+                    const emojis = {
+                        'API': '👾',
+                        'FE': '👹',
+                        'UI': '🦇',
+                        'AC': '👻',
+                        'Testing': '🕷️',
+                        'UAT': '🍄'
+                    };
+                    return emojis[type] || '👾';
+                },
+
+                getClassCount(role) {
+                    return this.currentTeam.members.filter(m => m.role === role).length;
+                }
+            }
+        }
+    </script>
+</body>
+</html>

@@ -565,7 +565,7 @@
         <div class="login-container">
             <div class="logo-section">
                 <svg class="logo-icon" viewBox="0 0 200 240">
-                    <use href="assets/characters.svg#char-warrior" />
+                    <use href="../v2/assets/characters.svg#char-warrior" />
                 </svg>
                 <h1 class="logo-title">MCOP QUEST</h1>
                 <p class="logo-subtitle">Enter the Realm of Adventure</p>
@@ -656,14 +656,14 @@
                         <button class="btn-demo" @click="demoLogin('Ken')">
                             <svg viewBox="0 0 200 240">
                                 <use
-                                    href="assets/characters.svg#char-warrior"
+                                    href="../v2/assets/characters.svg#char-warrior"
                                 />
                             </svg>
                             Ken (Warrior)
                         </button>
                         <button class="btn-demo" @click="demoLogin('May')">
                             <svg viewBox="0 0 200 240">
-                                <use href="assets/characters.svg#char-mage" />
+                                <use href="../v2/assets/characters.svg#char-mage" />
                             </svg>
                             May (Mage)
                         </button>
@@ -674,19 +674,19 @@
             <div class="features">
                 <div class="feature">
                     <svg class="feature-icon" viewBox="0 0 64 64">
-                        <use href="assets/items.svg#item-map" />
+                        <use href="../v2/assets/items.svg#item-map" />
                     </svg>
                     <p class="feature-text">World Map</p>
                 </div>
                 <div class="feature">
                     <svg class="feature-icon" viewBox="0 0 64 64">
-                        <use href="assets/items.svg#item-sword-iron" />
+                        <use href="../v2/assets/items.svg#item-sword-iron" />
                     </svg>
                     <p class="feature-text">Battle Tasks</p>
                 </div>
                 <div class="feature">
                     <svg class="feature-icon" viewBox="0 0 64 64">
-                        <use href="assets/items.svg#item-chest" />
+                        <use href="../v2/assets/items.svg#item-chest" />
                     </svg>
                     <p class="feature-text">Earn Rewards</p>
                 </div>
@@ -707,7 +707,7 @@
             <div class="modal-overlay" @click.self="showHeroModal = false">
                 <div class="modal-content">
                     <svg class="modal-icon" viewBox="0 0 100 100">
-                        <use href="assets/monsters.svg#mon-minion" />
+                        <use href="../v2/assets/monsters.svg#mon-minion" />
                     </svg>
                     <h3 class="modal-title">Welcome, Hero!</h3>
                     <p class="modal-subtitle">
@@ -717,7 +717,7 @@
                     <div class="hero-preview">
                         <svg class="hero-avatar" viewBox="0 0 200 240">
                             <use
-                                :href="'assets/characters.svg#char-' + (newHeroName === 'Ken' ? 'warrior' : 'mage')"
+                                :href="'../v2/assets/characters.svg#char-' + (newHeroName === 'Ken' ? 'warrior' : 'mage')"
                             />
                         </svg>
                         <p class="hero-name" x-text="newHeroName">Ken</p>
