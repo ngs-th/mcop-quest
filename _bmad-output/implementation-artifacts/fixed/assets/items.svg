@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <defs>
+    <!-- WEAPONS -->
+
+    <!-- Iron Sword -->
+    <symbol id="item-sword-iron" viewBox="0 0 64 64">
+      <rect x="30" y="8" width="4" height="38" fill="#C0C0C0" stroke="#718096" stroke-width="1"/>
+      <path d="M30 8 L32 2 L34 8 Z" fill="#E74C3C"/>
+      <circle cx="32" cy="4" r="2" fill="#F4D03F"/>
+      <rect x="24" y="44" width="16" height="6" rx="1" fill="#D4A853"/>
+      <rect x="28" y="50" width="8" height="10" fill="#5D4037"/>
+      <rect x="22" y="42" width="20" height="4" rx="1" fill="#8B6914"/>
+      <!-- Shine -->
+      <line x1="31" y1="12" x2="31" y2="30" stroke="#FFF" stroke-width="1" opacity="0.6"/>
+    </symbol>
+
+    <!-- Magic Staff -->
+    <symbol id="item-staff-magic" viewBox="0 0 64 64">
+      <rect x="30" y="20" width="4" height="40" fill="#5D4037" rx="1"/>
+      <path d="M32 20 L26 8 L32 15 L38 8 Z" fill="#3498DB"/>
+      <circle cx="32" cy="12" r="8" fill="#3498DB" stroke="#5DADE2" stroke-width="1"/>
+      <circle cx="32" cy="12" r="4" fill="#85C1E9"/>
+      <!-- Magic glow -->
+      <circle cx="32" cy="12" r="12" fill="none" stroke="#3498DB" stroke-width="0.5" opacity="0.5"/>
+    </symbol>
+
+    <!-- Bow -->
+    <symbol id="item-bow" viewBox="0 0 64 64">
+      <path d="M20 10 Q10 32 20 54" stroke="#5D4037" stroke-width="3" fill="none"/>
+      <line x1="20" y1="10" x2="20" y2="54" stroke="#D4A853" stroke-width="1"/>
+      <rect x="16" y="30" width="24" height="3" fill="#8B4513"/>
+      <polygon points="40,28 48,31.5 40,35" fill="#C0C0C0"/>
+      <rect x="18" y="29" width="4" height="5" fill="#5D4037"/>
+    </symbol>
+
+    <!-- Dagger -->
+    <symbol id="item-dagger" viewBox="0 0 64 64">
+      <path d="M32 8 L26 35 L32 40 L38 35 Z" fill="#C0C0C0" stroke="#718096"/>
+      <rect x="28" y="40" width="8" height="4" fill="#D4A853"/>
+      <rect x="30" y="44" width="4" height="10" fill="#5D4037"/>
+    </symbol>
+
+    <!-- ARMOR & HELMETS -->
+
+    <!-- Iron Helmet -->
+    <symbol id="item-helm-iron" viewBox="0 0 64 64">
+      <path d="M16 32 Q16 12 32 12 Q48 12 48 32 L48 40 L16 40 Z" fill="#718096" stroke="#4A5568" stroke-width="2"/>
+      <rect x="14" y="32" width="36" height="12" rx="3" fill="#4A5568"/>
+      <line x1="24" y1="20" x2="24" y2="32" stroke="#2D3748" stroke-width="2"/>
+      <line x1="40" y1="20" x2="40" y2="32" stroke="#2D3748" stroke-width="2"/>
+      <circle cx="32" cy="18" r="4" fill="#C0392B"/>
+    </symbol>
+
+    <!-- Wizard Hat -->
+    <symbol id="item-hat-wizard" viewBox="0 0 64 64">
+      <path d="M20 40 L32 12 L44 40" fill="#6B3490"/>
+      <ellipse cx="32" cy="40" rx="18" ry="5" fill="#9B59B6"/>
+      <ellipse cx="32" cy="37" rx="14" ry="3" fill="#D4A853"/>
+      <circle cx="32" cy="18" r="4" fill="#3498DB"/>
+    </symbol>
+
+    <!-- Archer Hood -->
+    <symbol id="item-hood" viewBox="0 0 64 64">
+      <path d="M20 40 Q20 15 32 15 Q44 15 44 40" fill="#1E5631"/>
+      <ellipse cx="32" cy="42" rx="16" ry="5" fill="#27AE60"/>
+      <ellipse cx="32" cy="25" rx="10" ry="8" fill="#2C1810"/>
+    </symbol>
+
+    <!-- Knight Armor -->
+    <symbol id="item-armor-knight" viewBox="0 0 64 64">
+      <rect x="18" y="20" width="28" height="38" rx="5" fill="#718096" stroke="#4A5568" stroke-width="2"/>
+      <rect x="24" y="28" width="16" height="20" rx="3" fill="#4A5568"/>
+      <circle cx="32" cy="38" r="6" fill="#D4A853"/>
+      <rect x="14" y="25" width="6" height="25" rx="2" fill="#718096"/>
+      <rect x="44" y="25" width="6" height="25" rx="2" fill="#718096"/>
+    </symbol>
+
+    <!-- Robes -->
+    <symbol id="item-robe" viewBox="0 0 64 64">
+      <path d="M22 20 L18 55 L46 55 L42 20 Z" fill="#9B59B6"/>
+      <rect x="22" y="20" width="20" height="6" fill="#D4A853"/>
+      <circle cx="32" cy="35" r="5" fill="#3498DB"/>
+      <ellipse cx="16" cy="30" rx="5" ry="15" fill="#9B59B6"/>
+      <ellipse cx="48" cy="30" rx="5" ry="15" fill="#9B59B6"/>
+    </symbol>
+
+    <!-- SHIELDS -->
+
+    <!-- Tower Shield -->
+    <symbol id="item-shield-tower" viewBox="0 0 64 64">
+      <path d="M20 12 L20 44 Q32 56 44 44 L44 12 Z" fill="#4A5568" stroke="#D4A853" stroke-width="3"/>
+      <path d="M26 18 L26 40 Q32 46 38 40 L38 18 Z" fill="#2D3748"/>
+      <rect x="30" y="28" width="4" height="8" fill="#D4A853"/>
+    </symbol>
+
+    <!-- Round Shield -->
+    <symbol id="item-shield-round" viewBox="0 0 64 64">
+      <circle cx="32" cy="32" r="22" fill="#5D4037" stroke="#D4A853" stroke-width="3"/>
+      <circle cx="32" cy="32" r="15" fill="#8B4513"/>
+      <circle cx="32" cy="32" r="8" fill="#D4A853"/>
+      <circle cx="32" cy="32" r="3" fill="#C0392B"/>
+    </symbol>
+
+    <!-- ACCESSORIES -->
+
+    <!-- Health Potion -->
+    <symbol id="item-potion-red" viewBox="0 0 64 64">
+      <path d="M24 24 L24 52 Q32 60 40 52 L40 24 Q32 28 24 24" fill="#C0392B" opacity="0.8"/>
+      <ellipse cx="32" cy="24" rx="10" ry="4" fill="#95A5A6"/>
+      <ellipse cx="32" cy="24" rx="6" ry="2" fill="#7F8C8D"/>
+      <rect x="28" y="16" width="8" height="8" fill="#95A5A6"/>
+      <circle cx="28" cy="40" r="3" fill="#FFF" opacity="0.3"/>
+      <circle cx="36" cy="46" r="2" fill="#FFF" opacity="0.3"/>
+    </symbol>
+
+    <!-- Mana Potion -->
+    <symbol id="item-potion-blue" viewBox="0 0 64 64">
+      <path d="M24 24 L24 52 Q32 60 40 52 L40 24 Q32 28 24 24" fill="#2980B9" opacity="0.8"/>
+      <ellipse cx="32" cy="24" rx="10" ry="4" fill="#95A5A6"/>
+      <ellipse cx="32" cy="24" rx="6" ry="2" fill="#7F8C8D"/>
+      <rect x="28" y="16" width="8" height="8" fill="#95A5A6"/>
+      <circle cx="28" cy="40" r="3" fill="#FFF" opacity="0.3"/>
+    </symbol>
+
+    <!-- Gold Ring -->
+    <symbol id="item-ring-gold" viewBox="0 0 64 64">
+      <ellipse cx="32" cy="32" rx="20" ry="20" fill="none" stroke="#D4A853" stroke-width="8"/>
+      <ellipse cx="32" cy="28" rx="8" ry="6" fill="#E74C3C"/>
+      <ellipse cx="32" cy="28" rx="20" ry="20" fill="none" stroke="#F4D03F" stroke-width="2" opacity="0.5"/>
+    </symbol>
+
+    <!-- Amulet -->
+    <symbol id="item-amulet" viewBox="0 0 64 64">
+      <path d="M32 8 L20 32 L32 28 L44 32 Z" fill="#D4A853"/>
+      <circle cx="32" cy="42" r="12" fill="#D4A853" stroke="#8B6914" stroke-width="2"/>
+      <circle cx="32" cy="42" r="6" fill="#3498DB"/>
+    </symbol>
+
+    <!-- Scroll -->
+    <symbol id="item-scroll" viewBox="0 0 64 64">
+      <rect x="16" y="12" width="32" height="40" rx="2" fill="#F4E8D0"/>
+      <path d="M16 12 Q12 12 12 16 L12 48 Q12 52 16 52" fill="none" stroke="#D4A853" stroke-width="2"/>
+      <path d="M48 12 Q52 12 52 16 L52 48 Q52 52 48 52" fill="none" stroke="#D4A853" stroke-width="2"/>
+      <line x1="20" y1="20" x2="44" y2="20" stroke="#5C4018" stroke-width="2"/>
+      <line x1="20" y1="28" x2="44" y2="28" stroke="#5C4018" stroke-width="2"/>
+      <line x1="20" y1="36" x2="40" y2="36" stroke="#5C4018" stroke-width="2"/>
+    </symbol>
+
+    <!-- Treasure Chest -->
+    <symbol id="item-chest" viewBox="0 0 64 64">
+      <rect x="12" y="28" width="40" height="28" fill="#8B4513" stroke="#5D4037" stroke-width="2"/>
+      <path d="M12 28 L32 18 L52 28 Z" fill="#A0522D" stroke="#5D4037" stroke-width="2"/>
+      <rect x="28" y="38" width="8" height="8" fill="#D4A853"/>
+      <circle cx="32" cy="42" r="2" fill="#5D4037"/>
+      <line x1="12" y1="42" x2="52" y2="42" stroke="#5D4037" stroke-width="1"/>
+    </symbol>
+
+    <!-- Gold Coins -->
+    <symbol id="item-coins" viewBox="0 0 64 64">
+      <ellipse cx="32" cy="48" rx="18" ry="6" fill="#8B6914"/>
+      <ellipse cx="32" cy="42" rx="18" ry="6" fill="#D4A853"/>
+      <ellipse cx="32" cy="36" rx="18" ry="6" fill="#F4D03F"/>
+      <text x="32" y="44" text-anchor="middle" font-size="14" fill="#8B6914" font-weight="bold">$</text>
+    </symbol>
+
+    <!-- Gem Diamond -->
+    <symbol id="item-gem" viewBox="0 0 64 64">
+      <path d="M32 12 L52 32 L32 52 L12 32 Z" fill="#3498DB" stroke="#5DADE2" stroke-width="1"/>
+      <path d="M32 12 L32 52" stroke="#85C1E9" stroke-width="1"/>
+      <path d="M12 32 L52 32" stroke="#85C1E9" stroke-width="1"/>
+      <path d="M20 20 L32 12 L44 20" fill="#5DADE2"/>
+      <path d="M12 32 L20 20 L32 32" fill="#2980B9"/>
+      <path d="M32 32 L44 20 L52 32" fill="#2980B9"/>
+      <path d="M20 44 L32 52 L44 44" fill="#1F618D"/>
+    </symbol>
+
+    <!-- Key -->
+    <symbol id="item-key" viewBox="0 0 64 64">
+      <circle cx="24" cy="24" r="10" fill="none" stroke="#D4A853" stroke-width="4"/>
+      <circle cx="24" cy="24" r="4" fill="#D4A853"/>
+      <rect x="30" y="22" width="24" height="4" fill="#D4A853"/>
+      <rect x="50" y="22" width="4" height="12" fill="#D4A853"/>
+      <rect x="46" y="30" width="8" height="4" fill="#D4A853"/>
+    </symbol>
+
+    <!-- Map -->
+    <symbol id="item-map" viewBox="0 0 64 64">
+      <path d="M16 16 L28 12 L40 16 L52 12 L52 48 L40 52 L28 48 L16 52 Z" fill="#F4E8D0" stroke="#5C4018" stroke-width="2"/>
+      <circle cx="32" cy="28" r="4" fill="#C0392B"/>
+      <path d="M24 36 L28 40 L36 32" stroke="#27AE60" stroke-width="2" fill="none"/>
+      <line x1="40" y1="20" x2="40" y2="24" stroke="#3498DB" stroke-width="2"/>
+    </symbol>
+  </defs>
+</svg>

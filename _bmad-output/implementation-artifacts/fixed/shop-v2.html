@@ -1,0 +1,845 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shop - MCOP Quest</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Crimson Text', Georgia, serif;
+            background: linear-gradient(135deg, #1a0f0a 0%, #2c1810 50%, #1a0f0a 100%);
+            min-height: 100vh;
+            color: #f4e8d0;
+            padding-bottom: 80px;
+        }
+
+        /* Background Pattern */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image:
+                radial-gradient(circle at 20% 30%, rgba(212, 168, 83, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 80% 70%, rgba(192, 57, 43, 0.05) 0%, transparent 40%),
+                url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23d4a853' fill-opacity='0.02'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(180deg, #2c1810 0%, #1a0f0a 100%);
+            border-bottom: 3px solid #8b6914;
+            padding: 15px 20px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+        }
+
+        .header-content {
+            max-width: 800px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-title {
+            font-family: 'Cinzel', serif;
+            font-size: 20px;
+            color: #d4a853;
+        }
+
+        .header-subtitle {
+            font-size: 12px;
+            color: #8b6914;
+            margin-top: 2px;
+        }
+
+        .currency-display {
+            display: flex;
+            gap: 10px;
+        }
+
+        .currency-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 6px 12px;
+            border-radius: 20px;
+            border: 1px solid #5c4018;
+        }
+
+        .currency-icon {
+            font-size: 16px;
+        }
+
+        .currency-value {
+            font-weight: 600;
+            font-family: 'Cinzel', serif;
+        }
+
+        .currency-gold {
+            color: #d4a853;
+        }
+
+        .currency-gems {
+            color: #3498db;
+        }
+
+        /* Main Content */
+        .main-content {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Info Banner */
+        .info-banner {
+            background: linear-gradient(145deg, rgba(212, 168, 83, 0.1) 0%, rgba(212, 168, 83, 0.05) 100%);
+            border: 2px solid #8b6914;
+            border-radius: 16px;
+            padding: 15px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+        }
+
+        .info-banner.gem-banner {
+            background: linear-gradient(145deg, rgba(52, 152, 219, 0.1) 0%, rgba(52, 152, 219, 0.05) 100%);
+            border-color: #3498db;
+        }
+
+        .info-icon {
+            font-size: 24px;
+        }
+
+        .info-content h3 {
+            font-family: 'Cinzel', serif;
+            font-size: 14px;
+            color: #d4a853;
+            margin-bottom: 4px;
+        }
+
+        .info-content.gem-content h3 {
+            color: #3498db;
+        }
+
+        .info-content p {
+            font-size: 13px;
+            color: #8b6914;
+            line-height: 1.5;
+        }
+
+        /* Category Tabs */
+        .category-tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+            overflow-x: auto;
+            padding-bottom: 5px;
+        }
+
+        .category-tab {
+            flex-shrink: 0;
+            padding: 10px 20px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 2px solid #5c4018;
+            border-radius: 25px;
+            color: #8b6914;
+            font-family: 'Cinzel', serif;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+
+        .category-tab:hover {
+            border-color: #d4a853;
+            color: #d4a853;
+        }
+
+        .category-tab.active {
+            background: linear-gradient(145deg, #d4a853 0%, #b8963f 100%);
+            border-color: #d4a853;
+            color: #1a0f0a;
+            box-shadow: 0 4px 15px rgba(212, 168, 83, 0.3);
+        }
+
+        /* Shop Grid */
+        .shop-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+
+        @media (min-width: 600px) {
+            .shop-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        /* Item Card */
+        .item-card {
+            background: linear-gradient(145deg, #3d2418 0%, #2c1810 100%);
+            border: 2px solid #5c4018;
+            border-radius: 16px;
+            padding: 15px;
+            position: relative;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .item-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(212, 168, 83, 0.2);
+            border-color: #8b6914;
+        }
+
+        .item-card.owned {
+            border-color: #2ecc71;
+        }
+
+        .item-card.locked {
+            opacity: 0.6;
+            filter: grayscale(0.7);
+        }
+
+        /* Rarity Border Colors */
+        .item-card.rarity-common {
+            border-color: #7f8c8d;
+        }
+
+        .item-card.rarity-rare {
+            border-color: #3498db;
+            box-shadow: 0 0 10px rgba(52, 152, 219, 0.2);
+        }
+
+        .item-card.rarity-epic {
+            border-color: #9b59b6;
+            box-shadow: 0 0 10px rgba(155, 89, 182, 0.2);
+        }
+
+        .item-card.rarity-legendary {
+            border-color: #d4a853;
+            box-shadow: 0 0 15px rgba(212, 168, 83, 0.3);
+        }
+
+        /* Rarity Badge */
+        .rarity-badge {
+            position: absolute;
+            top: -1px;
+            right: -1px;
+            padding: 4px 10px;
+            border-radius: 0 14px 0 10px;
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .rarity-common .rarity-badge {
+            background: #7f8c8d;
+            color: #fff;
+        }
+
+        .rarity-rare .rarity-badge {
+            background: #3498db;
+            color: #fff;
+        }
+
+        .rarity-epic .rarity-badge {
+            background: #9b59b6;
+            color: #fff;
+        }
+
+        .rarity-legendary .rarity-badge {
+            background: linear-gradient(145deg, #d4a853 0%, #f4d03f 100%);
+            color: #1a0f0a;
+        }
+
+        /* Item Icon */
+        .item-icon {
+            font-size: 40px;
+            text-align: center;
+            margin-bottom: 10px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Item Info */
+        .item-name {
+            font-family: 'Cinzel', serif;
+            font-size: 14px;
+            color: #f4e8d0;
+            text-align: center;
+            margin-bottom: 4px;
+        }
+
+        .item-description {
+            font-size: 11px;
+            color: #8b6914;
+            text-align: center;
+            margin-bottom: 8px;
+            line-height: 1.4;
+            min-height: 30px;
+        }
+
+        .item-level {
+            font-size: 10px;
+            color: #5c4018;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        /* Item Price */
+        .item-price {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            margin-bottom: 10px;
+            font-family: 'Cinzel', serif;
+            font-size: 16px;
+        }
+
+        .price-gold {
+            color: #d4a853;
+        }
+
+        .price-gems {
+            color: #3498db;
+        }
+
+        /* Item Actions */
+        .item-action {
+            margin-top: auto;
+        }
+
+        .btn-buy {
+            width: 100%;
+            padding: 10px;
+            background: linear-gradient(145deg, #d4a853 0%, #b8963f 100%);
+            border: none;
+            border-radius: 10px;
+            color: #1a0f0a;
+            font-family: 'Cinzel', serif;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-buy:hover {
+            box-shadow: 0 4px 15px rgba(212, 168, 83, 0.4);
+            transform: scale(1.02);
+        }
+
+        .btn-buy:disabled {
+            background: #3d2418;
+            color: #5c4018;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .btn-owned {
+            width: 100%;
+            padding: 10px;
+            background: rgba(46, 204, 113, 0.2);
+            border: 2px solid #2ecc71;
+            border-radius: 10px;
+            color: #2ecc71;
+            font-family: 'Cinzel', serif;
+            font-size: 12px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+        }
+
+        .btn-locked {
+            width: 100%;
+            padding: 10px;
+            background: rgba(127, 140, 141, 0.2);
+            border: 2px solid #5c4018;
+            border-radius: 10px;
+            color: #5c4018;
+            font-family: 'Cinzel', serif;
+            font-size: 11px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+        }
+
+        /* Section Title */
+        .section-title {
+            font-family: 'Cinzel', serif;
+            font-size: 18px;
+            color: #d4a853;
+            margin: 25px 0 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-title::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: linear-gradient(90deg, #8b6914, transparent);
+        }
+
+        /* Purchase History */
+        .history-card {
+            background: linear-gradient(145deg, #3d2418 0%, #2c1810 100%);
+            border: 2px solid #5c4018;
+            border-radius: 16px;
+            padding: 20px;
+            margin-top: 25px;
+        }
+
+        .history-title {
+            font-family: 'Cinzel', serif;
+            font-size: 14px;
+            color: #d4a853;
+            margin-bottom: 15px;
+        }
+
+        .history-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .history-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+            border: 1px solid #3d2418;
+        }
+
+        .history-item-name {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            color: #f4e8d0;
+        }
+
+        .history-item-price {
+            font-size: 12px;
+            color: #8b6914;
+            font-family: 'Cinzel', serif;
+        }
+
+        /* Toast Notification */
+        .toast {
+            position: fixed;
+            top: 80px;
+            left: 50%;
+            transform: translateX(-50%) translateY(-100px);
+            background: linear-gradient(145deg, #2ecc71 0%, #27ae60 100%);
+            color: #fff;
+            padding: 12px 24px;
+            border-radius: 25px;
+            font-family: 'Cinzel', serif;
+            font-size: 14px;
+            box-shadow: 0 4px 20px rgba(46, 204, 113, 0.4);
+            z-index: 200;
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+
+        .toast.error {
+            background: linear-gradient(145deg, #e74c3c 0%, #c0392b 100%);
+            box-shadow: 0 4px 20px rgba(231, 76, 60, 0.4);
+        }
+
+        /* Bottom Navigation */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(180deg, #2c1810 0%, #1a0f0a 100%);
+            border-top: 3px solid #8b6914;
+            box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.5);
+            z-index: 100;
+        }
+
+        .nav-content {
+            max-width: 800px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-around;
+            padding: 10px 0;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+            padding: 8px 20px;
+            color: #5c4018;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .nav-item.active,
+        .nav-item:hover {
+            color: #d4a853;
+        }
+
+        .nav-item.active::before {
+            content: '';
+            position: absolute;
+            top: -13px;
+            width: 40px;
+            height: 3px;
+            background: #d4a853;
+            box-shadow: 0 0 10px rgba(212, 168, 83, 0.5);
+        }
+
+        .nav-icon {
+            font-size: 24px;
+        }
+
+        .nav-label {
+            font-size: 11px;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body x-data="shopData()">
+    <!-- Toast Notification -->
+    <div class="toast" :class="{ 'show': toast.show, 'error': toast.isError }" x-text="toast.message"></div>
+
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <div>
+                <h1 class="header-title">🛒 Shop</h1>
+                <p class="header-subtitle">Buy cosmetics with Gold</p>
+            </div>
+            <div class="currency-display">
+                <div class="currency-item">
+                    <span class="currency-icon">🪙</span>
+                    <span class="currency-value currency-gold" x-text="formatNumber(currency.gold)"></span>
+                </div>
+                <div class="currency-item">
+                    <span class="currency-icon">💎</span>
+                    <span class="currency-value currency-gems" x-text="formatNumber(currency.gems)"></span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Info Banners -->
+        <div class="info-banner">
+            <span class="info-icon">💡</span>
+            <div class="info-content">
+                <h3>Cosmetic Only</h3>
+                <p>Items are purely cosmetic and do not affect your power stats. Express your style!</p>
+            </div>
+        </div>
+
+        <div class="info-banner gem-banner">
+            <span class="info-icon">💎</span>
+            <div class="info-content gem-content">
+                <h3>Gem = Real Incentive</h3>
+                <p>Gems earned by defeating Commanders can be exchanged for real rewards at HR!</p>
+            </div>
+        </div>
+
+        <!-- Category Tabs -->
+        <div class="category-tabs">
+            <button
+                class="category-tab"
+                :class="{ 'active': activeCategory === 'all' }"
+                @click="activeCategory = 'all'">
+                ✨ All
+            </button>
+            <button
+                class="category-tab"
+                :class="{ 'active': activeCategory === 'boosts' }"
+                @click="activeCategory = 'boosts'">
+                ⚡ Boosts
+            </button>
+            <button
+                class="category-tab"
+                :class="{ 'active': activeCategory === 'skins' }"
+                @click="activeCategory = 'skins'">
+                🎨 Skins
+            </button>
+            <button
+                class="category-tab"
+                :class="{ 'active': activeCategory === 'items' }"
+                @click="activeCategory = 'items'">
+                🛡️ Items
+            </button>
+        </div>
+
+        <!-- Shop Items Grid -->
+        <div class="shop-grid">
+            <template x-for="item in filteredItems" :key="item.id">
+                <div
+                    class="item-card"
+                    :class="{
+                        'rarity-common': item.rarity === 'common',
+                        'rarity-rare': item.rarity === 'rare',
+                        'rarity-epic': item.rarity === 'epic',
+                        'rarity-legendary': item.rarity === 'legendary',
+                        'owned': item.owned,
+                        'locked': isLocked(item)
+                    }">
+                    <span class="rarity-badge" x-text="item.rarity"></span>
+                    <div class="item-icon" x-text="item.icon"></div>
+                    <h3 class="item-name" x-text="item.name"></h3>
+                    <p class="item-description" x-text="item.description"></p>
+                    <p class="item-level">
+                        <span x-show="item.levelRequired > 1">Lv. <span x-text="item.levelRequired"></span> Required</span>
+                        <span x-show="item.levelRequired === 1">Starter Item</span>
+                    </p>
+                    <div class="item-price">
+                        <template x-if="item.priceType === 'gold'">
+                            <span class="price-gold">🪙 <span x-text="formatNumber(item.price)"></span></span>
+                        </template>
+                        <template x-if="item.priceType === 'gems'">
+                            <span class="price-gems">💎 <span x-text="formatNumber(item.price)"></span></span>
+                        </template>
+                    </div>
+                    <div class="item-action">
+                        <template x-if="item.owned">
+                            <div class="btn-owned">
+                                <span>✓</span>
+                                <span>Owned</span>
+                            </div>
+                        </template>
+                        <template x-if="!item.owned && isLocked(item)">
+                            <div class="btn-locked">
+                                <span>🔒</span>
+                                <span>Lv. <span x-text="item.levelRequired"></span></span>
+                            </div>
+                        </template>
+                        <template x-if="!item.owned && !isLocked(item)">
+                            <button class="btn-buy" @click="buyItem(item)">
+                                Buy
+                            </button>
+                        </template>
+                    </div>
+                </div>
+            </template>
+        </div>
+
+        <!-- Purchase History -->
+        <div class="history-card">
+            <h3 class="history-title">📜 Recent Purchases</h3>
+            <div class="history-list">
+                <template x-for="purchase in purchaseHistory" :key="purchase.id">
+                    <div class="history-item">
+                        <span class="history-item-name">
+                            <span x-text="purchase.icon"></span>
+                            <span x-text="purchase.name"></span>
+                        </span>
+                        <span class="history-item-price" x-text="purchase.priceText"></span>
+                    </div>
+                </template>
+                <div x-show="purchaseHistory.length === 0" class="history-item">
+                    <span class="history-item-name">No purchases yet</span>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Bottom Navigation -->
+    <nav class="bottom-nav">
+        <div class="nav-content">
+            <a href="hero-v2.html" class="nav-item">
+                <span class="nav-icon">⚔️</span>
+                <span class="nav-label">Hero</span>
+            </a>
+            <a href="team-v2.html" class="nav-item">
+                <span class="nav-icon">👥</span>
+                <span class="nav-label">Team</span>
+            </a>
+            <a href="world-map-v2.html" class="nav-item">
+                <span class="nav-icon">🗺️</span>
+                <span class="nav-label">World</span>
+            </a>
+            <a href="shop-v2.html" class="nav-item active">
+                <span class="nav-icon">🛒</span>
+                <span class="nav-label">Shop</span>
+            </a>
+        </div>
+    </nav>
+
+    <script>
+        function shopData() {
+            return {
+                activeCategory: 'all',
+                currency: {
+                    gold: 2450,
+                    gems: 15
+                },
+                playerLevel: 15,
+                toast: {
+                    show: false,
+                    message: '',
+                    isError: false
+                },
+                purchaseHistory: [
+                    { id: 1, icon: '🪖', name: 'Basic Helmet', priceText: 'Free (Starter)' },
+                    { id: 2, icon: '🗡️', name: 'Basic Sword', priceText: 'Free (Starter)' },
+                    { id: 3, icon: '🛡️', name: 'Wooden Shield', priceText: 'Free (Starter)' }
+                ],
+                items: [
+                    // Helmets
+                    { id: 1, category: 'items', name: 'Basic Helmet', description: 'Standard issue head protection', icon: '🪖', rarity: 'common', price: 0, priceType: 'gold', levelRequired: 1, owned: true },
+                    { id: 2, category: 'items', name: 'Warrior Helm', description: 'Forged for battle-hardened heroes', icon: '⛑️', rarity: 'rare', price: 500, priceType: 'gold', levelRequired: 5, owned: false },
+                    { id: 3, category: 'items', name: 'Wizard Hat', description: 'Enhances magical appearance', icon: '🎩', rarity: 'rare', price: 1200, priceType: 'gold', levelRequired: 10, owned: false },
+                    { id: 4, category: 'items', name: 'Royal Crown', description: 'Fit for a coding monarch', icon: '👑', rarity: 'legendary', price: 5000, priceType: 'gold', levelRequired: 20, owned: false },
+                    { id: 5, category: 'items', name: 'Dragon Helm', description: 'Worn by dragon slayers', icon: '🐲', rarity: 'epic', price: 2500, priceType: 'gold', levelRequired: 15, owned: false },
+
+                    // Weapons
+                    { id: 6, category: 'items', name: 'Basic Sword', description: 'Your trusty starter blade', icon: '🗡️', rarity: 'common', price: 0, priceType: 'gold', levelRequired: 1, owned: true },
+                    { id: 7, category: 'items', name: 'Fire Sword', description: 'Burns with eternal flame', icon: '🔥', rarity: 'rare', price: 800, priceType: 'gold', levelRequired: 8, owned: false },
+                    { id: 8, category: 'items', name: 'Lightning Staff', description: 'Crackles with thunder', icon: '⚡', rarity: 'epic', price: 1500, priceType: 'gold', levelRequired: 12, owned: false },
+                    { id: 9, category: 'items', name: 'Legendary Axe', description: 'Once wielded by ancient gods', icon: '🪓', rarity: 'legendary', price: 10000, priceType: 'gold', levelRequired: 25, owned: false },
+                    { id: 10, category: 'items', name: 'Crystal Wand', description: 'Focuses arcane energies', icon: '✨', rarity: 'rare', price: 1000, priceType: 'gold', levelRequired: 10, owned: false },
+
+                    // Shields
+                    { id: 11, category: 'items', name: 'Wooden Shield', description: 'Simple but reliable', icon: '🛡️', rarity: 'common', price: 0, priceType: 'gold', levelRequired: 1, owned: true },
+                    { id: 12, category: 'items', name: 'Iron Shield', description: 'Reinforced with iron bands', icon: '🔰', rarity: 'rare', price: 700, priceType: 'gold', levelRequired: 7, owned: false },
+                    { id: 13, category: 'items', name: 'Mirror Shield', description: 'Reflects magic attacks', icon: '💠', rarity: 'epic', price: 2000, priceType: 'gold', levelRequired: 15, owned: false },
+                    { id: 14, category: 'items', name: 'Aegis of Legends', description: 'Impenetrable divine protection', icon: '🛡️', rarity: 'legendary', price: 8000, priceType: 'gold', levelRequired: 30, owned: false },
+
+                    // Boosts
+                    { id: 15, category: 'boosts', name: 'XP Boost', description: '+50% XP for 24 hours', icon: '📈', rarity: 'rare', price: 5, priceType: 'gems', levelRequired: 1, owned: false },
+                    { id: 16, category: 'boosts', name: 'Gold Boost', description: '+100% Gold for 24 hours', icon: '💰', rarity: 'epic', price: 10, priceType: 'gems', levelRequired: 5, owned: false },
+                    { id: 17, category: 'boosts', name: 'Lucky Charm', description: 'Better drop rates for 1 hour', icon: '🍀', rarity: 'rare', price: 3, priceType: 'gems', levelRequired: 1, owned: false },
+                    { id: 18, category: 'boosts', name: 'Energy Potion', description: 'Instant stamina refill', icon: '⚗️', rarity: 'common', price: 200, priceType: 'gold', levelRequired: 1, owned: false },
+                    { id: 19, category: 'boosts', name: 'Mega Boost', description: 'All boosts combined for 48h', icon: '🚀', rarity: 'legendary', price: 25, priceType: 'gems', levelRequired: 10, owned: false },
+
+                    // Skins
+                    { id: 20, category: 'skins', name: 'Dark Theme', description: 'Midnight interface aesthetic', icon: '🌙', rarity: 'common', price: 0, priceType: 'gold', levelRequired: 1, owned: true },
+                    { id: 21, category: 'skins', name: 'Forest Theme', description: 'Nature-inspired green tones', icon: '🌲', rarity: 'rare', price: 500, priceType: 'gold', levelRequired: 5, owned: false },
+                    { id: 22, category: 'skins', name: 'Ocean Theme', description: 'Deep blue sea aesthetic', icon: '🌊', rarity: 'rare', price: 500, priceType: 'gold', levelRequired: 5, owned: false },
+                    { id: 23, category: 'skins', name: 'Inferno Theme', description: 'Burning red and orange', icon: '🔥', rarity: 'epic', price: 1000, priceType: 'gold', levelRequired: 10, owned: false },
+                    { id: 24, category: 'skins', name: 'Cosmic Theme', description: 'Starry night purple hues', icon: '🌌', rarity: 'legendary', price: 3000, priceType: 'gold', levelRequired: 20, owned: false },
+                    { id: 25, category: 'skins', name: 'Avatar Frame: Gold', description: 'Golden border for your avatar', icon: '🖼️', rarity: 'epic', price: 15, priceType: 'gems', levelRequired: 15, owned: false },
+                    { id: 26, category: 'skins', name: 'Avatar Frame: Animated', description: 'Glowing animated frame', icon: '✨', rarity: 'legendary', price: 50, priceType: 'gems', levelRequired: 30, owned: false },
+                    { id: 27, category: 'skins', name: 'Title: The Debugger', description: 'Show your debugging prowess', icon: '📛', rarity: 'rare', price: 2000, priceType: 'gold', levelRequired: 15, owned: false },
+                    { id: 28, category: 'skins', name: 'Title: Code Master', description: 'For the elite developers', icon: '👑', rarity: 'legendary', price: 5000, priceType: 'gold', levelRequired: 25, owned: false }
+                ],
+
+                get filteredItems() {
+                    if (this.activeCategory === 'all') {
+                        return this.items;
+                    }
+                    return this.items.filter(item => item.category === this.activeCategory);
+                },
+
+                isLocked(item) {
+                    return this.playerLevel < item.levelRequired;
+                },
+
+                canAfford(item) {
+                    if (item.priceType === 'gold') {
+                        return this.currency.gold >= item.price;
+                    }
+                    return this.currency.gems >= item.price;
+                },
+
+                buyItem(item) {
+                    if (this.isLocked(item)) {
+                        this.showToast(`Reach level ${item.levelRequired} to unlock!`, true);
+                        return;
+                    }
+
+                    if (!this.canAfford(item)) {
+                        const currency = item.priceType === 'gold' ? 'Gold' : 'Gems';
+                        this.showToast(`Not enough ${currency}!`, true);
+                        return;
+                    }
+
+                    // Deduct currency
+                    if (item.priceType === 'gold') {
+                        this.currency.gold -= item.price;
+                    } else {
+                        this.currency.gems -= item.price;
+                    }
+
+                    // Mark as owned
+                    item.owned = true;
+
+                    // Add to history
+                    const priceText = item.priceType === 'gold'
+                        ? `🪙 ${this.formatNumber(item.price)}`
+                        : `💎 ${this.formatNumber(item.price)}`;
+
+                    this.purchaseHistory.unshift({
+                        id: Date.now(),
+                        icon: item.icon,
+                        name: item.name,
+                        priceText: priceText
+                    });
+
+                    // Keep only last 5 purchases
+                    if (this.purchaseHistory.length > 5) {
+                        this.purchaseHistory.pop();
+                    }
+
+                    this.showToast(`Purchased ${item.name}!`);
+                },
+
+                showToast(message, isError = false) {
+                    this.toast.message = message;
+                    this.toast.isError = isError;
+                    this.toast.show = true;
+                    setTimeout(() => {
+                        this.toast.show = false;
+                    }, 3000);
+                },
+
+                formatNumber(num) {
+                    return num.toLocaleString();
+                }
+            }
+        }
+    </script>
+</body>
+</html>

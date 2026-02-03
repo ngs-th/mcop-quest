@@ -1,0 +1,329 @@
+/* ============================================
+   MCOP Quest - Fantasy RPG Theme (v2)
+   Inspired by classic fantasy RPG games
+   ============================================ */
+
+:root {
+    /* Primary Colors - Fantasy Palette */
+    --fantasy-bg-dark: #1a0f0a;
+    --fantasy-bg-primary: #2c1810;
+    --fantasy-bg-secondary: #3d2418;
+    --fantasy-bg-card: #4a2e1f;
+    --fantasy-bg-parchment: #f4e8d0;
+
+    /* Gold/Treasure Colors */
+    --fantasy-gold-dark: #8b6914;
+    --fantasy-gold: #d4a853;
+    --fantasy-gold-light: #f4d03f;
+    --fantasy-gold-bright: #fff8dc;
+
+    /* Accent Colors */
+    --fantasy-health: #c0392b;
+    --fantasy-health-full: #27ae60;
+    --fantasy-mana: #3498db;
+    --fantasy-magic: #9b59b6;
+    --fantasy-stamina: #f39c12;
+
+    /* Border & Shadow */
+    --fantasy-border: #8b6914;
+    --fantasy-border-dark: #5c4018;
+    --fantasy-shadow: rgba(0, 0, 0, 0.6);
+    --fantasy-glow: rgba(212, 168, 83, 0.4);
+
+    /* Typography */
+    --font-fantasy: 'Cinzel', 'Trajan Pro', 'Georgia', serif;
+    --font-body: 'Crimson Text', 'Georgia', serif;
+
+    /* Spacing */
+    --border-radius-sm: 4px;
+    --border-radius-md: 8px;
+    --border-radius-lg: 12px;
+    --border-radius-xl: 20px;
+}
+
+/* Base Styles */
+.fantasy-theme {
+    font-family: var(--font-body);
+    background: var(--fantasy-bg-dark);
+    color: var(--fantasy-bg-parchment);
+    min-height: 100vh;
+}
+
+/* Fantasy Typography */
+.fantasy-title {
+    font-family: var(--font-fantasy);
+    color: var(--fantasy-gold);
+    text-shadow: 2px 2px 4px var(--fantasy-shadow);
+    letter-spacing: 0.1em;
+}
+
+.fantasy-subtitle {
+    font-family: var(--font-body);
+    color: var(--fantasy-gold-light);
+    font-style: italic;
+}
+
+/* Fantasy Card - Wood/Parchment Style */
+.fantasy-card {
+    background: linear-gradient(145deg, var(--fantasy-bg-card) 0%, var(--fantasy-bg-secondary) 100%);
+    border: 3px solid var(--fantasy-border);
+    border-radius: var(--border-radius-lg);
+    box-shadow:
+        inset 0 0 20px rgba(0,0,0,0.5),
+        0 4px 15px var(--fantasy-shadow);
+    position: relative;
+}
+
+.fantasy-card::before {
+    content: '';
+    position: absolute;
+    top: -3px;
+    left: -3px;
+    right: -3px;
+    bottom: -3px;
+    border-radius: var(--border-radius-lg);
+    background: linear-gradient(45deg, var(--fantasy-gold-dark), var(--fantasy-gold), var(--fantasy-gold-dark));
+    z-index: -1;
+}
+
+/* Fantasy Button - Gold/Rustic */
+.fantasy-btn {
+    background: linear-gradient(180deg, var(--fantasy-gold) 0%, var(--fantasy-gold-dark) 100%);
+    border: 2px solid var(--fantasy-border);
+    border-radius: var(--border-radius-md);
+    color: var(--fantasy-bg-dark);
+    font-family: var(--font-fantasy);
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 12px 24px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow:
+        inset 0 1px 0 rgba(255,255,255,0.3),
+        0 4px 8px var(--fantasy-shadow);
+    position: relative;
+    overflow: hidden;
+}
+
+.fantasy-btn:hover {
+    background: linear-gradient(180deg, var(--fantasy-gold-light) 0%, var(--fantasy-gold) 100%);
+    box-shadow:
+        inset 0 1px 0 rgba(255,255,255,0.5),
+        0 6px 12px var(--fantasy-glow);
+    transform: translateY(-2px);
+}
+
+.fantasy-btn:active {
+    transform: translateY(0);
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.3);
+}
+
+.fantasy-btn::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+    transition: left 0.5s ease;
+}
+
+.fantasy-btn:hover::after {
+    left: 100%;
+}
+
+/* Fantasy Frame - Ornate Border */
+.fantasy-frame {
+    border: 4px solid var(--fantasy-border);
+    border-radius: var(--border-radius-xl);
+    position: relative;
+    padding: 20px;
+}
+
+.fantasy-frame::before,
+.fantasy-frame::after {
+    content: '◆';
+    position: absolute;
+    color: var(--fantasy-gold);
+    font-size: 24px;
+}
+
+.fantasy-frame::before {
+    top: -12px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.fantasy-frame::after {
+    bottom: -12px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+/* Fantasy Input */
+.fantasy-input {
+    background: var(--fantasy-bg-primary);
+    border: 2px solid var(--fantasy-border-dark);
+    border-radius: var(--border-radius-md);
+    color: var(--fantasy-bg-parchment);
+    font-family: var(--font-body);
+    padding: 12px 16px;
+    transition: all 0.3s ease;
+}
+
+.fantasy-input:focus {
+    outline: none;
+    border-color: var(--fantasy-gold);
+    box-shadow: 0 0 10px var(--fantasy-glow);
+}
+
+.fantasy-input::placeholder {
+    color: var(--fantasy-border-dark);
+}
+
+/* Health/Mana Bars */
+.fantasy-bar {
+    height: 20px;
+    background: var(--fantasy-bg-primary);
+    border: 2px solid var(--fantasy-border-dark);
+    border-radius: var(--border-radius-sm);
+    overflow: hidden;
+    position: relative;
+}
+
+.fantasy-bar-fill {
+    height: 100%;
+    transition: width 0.5s ease;
+    position: relative;
+}
+
+.fantasy-bar-fill::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 40%;
+    background: linear-gradient(180deg, rgba(255,255,255,0.3), transparent);
+}
+
+.fantasy-health-fill {
+    background: linear-gradient(180deg, #e74c3c 0%, #c0392b 100%);
+}
+
+.fantasy-mana-fill {
+    background: linear-gradient(180deg, #3498db 0%, #2980b9 100%);
+}
+
+.fantasy-xp-fill {
+    background: linear-gradient(180deg, var(--fantasy-gold-light) 0%, var(--fantasy-gold) 100%);
+}
+
+/* Status Effects */
+.fantasy-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 12px;
+    border-radius: var(--border-radius-sm);
+    font-size: 0.85em;
+    font-weight: bold;
+}
+
+.fantasy-status-buff {
+    background: rgba(39, 174, 96, 0.2);
+    border: 1px solid #27ae60;
+    color: #2ecc71;
+}
+
+.fantasy-status-debuff {
+    background: rgba(192, 57, 43, 0.2);
+    border: 1px solid #c0392b;
+    color: #e74c3c;
+}
+
+/* Animations */
+@keyframes fantasy-glow {
+    0%, 100% { box-shadow: 0 0 5px var(--fantasy-glow); }
+    50% { box-shadow: 0 0 20px var(--fantasy-glow), 0 0 40px var(--fantasy-glow); }
+}
+
+@keyframes fantasy-float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+}
+
+@keyframes fantasy-shimmer {
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+}
+
+.fantasy-glow {
+    animation: fantasy-glow 2s ease-in-out infinite;
+}
+
+.fantasy-float {
+    animation: fantasy-float 3s ease-in-out infinite;
+}
+
+/* Navigation - Tab Bar Fantasy Style */
+.fantasy-nav {
+    background: linear-gradient(180deg, var(--fantasy-bg-secondary) 0%, var(--fantasy-bg-dark) 100%);
+    border-top: 3px solid var(--fantasy-border);
+    box-shadow: 0 -4px 15px var(--fantasy-shadow);
+}
+
+.fantasy-nav-item {
+    color: var(--fantasy-border-dark);
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.fantasy-nav-item:hover,
+.fantasy-nav-item.active {
+    color: var(--fantasy-gold);
+}
+
+.fantasy-nav-item.active::before {
+    content: '';
+    position: absolute;
+    top: -3px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 40px;
+    height: 3px;
+    background: var(--fantasy-gold);
+    box-shadow: 0 0 10px var(--fantasy-glow);
+}
+
+/* Corner Decorations */
+.fantasy-corner {
+    position: relative;
+}
+
+.fantasy-corner::before,
+.fantasy-corner::after {
+    content: '';
+    position: absolute;
+    width: 30px;
+    height: 30px;
+    border: 2px solid var(--fantasy-gold);
+}
+
+.fantasy-corner::before {
+    top: -2px;
+    left: -2px;
+    border-right: none;
+    border-bottom: none;
+    border-radius: var(--border-radius-sm) 0 0 0;
+}
+
+.fantasy-corner::after {
+    bottom: -2px;
+    right: -2px;
+    border-left: none;
+    border-top: none;
+    border-radius: 0 0 var(--border-radius-sm) 0;
+}

@@ -1,0 +1,740 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>City Detail - MCOP Quest</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏰</text></svg>">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=VT323&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-parchment: #e8dcc0;
+            --bg-parchment-dark: #d4c8a8;
+            --border-gold: #c9a227;
+            --text-dark: #2c2416;
+            --hp-design: #E67E22;
+            --hp-ac: #3498DB;
+            --hp-api: #9B59B6;
+            --hp-fe: #1ABC9C;
+            --hp-testing: #F1C40F;
+            --hp-uat: #2ECC71;
+        }
+
+        body {
+            font-family: "VT323", monospace;
+            background: #1a1510;
+            color: var(--text-dark);
+        }
+
+        .font-fantasy {
+            font-family: "Cinzel", serif;
+        }
+
+        .golden-frame {
+            border: 8px solid var(--border-gold);
+            border-image: linear-gradient(
+                    135deg,
+                    #bf953f 0%,
+                    #fcf6ba 25%,
+                    #b38728 50%,
+                    #fbf5b7 75%,
+                    #aa771c 100%
+                )
+                1;
+            box-shadow:
+                inset 0 0 30px rgba(0, 0, 0, 0.5),
+                0 0 20px rgba(201, 162, 39, 0.3);
+        }
+
+        .parchment {
+            background: linear-gradient(
+                135deg,
+                #e8dcc0 0%,
+                #d4c8a8 50%,
+                #c9b896 100%
+            );
+            position: relative;
+        }
+
+        .parchment::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%' height='100%' filter='url(%23noise)' opacity='0.15'/%3E%3C/svg%3E");
+            opacity: 0.4;
+            pointer-events: none;
+        }
+
+        .pixel-art {
+            image-rendering: pixelated;
+            image-rendering: -moz-crisp-edges;
+            image-rendering: crisp-edges;
+        }
+
+        .resource-counter {
+            background: linear-gradient(135deg, #2c2416 0%, #1a1510 100%);
+            border: 2px solid var(--border-gold);
+            padding: 6px 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .health-bar-bg {
+            background: #2a2015;
+            border-radius: 4px;
+            border: 2px solid #5a4a3a;
+            overflow: hidden;
+        }
+
+        .health-full {
+            background: linear-gradient(180deg, #66bb6a 0%, #4cae4c 100%);
+        }
+        .health-stable {
+            background: linear-gradient(180deg, #5bc0de 0%, #46b8da 100%);
+        }
+        .health-medium {
+            background: linear-gradient(180deg, #f0ad4e 0%, #ec971f 100%);
+        }
+        .health-low {
+            background: linear-gradient(180deg, #d9534f 0%, #c9302c 100%);
+        }
+
+        .hp-bar-design { background: var(--hp-design); }
+        .hp-bar-ac { background: var(--hp-ac); }
+        .hp-bar-api { background: var(--hp-api); }
+        .hp-bar-fe { background: var(--hp-fe); }
+        .hp-bar-testing { background: var(--hp-testing); }
+        .hp-bar-uat { background: var(--hp-uat); }
+
+        .card-hover {
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .card-hover:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px rgba(201, 162, 39, 0.3);
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 4px 10px;
+            border-radius: 9999px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .status-active {
+            background: rgba(240, 173, 78, 0.2);
+            color: #d68910;
+            border: 1px solid rgba(240, 173, 78, 0.4);
+        }
+
+        .status-defeated {
+            background: rgba(76, 174, 76, 0.2);
+            color: #27ae60;
+            border: 1px solid rgba(76, 174, 76, 0.4);
+        }
+
+        .status-blocked {
+            background: rgba(217, 83, 79, 0.2);
+            color: #c0392b;
+            border: 1px solid rgba(217, 83, 79, 0.4);
+        }
+
+        .commander-card {
+            background: linear-gradient(135deg, #f5f0e1 0%, #e8dcc0 100%);
+            border: 3px solid var(--border-gold);
+            border-radius: 12px;
+            padding: 16px;
+        }
+
+        .commander-card.active {
+            border-color: #f0ad4e;
+            box-shadow: 0 0 15px rgba(240, 173, 78, 0.3);
+        }
+
+        .commander-card.defeated {
+            border-color: #4cae4c;
+            opacity: 0.85;
+        }
+
+        .commander-card.blocked {
+            border-color: #d9534f;
+        }
+
+        .character-defeated {
+            filter: grayscale(100%);
+            opacity: 0.6;
+        }
+
+        .character-silhouette {
+            filter: brightness(0) saturate(100%);
+            opacity: 0.4;
+        }
+
+        @keyframes commander-idle {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-3px); }
+        }
+        .commander-idle { animation: commander-idle 2.5s ease-in-out infinite; }
+
+        .demon-portal {
+            background: linear-gradient(135deg, rgba(217, 83, 79, 0.15) 0%, #f5f0e1 100%);
+            border: 3px solid rgba(217, 83, 79, 0.5);
+        }
+
+        @keyframes portal-swirl {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .animate-portal { animation: portal-swirl 10s linear infinite; }
+
+        .back-btn {
+            background: linear-gradient(135deg, #4a4035 0%, #2d2820 100%);
+            border: 2px solid var(--border-gold);
+            color: #e8d478;
+            transition: all 0.2s;
+        }
+        .back-btn:hover {
+            transform: translateX(-3px);
+            box-shadow: 0 4px 12px rgba(201, 162, 39, 0.4);
+        }
+
+        .stat-box {
+            background: linear-gradient(135deg, #2c2416 0%, #1a1510 100%);
+            border: 2px solid var(--border-gold);
+            border-radius: 8px;
+            padding: 12px 16px;
+            text-align: center;
+        }
+
+        .task-table th {
+            background: linear-gradient(135deg, #4a4035 0%, #2d2820 100%);
+            color: #e8d478;
+            padding: 10px;
+            text-align: left;
+            font-family: "Cinzel", serif;
+            font-size: 12px;
+        }
+
+        .task-table td {
+            padding: 10px;
+            border-bottom: 1px solid rgba(74, 64, 53, 0.3);
+        }
+
+        .task-table tr:hover {
+            background: rgba(201, 162, 39, 0.1);
+        }
+
+        /* Mobile optimizations */
+        @media (max-width: 768px) {
+            .font-fantasy {
+                font-size: 0.9em;
+            }
+            .commander-card {
+                padding: 12px;
+            }
+        }
+    </style>
+</head>
+<body class="min-h-screen p-4">
+    <div class="max-w-[1400px] mx-auto">
+        <!-- Header -->
+        <div class="flex items-center justify-between mb-4 px-4">
+            <div class="flex items-center gap-4">
+                <a href="world-map-v2.html" class="back-btn rounded-lg px-4 py-2 flex items-center gap-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+                    </svg>
+                    <span class="font-fantasy">Back to Map</span>
+                </a>
+                <div>
+                    <p class="text-amber-600 text-sm">World Map</p>
+                    <h1 class="font-fantasy text-4xl font-bold text-amber-400 drop-shadow-lg" style="text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5)">
+                        🏰 Member City System
+                    </h1>
+                </div>
+            </div>
+            <div class="flex gap-4">
+                <div class="resource-counter rounded-lg">
+                    <img src="assets-pixels/ui/coin.png" alt="Gold" class="w-6 h-6 pixel-art">
+                    <span class="text-amber-300 text-xl">2,450</span>
+                </div>
+                <div class="resource-counter rounded-lg">
+                    <img src="assets-pixels/ui/gem.png" alt="Gems" class="w-6 h-6 pixel-art">
+                    <span class="text-cyan-300 text-xl">15</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Game Frame -->
+        <div class="golden-frame rounded-lg overflow-hidden">
+            <div class="parchment min-h-[800px] flex">
+                <!-- Main Content Area -->
+                <div class="flex-1 p-6 overflow-y-auto" style="max-height: 800px;">
+
+                    <!-- City Boss Section -->
+                    <div class="mb-6">
+                        <div class="flex items-start gap-6 bg-gradient-to-br from-amber-100/50 to-amber-50/30 rounded-xl p-6 border-4 border-amber-600/50">
+                            <!-- City Visual -->
+                            <div class="flex-shrink-0 relative">
+                                <img src="assets-v2/castle.png" alt="Member City Castle" class="w-48 h-48 pixel-art drop-shadow-2xl">
+                                <div class="absolute -bottom-2 left-1/2 -translate-x-1/2 w-32 h-8 bg-black/20 rounded-full blur-md"></div>
+                            </div>
+
+                            <!-- City Info -->
+                            <div class="flex-1">
+                                <div class="flex items-center justify-between mb-3">
+                                    <div>
+                                        <h2 class="font-fantasy text-3xl font-bold text-amber-800">👑 King of Members</h2>
+                                        <p class="text-amber-700 text-lg">City Boss • System Module</p>
+                                    </div>
+                                    <div class="text-right">
+                                        <span class="text-3xl font-bold text-amber-600">75%</span>
+                                        <p class="text-sm text-amber-700">Overall Health</p>
+                                    </div>
+                                </div>
+
+                                <!-- Main HP Bar -->
+                                <div class="health-bar-bg h-6 rounded-lg mb-4">
+                                    <div class="health-medium h-full rounded" style="width: 75%"></div>
+                                </div>
+
+                                <div class="flex items-center justify-between">
+                                    <p class="text-amber-800">2/3 Commanders Defeated</p>
+                                    <span class="status-badge status-active">⚔️ In Battle</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Stats Panel -->
+                    <div class="grid grid-cols-4 gap-4 mb-6">
+                        <div class="stat-box">
+                            <p class="text-amber-400 text-xs font-fantasy mb-1">FLOWS</p>
+                            <p class="text-amber-200 text-2xl font-bold">3</p>
+                        </div>
+                        <div class="stat-box">
+                            <p class="text-amber-400 text-xs font-fantasy mb-1">TASKS</p>
+                            <p class="text-amber-200 text-2xl font-bold">12</p>
+                        </div>
+                        <div class="stat-box">
+                            <p class="text-amber-400 text-xs font-fantasy mb-1">BUGS</p>
+                            <p class="text-red-400 text-2xl font-bold">2</p>
+                        </div>
+                        <div class="stat-box">
+                            <p class="text-amber-400 text-xs font-fantasy mb-1">PROGRESS</p>
+                            <p class="text-green-400 text-2xl font-bold">75%</p>
+                        </div>
+                    </div>
+
+                    <!-- Commanders Section -->
+                    <div class="mb-6">
+                        <h3 class="font-fantasy text-2xl font-bold text-amber-800 mb-4 flex items-center gap-2">
+                            <span>⚔️</span>
+                            <span>Commanders (3)</span>
+                        </h3>
+
+                        <div class="space-y-4">
+                            <!-- Commander 1: Flow Login (Active) -->
+                            <a href="commander-v2.html?id=1" class="block card-hover commander-card active">
+                                <div class="flex items-start justify-between mb-3">
+                                    <div class="flex items-center gap-4">
+                                        <!-- Commander Character SVG - Mage -->
+                                        <svg width="60" height="75" viewBox="0 0 50 65" class="commander-idle flex-shrink-0">
+                                            <ellipse cx="25" cy="62" rx="15" ry="3" fill="#0f3460" opacity="0.5"/>
+                                            <path d="M15 35 L10 60 L40 60 L35 35 Z" fill="#9B59B6"/>
+                                            <path d="M15 35 L12 60 L20 60 L18 40 Z" fill="#8E44AD"/>
+                                            <ellipse cx="25" cy="35" rx="12" ry="8" fill="#9B59B6"/>
+                                            <rect x="18" y="30" width="14" height="10" fill="#8E44AD"/>
+                                            <rect x="38" y="15" width="3" height="45" fill="#8B4513"/>
+                                            <circle cx="39.5" cy="12" r="6" fill="#3498DB"/>
+                                            <circle cx="39.5" cy="12" r="3" fill="#85C1E9"/>
+                                            <circle cx="25" cy="20" r="12" fill="#ffd5b5"/>
+                                            <path d="M12 22 L25 -5 L38 22 Z" fill="#9B59B6"/>
+                                            <ellipse cx="25" cy="22" rx="15" ry="4" fill="#8E44AD"/>
+                                            <circle cx="25" cy="2" r="3" fill="#f1c40f"/>
+                                            <circle cx="21" cy="18" r="2" fill="#2d3748"/>
+                                            <circle cx="29" cy="18" r="2" fill="#2d3748"/>
+                                            <path d="M22 25 Q25 27 28 25" stroke="#a0522d" fill="none" stroke-width="1.5"/>
+                                            <circle cx="8" cy="45" r="4" fill="#f1c40f" opacity="0.6"/>
+                                            <circle cx="10" cy="50" r="3" fill="#f1c40f" opacity="0.4"/>
+                                        </svg>
+                                        <div>
+                                            <h4 class="font-fantasy text-xl font-bold text-amber-900">Flow: Login</h4>
+                                            <span class="status-badge status-active">⚔️ Active</span>
+                                        </div>
+                                    </div>
+                                    <div class="text-right">
+                                        <div class="text-3xl font-bold text-amber-600">63%</div>
+                                        <div class="text-sm text-amber-700">Overall</div>
+                                    </div>
+                                </div>
+
+                                <!-- 6 HP Bars -->
+                                <div class="grid grid-cols-2 gap-3">
+                                    <div class="flex items-center gap-2">
+                                        <span class="w-16 text-xs text-amber-800 flex items-center gap-1">
+                                            <span style="color: var(--hp-design)">📐</span> Design
+                                        </span>
+                                        <div class="flex-1 h-2 health-bar-bg">
+                                            <div class="h-full rounded hp-bar-design" style="width: 100%"></div>
+                                        </div>
+                                        <span class="w-10 text-xs text-right text-green-600 font-bold">100%</span>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <span class="w-16 text-xs text-amber-800 flex items-center gap-1">
+                                            <span style="color: var(--hp-ac)">📋</span> AC
+                                        </span>
+                                        <div class="flex-1 h-2 health-bar-bg">
+                                            <div class="h-full rounded hp-bar-ac" style="width: 100%"></div>
+                                        </div>
+                                        <span class="w-10 text-xs text-right text-green-600 font-bold">100%</span>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <span class="w-16 text-xs text-amber-800 flex items-center gap-1">
+                                            <span style="color: var(--hp-api)">⚙️</span> API
+                                        </span>
+                                        <div class="flex-1 h-2 health-bar-bg">
+                                            <div class="h-full rounded hp-bar-api" style="width: 80%"></div>
+                                        </div>
+                                        <span class="w-10 text-xs text-right text-amber-600 font-bold">80%</span>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <span class="w-16 text-xs text-amber-800 flex items-center gap-1">
+                                            <span style="color: var(--hp-fe)">💻</span> FE
+                                        </span>
+                                        <div class="flex-1 h-2 health-bar-bg">
+                                            <div class="h-full rounded hp-bar-fe" style="width: 50%"></div>
+                                        </div>
+                                        <span class="w-10 text-xs text-right text-amber-600 font-bold">50%</span>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <span class="w-16 text-xs text-amber-800 flex items-center gap-1">
+                                            <span style="color: var(--hp-testing)">🧪</span> Test
+                                        </span>
+                                        <div class="flex-1 h-2 health-bar-bg">
+                                            <div class="h-full rounded hp-bar-testing" style="width: 0%"></div>
+                                        </div>
+                                        <span class="w-10 text-xs text-right text-amber-800">0%</span>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <span class="w-16 text-xs text-amber-800 flex items-center gap-1">
+                                            <span style="color: var(--hp-uat)">✅</span> UAT
+                                        </span>
+                                        <div class="flex-1 h-2 health-bar-bg">
+                                            <div class="h-full rounded hp-bar-uat" style="width: 0%"></div>
+                                        </div>
+                                        <span class="w-10 text-xs text-right text-amber-800">0%</span>
+                                    </div>
+                                </div>
+
+                                <!-- Assignees -->
+                                <div class="mt-3 flex items-center gap-2 text-sm text-amber-700">
+                                    <span>Assignees:</span>
+                                    <span class="px-2 py-0.5 bg-amber-200/50 rounded border border-amber-400/50">Ken</span>
+                                    <span class="px-2 py-0.5 bg-amber-200/50 rounded border border-amber-400/50">Ton</span>
+                                    <span class="px-2 py-0.5 bg-amber-200/50 rounded border border-amber-400/50">May</span>
+                                </div>
+                            </a>
+
+                            <!-- Commander 2: Flow Registration (Defeated) -->
+                            <a href="commander-v2.html?id=2" class="block card-hover commander-card defeated">
+                                <div class="flex items-start justify-between mb-3">
+                                    <div class="flex items-center gap-4">
+                                        <div class="relative flex-shrink-0">
+                                            <svg width="60" height="75" viewBox="0 0 50 65" class="character-defeated">
+                                                <ellipse cx="25" cy="62" rx="15" ry="3" fill="#0f3460" opacity="0.3"/>
+                                                <rect x="15" y="32" width="20" height="25" rx="3" fill="#718096"/>
+                                                <rect x="18" y="35" width="14" height="8" fill="#4a5568"/>
+                                                <rect x="17" y="55" width="7" height="8" rx="2" fill="#4a5568"/>
+                                                <rect x="26" y="55" width="7" height="8" rx="2" fill="#4a5568"/>
+                                                <rect x="8" y="35" width="8" height="18" rx="3" fill="#718096"/>
+                                                <rect x="34" y="35" width="8" height="18" rx="3" fill="#718096"/>
+                                                <rect x="5" y="50" width="3" height="15" fill="#a0aec0" transform="rotate(-45 5 50)"/>
+                                                <circle cx="25" cy="22" r="12" fill="#4a5568"/>
+                                                <path d="M13 18 Q25 5 37 18" fill="#718096"/>
+                                                <rect x="13" y="18" width="24" height="8" fill="#718096"/>
+                                                <text x="20" y="24" fill="#e74c3c" font-size="8" font-weight="bold">✗</text>
+                                                <text x="28" y="24" fill="#e74c3c" font-size="8" font-weight="bold">✗</text>
+                                            </svg>
+                                            <div class="absolute inset-0 flex items-center justify-center">
+                                                <span class="text-2xl">💀</span>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <h4 class="font-fantasy text-xl font-bold text-amber-800 line-through">Flow: Registration</h4>
+                                            <span class="status-badge status-defeated">✓ Defeated</span>
+                                        </div>
+                                    </div>
+                                    <div class="text-right">
+                                        <div class="text-3xl font-bold text-green-600">100%</div>
+                                        <div class="text-sm text-amber-700">Complete</div>
+                                    </div>
+                                </div>
+
+                                <!-- 6 HP Bars (All 100%) -->
+                                <div class="grid grid-cols-3 gap-2">
+                                    <div class="flex items-center gap-2">
+                                        <span class="w-12 text-xs text-amber-700">📐 Design</span>
+                                        <div class="flex-1 h-1.5 health-bar-bg">
+                                            <div class="h-full rounded health-full" style="width: 100%"></div>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <span class="w-12 text-xs text-amber-700">📋 AC</span>
+                                        <div class="flex-1 h-1.5 health-bar-bg">
+                                            <div class="h-full rounded health-full" style="width: 100%"></div>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <span class="w-12 text-xs text-amber-700">⚙️ API</span>
+                                        <div class="flex-1 h-1.5 health-bar-bg">
+                                            <div class="h-full rounded health-full" style="width: 100%"></div>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <span class="w-12 text-xs text-amber-700">💻 FE</span>
+                                        <div class="flex-1 h-1.5 health-bar-bg">
+                                            <div class="h-full rounded health-full" style="width: 100%"></div>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <span class="w-12 text-xs text-amber-700">🧪 Test</span>
+                                        <div class="flex-1 h-1.5 health-bar-bg">
+                                            <div class="h-full rounded health-full" style="width: 100%"></div>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <span class="w-12 text-xs text-amber-700">✅ UAT</span>
+                                        <div class="flex-1 h-1.5 health-bar-bg">
+                                            <div class="h-full rounded health-full" style="width: 100%"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
+
+                            <!-- Commander 3: Flow Password Reset (Blocked) -->
+                            <a href="commander-v2.html?id=3" class="block card-hover commander-card blocked">
+                                <div class="flex items-start justify-between mb-3">
+                                    <div class="flex items-center gap-4">
+                                        <div class="relative flex-shrink-0">
+                                            <svg width="60" height="75" viewBox="0 0 50 65" class="character-silhouette">
+                                                <ellipse cx="25" cy="62" rx="15" ry="3" fill="#000"/>
+                                                <path d="M12 30 L8 62 L42 62 L38 30 Z" fill="#000"/>
+                                                <ellipse cx="25" cy="32" rx="14" ry="10" fill="#000"/>
+                                                <circle cx="25" cy="18" r="13" fill="#000"/>
+                                                <path d="M10 22 Q25 0 40 22 Q35 30 25 32 Q15 30 10 22 Z" fill="#000"/>
+                                                <rect x="40" y="10" width="3" height="50" fill="#000"/>
+                                                <circle cx="41.5" cy="8" r="5" fill="#000"/>
+                                            </svg>
+                                            <div class="absolute inset-0 flex items-center justify-center">
+                                                <span class="text-2xl">🔒</span>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <h4 class="font-fantasy text-xl font-bold text-amber-900">Flow: Password Reset</h4>
+                                            <span class="status-badge status-blocked">🔒 Blocked</span>
+                                        </div>
+                                    </div>
+                                    <div class="text-right">
+                                        <div class="text-3xl font-bold text-red-600">17%</div>
+                                        <div class="text-sm text-amber-700">Overall</div>
+                                    </div>
+                                </div>
+
+                                <!-- 6 HP Bars -->
+                                <div class="grid grid-cols-2 gap-3">
+                                    <div class="flex items-center gap-2">
+                                        <span class="w-16 text-xs text-amber-800">📐 Design</span>
+                                        <div class="flex-1 h-2 health-bar-bg">
+                                            <div class="h-full rounded hp-bar-design" style="width: 0%"></div>
+                                        </div>
+                                        <span class="w-10 text-xs text-right text-red-600 font-bold">0% ⚠️</span>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <span class="w-16 text-xs text-amber-800">📋 AC</span>
+                                        <div class="flex-1 h-2 health-bar-bg">
+                                            <div class="h-full rounded hp-bar-ac" style="width: 100%"></div>
+                                        </div>
+                                        <span class="w-10 text-xs text-right text-green-600 font-bold">100%</span>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <span class="w-16 text-xs text-amber-800">⚙️ API</span>
+                                        <div class="flex-1 h-2 health-bar-bg">
+                                            <div class="h-full rounded hp-bar-api" style="width: 0%"></div>
+                                        </div>
+                                        <span class="w-10 text-xs text-right text-amber-800">0%</span>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <span class="w-16 text-xs text-amber-800">💻 FE</span>
+                                        <div class="flex-1 h-2 health-bar-bg">
+                                            <div class="h-full rounded hp-bar-fe" style="width: 0%"></div>
+                                        </div>
+                                        <span class="w-10 text-xs text-right text-amber-800">0%</span>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <span class="w-16 text-xs text-amber-800">🧪 Test</span>
+                                        <div class="flex-1 h-2 health-bar-bg">
+                                            <div class="h-full rounded hp-bar-testing" style="width: 0%"></div>
+                                        </div>
+                                        <span class="w-10 text-xs text-right text-amber-800">0%</span>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <span class="w-16 text-xs text-amber-800">✅ UAT</span>
+                                        <div class="flex-1 h-2 health-bar-bg">
+                                            <div class="h-full rounded hp-bar-uat" style="width: 0%"></div>
+                                        </div>
+                                        <span class="w-10 text-xs text-right text-amber-800">0%</span>
+                                    </div>
+                                </div>
+
+                                <!-- Block Reason -->
+                                <div class="mt-3 p-3 bg-red-100/50 border border-red-400/50 rounded-lg">
+                                    <p class="text-sm text-red-700 font-bold">⚠️ Blocked: Waiting for Design (Equipment not ready)</p>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Active Tasks Table -->
+                    <div class="mb-6">
+                        <h3 class="font-fantasy text-2xl font-bold text-amber-800 mb-4 flex items-center gap-2">
+                            <span>📋</span>
+                            <span>Active Tasks</span>
+                        </h3>
+                        <div class="bg-gradient-to-br from-amber-100/30 to-amber-50/20 rounded-xl border-2 border-amber-600/30 overflow-hidden">
+                            <table class="w-full task-table">
+                                <thead>
+                                    <tr>
+                                        <th>Task</th>
+                                        <th>Flow</th>
+                                        <th>Stage</th>
+                                        <th>Assignee</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="text-amber-900">
+                                    <tr>
+                                        <td class="font-medium">Implement JWT authentication</td>
+                                        <td>Login</td>
+                                        <td><span class="px-2 py-1 bg-purple-200 rounded text-xs">API</span></td>
+                                        <td>Ken</td>
+                                        <td><span class="status-badge status-active">In Progress</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="font-medium">Design login form UI</td>
+                                        <td>Login</td>
+                                        <td><span class="px-2 py-1 bg-orange-200 rounded text-xs">Design</span></td>
+                                        <td>May</td>
+                                        <td><span class="status-badge status-defeated">Complete</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="font-medium">Write login AC documentation</td>
+                                        <td>Login</td>
+                                        <td><span class="px-2 py-1 bg-blue-200 rounded text-xs">AC</span></td>
+                                        <td>Ton</td>
+                                        <td><span class="status-badge status-defeated">Complete</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="font-medium">Build login React component</td>
+                                        <td>Login</td>
+                                        <td><span class="px-2 py-1 bg-teal-200 rounded text-xs">FE</span></td>
+                                        <td>Ken</td>
+                                        <td><span class="status-badge status-blocked">Blocked</span></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Demon Portal Section -->
+                    <div class="mb-6">
+                        <h3 class="font-fantasy text-2xl font-bold text-red-700 mb-4 flex items-center gap-2">
+                            <span>👹</span>
+                            <span>Demon Portal</span>
+                            <span class="text-sm bg-red-200 px-3 py-1 rounded-full">2 Active</span>
+                        </h3>
+
+                        <div class="demon-portal rounded-xl p-6">
+                            <!-- Portal Animation -->
+                            <div class="text-center mb-4">
+                                <div class="inline-block animate-portal text-6xl">🌀</div>
+                                <p class="text-red-600 text-lg mt-2 font-bold">Portal is open!</p>
+                            </div>
+
+                            <!-- Warning -->
+                            <div class="bg-red-100/50 border border-red-400/50 rounded-lg p-4 mb-4 text-center">
+                                <p class="text-red-700 font-bold">⚠️ Reinforcements from the Demon King</p>
+                                <p class="text-sm text-red-600">Killing these yields no XP/Gold/Gems</p>
+                            </div>
+
+                            <!-- Bug Cards -->
+                            <div class="space-y-3">
+                                <div class="bg-amber-50 border border-red-400/30 rounded-lg p-4 flex items-center gap-4">
+                                    <span class="text-3xl">👹</span>
+                                    <div class="flex-1">
+                                        <p class="font-bold text-amber-900">Login shows blank page when token expires</p>
+                                        <p class="text-sm text-amber-700">Reported by: QA Team</p>
+                                    </div>
+                                    <span class="px-3 py-1 bg-red-200 text-red-700 text-xs font-bold rounded">Critical</span>
+                                </div>
+                                <div class="bg-amber-50 border border-red-400/30 rounded-lg p-4 flex items-center gap-4">
+                                    <span class="text-3xl">👹</span>
+                                    <div class="flex-1">
+                                        <p class="font-bold text-amber-900">Email validation not working on Safari</p>
+                                        <p class="text-sm text-amber-700">Reported by: User</p>
+                                    </div>
+                                    <span class="px-3 py-1 bg-amber-200 text-amber-700 text-xs font-bold rounded">Major</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <!-- /Main Content Area -->
+            </div>
+        </div>
+
+        <!-- Bottom Info Bar -->
+        <div class="mt-4 flex items-center justify-between px-6 py-4 bg-gradient-to-r from-amber-900/60 via-amber-800/40 to-amber-900/60 rounded-lg border border-amber-700/50">
+            <div class="flex items-center gap-6">
+                <span class="text-amber-200 text-lg">Location: <span class="text-white font-bold">Member City System</span></span>
+                <span class="text-amber-600">|</span>
+                <span class="text-amber-200 text-lg">Active Tasks: <span class="text-green-400 font-bold">4</span></span>
+                <span class="text-amber-600">|</span>
+                <span class="text-amber-200 text-lg">Bugs: <span class="text-red-400 font-bold">2</span></span>
+            </div>
+            <div class="flex items-center gap-3">
+                <span class="text-amber-300">Select a commander to view details</span>
+                <img src="assets-pixels/ui/arrow_right.png" alt="Hint" class="w-5 h-5 pixel-art opacity-60">
+            </div>
+        </div>
+    </div>
+
+    <!-- Bottom Navigation -->
+    <nav style="position: fixed; bottom: 0; left: 0; right: 0; background: linear-gradient(180deg, #2c1810 0%, #1a0f0a 100%); border-top: 3px solid #8b6914; box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.5); z-index: 100;">
+        <div style="max-width: 800px; margin: 0 auto; display: flex; justify-content: space-around; padding: 10px 0;">
+            <a href="hero-v2.html" style="display: flex; flex-direction: column; align-items: center; gap: 5px; padding: 8px 20px; color: #5c4018; text-decoration: none; transition: all 0.3s ease;">
+                <span style="font-size: 24px;">⚔️</span>
+                <span style="font-size: 11px; font-weight: 600; font-family: Cinzel, serif;">Hero</span>
+            </a>
+            <a href="team-v2.html" style="display: flex; flex-direction: column; align-items: center; gap: 5px; padding: 8px 20px; color: #5c4018; text-decoration: none; transition: all 0.3s ease;">
+                <span style="font-size: 24px;">👥</span>
+                <span style="font-size: 11px; font-weight: 600; font-family: Cinzel, serif;">Team</span>
+            </a>
+            <a href="world-map-v2.html" style="display: flex; flex-direction: column; align-items: center; gap: 5px; padding: 8px 20px; color: #5c4018; text-decoration: none; transition: all 0.3s ease;">
+                <span style="font-size: 24px;">🗺️</span>
+                <span style="font-size: 11px; font-weight: 600; font-family: Cinzel, serif;">World</span>
+            </a>
+            <a href="shop-v2.html" style="display: flex; flex-direction: column; align-items: center; gap: 5px; padding: 8px 20px; color: #5c4018; text-decoration: none; transition: all 0.3s ease;">
+                <span style="font-size: 24px;">🛒</span>
+                <span style="font-size: 11px; font-weight: 600; font-family: Cinzel, serif;">Shop</span>
+            </a>
+        </div>
+    </nav>
+</body>
+</html>
