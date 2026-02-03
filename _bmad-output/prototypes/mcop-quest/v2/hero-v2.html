@@ -759,7 +759,7 @@
             margin-left: auto;
         }
 
-        /* Damage Contribution Card */
+        /* Daily Tasks Chart Card */
         .contribution-card {
             background: linear-gradient(145deg, #3d2418 0%, #2c1810 100%);
             border: 2px solid #8b6914;
@@ -768,67 +768,95 @@
             margin-bottom: 25px;
         }
 
-        .contribution-chart {
-            margin-bottom: 15px;
-        }
-
-        .chart-bar {
-            height: 24px;
-            background: #1a0f0a;
-            border: 2px solid #5c4018;
-            border-radius: 12px;
-            overflow: hidden;
+        .daily-chart {
             display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            height: 150px;
+            padding: 10px 0 30px;
+            border-bottom: 2px solid #5c4018;
+            position: relative;
         }
 
-        .chart-segment {
-            height: 100%;
-            transition: all 0.3s ease;
+        .daily-chart::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, #5c4018, transparent);
         }
 
-        .chart-segment:hover {
-            opacity: 0.9;
-        }
-
-        .chart-segment.design { background: #E67E22; }
-        .chart-segment.ac { background: #3498DB; }
-        .chart-segment.api { background: #9B59B6; }
-        .chart-segment.fe { background: #1ABC9C; }
-        .chart-segment.testing { background: #F1C40F; }
-
-        .contribution-legend {
+        .daily-bar-wrapper {
             display: flex;
-            flex-wrap: wrap;
-            gap: 12px;
-            justify-content: center;
-        }
-
-        .legend-item {
-            display: flex;
+            flex-direction: column;
             align-items: center;
-            gap: 6px;
+            flex: 1;
+            max-width: 40px;
+        }
+
+        .daily-bar {
+            width: 24px;
+            background: linear-gradient(180deg, #d4a853 0%, #8b6914 100%);
+            border-radius: 4px 4px 0 0;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .daily-bar:hover {
+            background: linear-gradient(180deg, #f4d03f 0%, #d4a853 100%);
+            box-shadow: 0 0 15px rgba(212, 168, 83, 0.5);
+        }
+
+        .daily-bar-value {
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
             font-size: 12px;
+            font-weight: bold;
+            color: #d4a853;
+            opacity: 0;
+            transition: opacity 0.2s;
         }
 
-        .legend-dot {
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
+        .daily-bar:hover .daily-bar-value {
+            opacity: 1;
         }
 
-        .legend-dot.design { background: #E67E22; }
-        .legend-dot.ac { background: #3498DB; }
-        .legend-dot.api { background: #9B59B6; }
-        .legend-dot.fe { background: #1ABC9C; }
-        .legend-dot.testing { background: #F1C40F; }
+        .daily-label {
+            position: absolute;
+            bottom: -25px;
+            font-size: 11px;
+            color: #8b6914;
+            text-transform: uppercase;
+        }
 
-        .legend-label {
+        .daily-total {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 35px;
+            padding-top: 15px;
+            border-top: 1px solid #5c4018;
+        }
+
+        .daily-total-label {
+            font-size: 14px;
             color: #8b6914;
         }
 
-        .legend-value {
+        .daily-total-value {
+            font-size: 24px;
+            font-weight: bold;
             color: #d4a853;
-            font-weight: 600;
+        }
+
+        .daily-average {
+            font-size: 12px;
+            color: #8b6914;
+            margin-top: 5px;
         }
 
         /* Recent Activity Card */
@@ -1260,44 +1288,59 @@
             </div>
         </div>
 
-        <!-- Damage Contribution Chart -->
+        <!-- Daily Tasks Done Chart -->
         <div class="contribution-card">
-            <h3 class="section-title">📊 Damage Contribution</h3>
-            <div class="contribution-chart">
-                <div class="chart-bar">
-                    <div class="chart-segment design" style="width: 5%" title="Design: 5%"></div>
-                    <div class="chart-segment ac" style="width: 5%" title="AC: 5%"></div>
-                    <div class="chart-segment api" style="width: 70%" title="API: 70%"></div>
-                    <div class="chart-segment fe" style="width: 15%" title="FE: 15%"></div>
-                    <div class="chart-segment testing" style="width: 5%" title="Testing: 5%"></div>
+            <h3 class="section-title">📊 Daily Tasks Completed</h3>
+            <div class="daily-chart">
+                <div class="daily-bar-wrapper">
+                    <div class="daily-bar" style="height: 60%">
+                        <span class="daily-bar-value">3</span>
+                    </div>
+                    <span class="daily-label">Mon</span>
+                </div>
+                <div class="daily-bar-wrapper">
+                    <div class="daily-bar" style="height: 100%">
+                        <span class="daily-bar-value">5</span>
+                    </div>
+                    <span class="daily-label">Tue</span>
+                </div>
+                <div class="daily-bar-wrapper">
+                    <div class="daily-bar" style="height: 40%">
+                        <span class="daily-bar-value">2</span>
+                    </div>
+                    <span class="daily-label">Wed</span>
+                </div>
+                <div class="daily-bar-wrapper">
+                    <div class="daily-bar" style="height: 80%">
+                        <span class="daily-bar-value">4</span>
+                    </div>
+                    <span class="daily-label">Thu</span>
+                </div>
+                <div class="daily-bar-wrapper">
+                    <div class="daily-bar" style="height: 20%">
+                        <span class="daily-bar-value">1</span>
+                    </div>
+                    <span class="daily-label">Fri</span>
+                </div>
+                <div class="daily-bar-wrapper">
+                    <div class="daily-bar" style="height: 0%">
+                        <span class="daily-bar-value">0</span>
+                    </div>
+                    <span class="daily-label">Sat</span>
+                </div>
+                <div class="daily-bar-wrapper">
+                    <div class="daily-bar" style="height: 40%">
+                        <span class="daily-bar-value">2</span>
+                    </div>
+                    <span class="daily-label">Sun</span>
                 </div>
             </div>
-            <div class="contribution-legend">
-                <div class="legend-item">
-                    <span class="legend-dot design"></span>
-                    <span class="legend-label">Design</span>
-                    <span class="legend-value">5%</span>
+            <div class="daily-total">
+                <div>
+                    <div class="daily-total-label">Total Tasks Done This Week</div>
+                    <div class="daily-average">Avg: 2.4 tasks/day</div>
                 </div>
-                <div class="legend-item">
-                    <span class="legend-dot ac"></span>
-                    <span class="legend-label">AC</span>
-                    <span class="legend-value">5%</span>
-                </div>
-                <div class="legend-item">
-                    <span class="legend-dot api"></span>
-                    <span class="legend-label">API</span>
-                    <span class="legend-value">70%</span>
-                </div>
-                <div class="legend-item">
-                    <span class="legend-dot fe"></span>
-                    <span class="legend-label">FE</span>
-                    <span class="legend-value">15%</span>
-                </div>
-                <div class="legend-item">
-                    <span class="legend-dot testing"></span>
-                    <span class="legend-label">Testing</span>
-                    <span class="legend-value">5%</span>
-                </div>
+                <div class="daily-total-value">17</div>
             </div>
         </div>
 
