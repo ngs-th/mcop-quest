@@ -1,4 +1,4 @@
-<div x-data="heroData()" class="min-h-screen pb-20" style="background-color: #1a1a2e;">
+<div x-data="heroData()" class="min-h-screen pb-24" style="background-color: #1a1a2e;">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Inter:wght@400;500;600;700&display=swap');
 
@@ -65,11 +65,11 @@
 
         <!-- Character Card with Equipment -->
         <div class="rounded-xl p-4 animate-pulse-gold border" style="background-color: #16213e; border-color: #f1c40f;">
-            <div class="flex items-start gap-4">
+            <div class="flex flex-col sm:flex-row items-center sm:items-start gap-2 sm:gap-4">
                 <!-- Character Avatar with Equipment -->
-                <div class="relative">
+                <div class="relative flex-shrink-0">
                     <div class="animate-hero">
-                        <svg width="100" height="120" viewBox="0 0 100 120" class="drop-shadow-lg">
+                        <svg width="80" height="96" viewBox="0 0 100 120" class="drop-shadow-lg sm:w-[100px] sm:h-[120px]">
                             <!-- Character Body (Warrior) -->
                             <circle cx="50" cy="25" r="20" fill="#ffd5b5"/>
                             <path d="M32 20 Q35 5 50 8 Q65 5 68 20 Q68 15 50 12 Q32 15 32 20" fill="#4a3728"/>
@@ -110,9 +110,9 @@
                 </div>
 
                 <!-- Character Info -->
-                <div class="flex-1">
-                    <h2 class="font-cinzel text-xl text-white">{{ $hero['name'] }}</h2>
-                    <p class="text-purple-500 text-sm">⚔️ {{ $hero['class'] }} ({{ $hero['role'] }})</p>
+                <div class="flex-1 w-full">
+                    <h2 class="font-cinzel text-lg sm:text-xl text-white text-center sm:text-left">{{ $hero['name'] }}</h2>
+                    <p class="text-purple-500 text-sm text-center sm:text-left">⚔️ {{ $hero['class'] }} ({{ $hero['role'] }})</p>
 
                     <!-- XP Bar -->
                     <div class="mt-3">
@@ -127,7 +127,7 @@
                     </div>
 
                     <!-- Quick Stats -->
-                    <div class="grid grid-cols-3 gap-2 mt-3">
+                    <div class="grid grid-cols-3 gap-1.5 sm:gap-2 mt-3">
                         <div class="text-center rounded-lg p-2" style="background-color: rgba(26, 26, 46, 0.5);">
                             <div class="text-lg font-bold text-green-500">{{ $stats['kills'] }}</div>
                             <p class="text-xs text-gray-500">Kills</p>
@@ -163,7 +163,7 @@
                     <!-- Hero (Left Side) -->
                     <div class="flex flex-col items-center">
                         <div class="animate-hero">
-                            <svg width="60" height="80" viewBox="0 0 100 120" class="drop-shadow-lg">
+                            <svg width="50" height="67" viewBox="0 0 100 120" class="drop-shadow-lg sm:w-[60px] sm:h-[80px]">
                                 <circle cx="50" cy="25" r="18" fill="#ffd5b5"/>
                                 <path d="M32 20 Q35 8 50 10 Q65 8 68 20" fill="#4a3728"/>
                                 <path d="M30 18 Q30 5 50 3 Q70 5 70 18 L68 22 Q50 20 32 22 Z" fill="#718096"/>
@@ -191,11 +191,11 @@
                     </div>
 
                     <!-- Monsters -->
-                    <div class="flex items-end gap-2">
+                    <div class="flex items-end gap-1 sm:gap-2">
                         @foreach($activeTasks as $index => $task)
                         <div class="flex flex-col items-center">
                             <div class="animate-monster" style="animation-delay: {{ $index * 0.2 }}s;">
-                                <svg width="45" height="55" viewBox="0 0 60 70" class="drop-shadow-lg">
+                                <svg width="35" height="43" viewBox="0 0 60 70" class="drop-shadow-lg sm:w-[45px] sm:h-[55px]">
                                     <ellipse cx="30" cy="55" rx="25" ry="12" fill="#7c3aed" opacity="0.5"/>
                                     <ellipse cx="30" cy="40" rx="22" ry="25" fill="#9B59B6"/>
                                     <ellipse cx="30" cy="35" rx="18" ry="20" fill="#a855f7"/>
@@ -270,7 +270,7 @@
 
             <!-- Equipment Tab -->
             <div x-show="activeTab === 'equipment'">
-                <div class="grid grid-cols-3 gap-2">
+                <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
                     @foreach($equipment as $key => $slot)
                     <div class="equipment-slot rounded-lg p-2 text-center border"
                          style="background-color: rgba(26, 26, 46, 0.5); border-color: #0f3460;"
@@ -309,7 +309,7 @@
 
             <!-- Inventory Tab -->
             <div x-show="activeTab === 'inventory'">
-                <div class="grid grid-cols-4 gap-2">
+                <div class="grid grid-cols-3 sm:grid-cols-4 gap-2">
                     @foreach($inventory as $item)
                     <div class="equipment-slot rounded-lg p-2 text-center border cursor-pointer"
                          style="background-color: rgba(26, 26, 46, 0.5); border-color: {{ $item['equipped'] ? '#f1c40f' : '#0f3460' }};"
@@ -394,23 +394,23 @@
     </main>
 
     <!-- Bottom Tab Bar -->
-    <nav class="fixed bottom-0 left-0 right-0 border-t z-50" style="background-color: #16213e; border-color: #0f3460;">
+    <nav class="fixed bottom-0 left-0 right-0 border-t z-50" style="background-color: #16213e; border-color: #0f3460; padding-bottom: env(safe-area-inset-bottom, 0px);">
         <div class="flex justify-around">
-            <a href="{{ route('hero') }}" class="flex-1 py-3 text-center" style="color: #f1c40f; border-bottom: 3px solid #f1c40f;">
-                <div class="text-xl">⚔️</div>
-                <div class="text-xs mt-1">Hero</div>
+            <a href="{{ route('hero') }}" class="flex-1 py-3 text-center" style="color: #f1c40f; border-top: 3px solid #f1c40f;">
+                <div class="text-lg sm:text-xl">&#x2694;&#xFE0F;</div>
+                <div class="text-[10px] sm:text-xs mt-1 font-cinzel">Hero</div>
             </a>
-            <a href="#" class="flex-1 py-3 text-center text-gray-400 hover:text-yellow-400">
-                <div class="text-xl">👥</div>
-                <div class="text-xs mt-1">Team</div>
+            <a href="{{ route('team') }}" class="flex-1 py-3 text-center text-gray-400 hover:text-[#f1c40f] transition-colors">
+                <div class="text-lg sm:text-xl">&#x1F465;</div>
+                <div class="text-[10px] sm:text-xs mt-1 font-cinzel">Team</div>
             </a>
-            <a href="{{ route('dashboard') }}" class="flex-1 py-3 text-center text-gray-400 hover:text-yellow-400">
-                <div class="text-xl">🗺️</div>
-                <div class="text-xs mt-1">World</div>
+            <a href="{{ route('dashboard') }}" class="flex-1 py-3 text-center text-gray-400 hover:text-[#f1c40f] transition-colors">
+                <div class="text-lg sm:text-xl">&#x1F5FA;&#xFE0F;</div>
+                <div class="text-[10px] sm:text-xs mt-1 font-cinzel">World</div>
             </a>
-            <a href="#" class="flex-1 py-3 text-center text-gray-400 hover:text-yellow-400">
-                <div class="text-xl">🛒</div>
-                <div class="text-xs mt-1">Shop</div>
+            <a href="{{ route('shop') }}" class="flex-1 py-3 text-center text-gray-400 hover:text-[#f1c40f] transition-colors">
+                <div class="text-lg sm:text-xl">&#x1F6D2;</div>
+                <div class="text-[10px] sm:text-xs mt-1 font-cinzel">Shop</div>
             </a>
         </div>
     </nav>

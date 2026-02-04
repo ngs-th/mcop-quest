@@ -1,4 +1,4 @@
-<div>
+<div class="pb-24">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Inter:wght@400;500;600;700&display=swap');
 
@@ -72,10 +72,10 @@
 
         <!-- City Boss Progress -->
         <div class="bg-[#16213e] border border-[#0f3460] rounded-xl p-4">
-            <div class="flex items-start gap-4">
+            <div class="flex items-start gap-2 sm:gap-4">
                 <!-- Boss Character SVG -->
                 <div class="flex-shrink-0">
-                    <svg width="80" height="100" viewBox="0 0 80 100" class="boss-idle">
+                    <svg width="60" height="75" viewBox="0 0 80 100" class="boss-idle sm:w-[80px] sm:h-[100px]">
                         <!-- Knight King Boss -->
                         <ellipse cx="40" cy="95" rx="25" ry="5" fill="#0f3460" opacity="0.5"/>
                         <path d="M20 45 Q10 70 25 90" fill="#e74c3c"/>
@@ -111,7 +111,7 @@
                             <h2 class="font-cinzel text-lg text-[#f1c40f]">{{ $city->name }}</h2>
                             <p class="text-xs text-gray-400">City Boss</p>
                         </div>
-                        <span class="font-bold text-xl" style="color: {{ $this->getStatusColor($stats['overall_hp']) }}">{{ $stats['overall_hp'] }}%</span>
+                        <span class="font-bold text-lg sm:text-xl" style="color: {{ $this->getStatusColor($stats['overall_hp']) }}">{{ $stats['overall_hp'] }}%</span>
                     </div>
                     <div class="h-4 bg-[#0f3460] rounded-full overflow-hidden mb-2">
                         <div class="h-full bg-gradient-to-r from-[#e74c3c] via-[#f1c40f] to-[#2ecc71] rounded-full transition-all duration-500" style="width: {{ $stats['overall_hp'] }}%"></div>
@@ -137,18 +137,18 @@
         </div>
 
         <!-- Stats Panel -->
-        <div class="grid grid-cols-3 gap-4">
-            <div class="bg-[#16213e] border border-[#0f3460] rounded-xl p-4 text-center">
-                <div class="text-2xl font-bold text-[#3498db]">{{ $stats['total_flows'] }}</div>
-                <div class="text-xs text-gray-400">Flows</div>
+        <div class="grid grid-cols-3 gap-2 sm:gap-4">
+            <div class="bg-[#16213e] border border-[#0f3460] rounded-xl p-2 sm:p-4 text-center">
+                <div class="text-xl sm:text-2xl font-bold text-[#3498db]">{{ $stats['total_flows'] }}</div>
+                <div class="text-[10px] sm:text-xs text-gray-400">Flows</div>
             </div>
-            <div class="bg-[#16213e] border border-[#0f3460] rounded-xl p-4 text-center">
-                <div class="text-2xl font-bold text-[#f1c40f]">{{ $stats['total_tasks'] }}</div>
-                <div class="text-xs text-gray-400">Tasks</div>
+            <div class="bg-[#16213e] border border-[#0f3460] rounded-xl p-2 sm:p-4 text-center">
+                <div class="text-xl sm:text-2xl font-bold text-[#f1c40f]">{{ $stats['total_tasks'] }}</div>
+                <div class="text-[10px] sm:text-xs text-gray-400">Tasks</div>
             </div>
-            <div class="bg-[#16213e] border border-[#0f3460] rounded-xl p-4 text-center">
-                <div class="text-2xl font-bold text-[#e74c3c]">{{ $stats['bugs_count'] }}</div>
-                <div class="text-xs text-gray-400">Bugs</div>
+            <div class="bg-[#16213e] border border-[#0f3460] rounded-xl p-2 sm:p-4 text-center">
+                <div class="text-xl sm:text-2xl font-bold text-[#e74c3c]">{{ $stats['bugs_count'] }}</div>
+                <div class="text-[10px] sm:text-xs text-gray-400">Bugs</div>
             </div>
         </div>
 
@@ -254,7 +254,7 @@
                     <div class="space-y-2">
                         <!-- Design HP -->
                         <div class="flex items-center gap-2">
-                            <span class="w-16 text-xs text-gray-400 flex items-center gap-1">
+                            <span class="w-12 sm:w-16 text-[10px] sm:text-xs text-gray-400 flex items-center gap-1">
                                 <span style="color: #E67E22">Design</span>
                             </span>
                             <div class="flex-1 h-2 bg-[#0f3460] rounded-full overflow-hidden">
@@ -268,7 +268,7 @@
                         </div>
                         <!-- AC HP -->
                         <div class="flex items-center gap-2">
-                            <span class="w-16 text-xs text-gray-400 flex items-center gap-1">
+                            <span class="w-12 sm:w-16 text-[10px] sm:text-xs text-gray-400 flex items-center gap-1">
                                 <span style="color: #3498DB">AC</span>
                             </span>
                             <div class="flex-1 h-2 bg-[#0f3460] rounded-full overflow-hidden">
@@ -282,7 +282,7 @@
                         </div>
                         <!-- API HP -->
                         <div class="flex items-center gap-2">
-                            <span class="w-16 text-xs text-gray-400 flex items-center gap-1">
+                            <span class="w-12 sm:w-16 text-[10px] sm:text-xs text-gray-400 flex items-center gap-1">
                                 <span style="color: #9B59B6">API</span>
                             </span>
                             <div class="flex-1 h-2 bg-[#0f3460] rounded-full overflow-hidden">
@@ -296,7 +296,7 @@
                         </div>
                         <!-- FE/App HP -->
                         <div class="flex items-center gap-2">
-                            <span class="w-16 text-xs text-gray-400 flex items-center gap-1">
+                            <span class="w-12 sm:w-16 text-[10px] sm:text-xs text-gray-400 flex items-center gap-1">
                                 <span style="color: #1ABC9C">FE</span>
                             </span>
                             <div class="flex-1 h-2 bg-[#0f3460] rounded-full overflow-hidden">
@@ -310,7 +310,7 @@
                         </div>
                         <!-- Testing HP -->
                         <div class="flex items-center gap-2">
-                            <span class="w-16 text-xs text-gray-400 flex items-center gap-1">
+                            <span class="w-12 sm:w-16 text-[10px] sm:text-xs text-gray-400 flex items-center gap-1">
                                 <span style="color: #F1C40F">Test</span>
                             </span>
                             <div class="flex-1 h-2 bg-[#0f3460] rounded-full overflow-hidden">
@@ -324,7 +324,7 @@
                         </div>
                         <!-- UAT HP -->
                         <div class="flex items-center gap-2">
-                            <span class="w-16 text-xs text-gray-400 flex items-center gap-1">
+                            <span class="w-12 sm:w-16 text-[10px] sm:text-xs text-gray-400 flex items-center gap-1">
                                 <span style="color: #2ECC71">UAT</span>
                             </span>
                             <div class="flex-1 h-2 bg-[#0f3460] rounded-full overflow-hidden">
@@ -365,19 +365,19 @@
                         <table class="w-full">
                             <thead class="bg-[#0f3460]">
                                 <tr>
-                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-400">Task</th>
-                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-400">Type</th>
-                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-400">Flow</th>
-                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-400">Status</th>
-                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-400">Assignee</th>
+                                    <th class="px-2 sm:px-4 py-2 sm:py-3 text-left text-[10px] sm:text-xs font-medium text-gray-400">Task</th>
+                                    <th class="px-2 sm:px-4 py-2 sm:py-3 text-left text-[10px] sm:text-xs font-medium text-gray-400">Type</th>
+                                    <th class="px-2 sm:px-4 py-2 sm:py-3 text-left text-[10px] sm:text-xs font-medium text-gray-400">Flow</th>
+                                    <th class="px-2 sm:px-4 py-2 sm:py-3 text-left text-[10px] sm:text-xs font-medium text-gray-400">Status</th>
+                                    <th class="px-2 sm:px-4 py-2 sm:py-3 text-left text-[10px] sm:text-xs font-medium text-gray-400">Assignee</th>
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-[#0f3460]">
                                 @foreach($tasks as $task)
                                     <tr class="hover:bg-[#1a1a2e]">
-                                        <td class="px-4 py-3 text-sm text-white">{{ $task['title'] }}</td>
-                                        <td class="px-4 py-3 text-sm">
-                                            <span class="inline-flex items-center px-2 py-0.5 rounded text-xs
+                                        <td class="px-2 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm text-white">{{ $task['title'] }}</td>
+                                        <td class="px-2 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm">
+                                            <span class="inline-flex items-center px-1.5 sm:px-2 py-0.5 rounded text-[10px] sm:text-xs
                                                 @if($task['type'] === 'UI') bg-[#E67E22]/20 text-[#E67E22]
                                                 @elseif($task['type'] === 'API') bg-[#9B59B6]/20 text-[#9B59B6]
                                                 @elseif($task['type'] === 'FE') bg-[#1ABC9C]/20 text-[#1ABC9C]
@@ -386,9 +386,9 @@
                                                 {{ $task['type'] }}
                                             </span>
                                         </td>
-                                        <td class="px-4 py-3 text-sm text-gray-400">{{ $task['flow_name'] }}</td>
-                                        <td class="px-4 py-3 text-sm">
-                                            <span class="inline-flex items-center px-2 py-0.5 rounded text-xs
+                                        <td class="px-2 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm text-gray-400">{{ $task['flow_name'] }}</td>
+                                        <td class="px-2 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm">
+                                            <span class="inline-flex items-center px-1.5 sm:px-2 py-0.5 rounded text-[10px] sm:text-xs
                                                 @if($task['status'] === 'done') bg-[#2ecc71]/20 text-[#2ecc71]
                                                 @elseif($task['status'] === 'doing') bg-[#f1c40f]/20 text-[#f1c40f]
                                                 @else bg-gray-500/20 text-gray-400
@@ -396,7 +396,7 @@
                                                 {{ ucfirst($task['status']) }}
                                             </span>
                                         </td>
-                                        <td class="px-4 py-3 text-sm text-gray-400">{{ $task['assignee'] ?? '-' }}</td>
+                                        <td class="px-2 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm text-gray-400">{{ $task['assignee'] ?? '-' }}</td>
                                     </tr>
                                 @endforeach
                             </tbody>
@@ -407,4 +407,26 @@
         @endif
 
     </main>
+
+    <!-- Bottom Tab Bar -->
+    <nav class="fixed bottom-0 left-0 right-0 bg-[#16213e] border-t border-[#0f3460] z-50" style="padding-bottom: env(safe-area-inset-bottom, 0px);">
+        <div class="flex justify-around">
+            <a href="{{ route('hero') }}" class="flex-1 py-3 text-center text-gray-400 hover:text-[#f1c40f] transition-colors">
+                <div class="text-lg sm:text-xl">&#x2694;&#xFE0F;</div>
+                <div class="text-[10px] sm:text-xs mt-1" style="font-family: 'Cinzel', serif;">Hero</div>
+            </a>
+            <a href="{{ route('team') }}" class="flex-1 py-3 text-center text-gray-400 hover:text-[#f1c40f] transition-colors">
+                <div class="text-lg sm:text-xl">&#x1F465;</div>
+                <div class="text-[10px] sm:text-xs mt-1" style="font-family: 'Cinzel', serif;">Team</div>
+            </a>
+            <a href="{{ route('dashboard') }}" class="flex-1 py-3 text-center text-gray-400 hover:text-[#f1c40f] transition-colors">
+                <div class="text-lg sm:text-xl">&#x1F5FA;&#xFE0F;</div>
+                <div class="text-[10px] sm:text-xs mt-1" style="font-family: 'Cinzel', serif;">World</div>
+            </a>
+            <a href="{{ route('shop') }}" class="flex-1 py-3 text-center text-gray-400 hover:text-[#f1c40f] transition-colors">
+                <div class="text-lg sm:text-xl">&#x1F6D2;</div>
+                <div class="text-[10px] sm:text-xs mt-1" style="font-family: 'Cinzel', serif;">Shop</div>
+            </a>
+        </div>
+    </nav>
 </div>

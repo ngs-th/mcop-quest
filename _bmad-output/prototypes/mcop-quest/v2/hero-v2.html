@@ -792,8 +792,11 @@
             display: flex;
             flex-direction: column;
             align-items: center;
+            justify-content: flex-end;
             flex: 1;
             max-width: 40px;
+            height: 100%;
+            position: relative;
         }
 
         .daily-bar {
@@ -986,31 +989,325 @@
         }
 
         /* Responsive */
-        @media (max-width: 600px) {
+        @media (max-width: 640px) {
+            body {
+                padding-bottom: 90px;
+            }
+
+            /* Header */
+            .header {
+                padding: 10px 12px;
+            }
+
+            .header-title {
+                font-size: 17px;
+            }
+
+            .header-subtitle {
+                font-size: 11px;
+            }
+
+            .currency-display {
+                gap: 8px;
+            }
+
+            .currency-item {
+                padding: 4px 8px;
+                gap: 4px;
+            }
+
+            .currency-icon {
+                font-size: 14px;
+            }
+
+            .currency-value {
+                font-size: 13px;
+            }
+
+            /* Main Content */
+            .main-content {
+                padding: 12px;
+            }
+
+            /* Hero Card */
+            .hero-card {
+                padding: 16px;
+                margin-bottom: 16px;
+            }
+
             .hero-header {
                 flex-direction: column;
                 text-align: center;
+                gap: 12px;
             }
 
             .hero-avatar {
-                width: 100px;
-                height: 120px;
+                width: 90px;
+                height: 110px;
+                margin: 0 auto;
+            }
+
+            .hero-avatar svg {
+                width: 80px;
+                height: 100px;
             }
 
             .hero-name {
                 font-size: 22px;
             }
 
-            .stats-grid {
-                grid-template-columns: 1fr;
+            .hero-class {
+                font-size: 14px;
+                margin-bottom: 10px;
             }
 
-            .equipment-grid {
-                grid-template-columns: repeat(2, 1fr);
+            .xp-header {
+                font-size: 12px;
+            }
+
+            /* Stats Grid - keep 3 columns, smaller */
+            .stats-grid {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 8px;
+                margin-top: 15px;
+                padding-top: 15px;
+            }
+
+            .stat-item {
+                padding: 10px 5px;
+            }
+
+            .stat-value {
+                font-size: 18px;
+                margin-bottom: 3px;
+            }
+
+            .stat-label {
+                font-size: 10px;
+            }
+
+            /* Section Title */
+            .section-title {
+                font-size: 16px;
+                gap: 8px;
+                margin-bottom: 12px;
+            }
+
+            /* Battle Card */
+            .battle-card {
+                padding: 15px;
+                margin-bottom: 16px;
+            }
+
+            .battle-header {
+                gap: 8px;
+                margin-bottom: 12px;
+            }
+
+            .battle-title {
+                font-size: 14px;
+            }
+
+            .battle-arena {
+                padding: 12px;
+                min-height: 100px;
+            }
+
+            .hero-mini {
+                width: 50px;
+                height: 60px;
             }
 
             .monster-side {
+                gap: 6px;
+            }
+
+            .monster-icon {
+                font-size: 32px;
+            }
+
+            .monster-type {
+                font-size: 9px;
+            }
+
+            /* Task Card */
+            .task-card {
+                padding: 15px;
+                margin-bottom: 16px;
+            }
+
+            .task-item {
+                padding: 10px 12px;
+                gap: 8px;
+            }
+
+            .task-info {
+                min-width: 0;
+            }
+
+            .task-name {
+                font-size: 13px;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+
+            .task-meta {
+                font-size: 11px;
+            }
+
+            .task-status {
+                font-size: 10px;
+                padding: 3px 8px;
+                flex-shrink: 0;
+            }
+
+            /* Equipment Card */
+            .equipment-card {
+                padding: 15px;
+                margin-bottom: 16px;
+            }
+
+            .equipment-grid {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 8px;
+            }
+
+            .equip-icon {
+                font-size: 22px;
+                margin-bottom: 3px;
+            }
+
+            .equip-label {
+                font-size: 9px;
+            }
+
+            .equip-name {
+                font-size: 9px;
+            }
+
+            .equip-stats {
+                font-size: 8px;
+            }
+
+            /* Item Bag */
+            .item-bag-card {
+                padding: 15px;
+                margin-bottom: 16px;
+            }
+
+            .item-bag-header {
                 flex-direction: column;
+                gap: 10px;
+                align-items: flex-start;
+            }
+
+            .item-bag-tabs {
+                gap: 6px;
+            }
+
+            .item-bag-tab {
+                padding: 5px 10px;
+                font-size: 11px;
+            }
+
+            .item-grid {
+                grid-template-columns: repeat(4, 1fr);
+                gap: 6px;
+            }
+
+            .item-slot .item-icon {
+                font-size: 20px;
+            }
+
+            .item-slot .item-name {
+                font-size: 8px;
+            }
+
+            .item-slot .item-count {
+                font-size: 9px;
+            }
+
+            /* Contribution Card (Daily Chart) */
+            .contribution-card {
+                padding: 15px;
+                margin-bottom: 16px;
+            }
+
+            .daily-chart {
+                height: 120px;
+                padding: 8px 0 25px;
+            }
+
+            .daily-bar {
+                width: 20px;
+            }
+
+            .daily-label {
+                font-size: 9px;
+                bottom: -20px;
+            }
+
+            .daily-total {
+                margin-top: 28px;
+            }
+
+            .daily-total-label {
+                font-size: 12px;
+            }
+
+            .daily-total-value {
+                font-size: 20px;
+            }
+
+            .daily-average {
+                font-size: 11px;
+            }
+
+            /* Activity Card */
+            .activity-card {
+                padding: 15px;
+                margin-bottom: 16px;
+            }
+
+            .activity-list {
+                gap: 12px;
+            }
+
+            .activity-icon {
+                width: 36px;
+                height: 36px;
+                font-size: 16px;
+            }
+
+            .activity-item {
+                gap: 10px;
+            }
+
+            .activity-text {
+                font-size: 13px;
+                word-break: break-word;
+            }
+
+            .activity-meta {
+                font-size: 11px;
+            }
+
+            /* Bottom Nav */
+            .bottom-nav {
+                padding-bottom: env(safe-area-inset-bottom, 0px);
+            }
+
+            .nav-item {
+                padding: 8px 12px;
+            }
+
+            .nav-icon {
+                font-size: 20px;
+            }
+
+            .nav-label {
+                font-size: 10px;
             }
         }
     </style>

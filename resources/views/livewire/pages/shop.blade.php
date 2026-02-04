@@ -41,12 +41,12 @@
                 <p class="text-gray-500 text-xs">Buy cosmetics with Gold</p>
             </div>
             <!-- Currency Display -->
-            <div class="flex items-center gap-4">
-                <div class="flex items-center gap-1 text-sm bg-[#16213e] px-3 py-1.5 rounded-lg border border-[#0f3460]">
+            <div class="flex items-center gap-2 sm:gap-4">
+                <div class="flex items-center gap-1 text-xs sm:text-sm bg-[#16213e] px-2 sm:px-3 py-1.5 rounded-lg border border-[#0f3460]">
                     <span>🪙</span>
                     <span class="text-[#f1c40f] font-medium">{{ number_format($userGold) }}</span>
                 </div>
-                <div class="flex items-center gap-1 text-sm bg-[#16213e] px-3 py-1.5 rounded-lg border border-[#0f3460]">
+                <div class="flex items-center gap-1 text-xs sm:text-sm bg-[#16213e] px-2 sm:px-3 py-1.5 rounded-lg border border-[#0f3460]">
                     <span>💎</span>
                     <span class="text-[#3498db] font-medium">{{ number_format($userGems) }}</span>
                 </div>
@@ -83,7 +83,7 @@
             @foreach($categories as $category)
                 <button
                     wire:click="filterByCategory('{{ $category }}')"
-                    class="px-4 py-2 text-sm font-medium whitespace-nowrap transition-colors {{ $selectedCategory === $category ? 'tab-active' : 'text-gray-400 hover:text-[#f1c40f]' }}"
+                    class="px-3 py-2 sm:px-4 text-xs sm:text-sm font-medium whitespace-nowrap transition-colors {{ $selectedCategory === $category ? 'tab-active' : 'text-gray-400 hover:text-[#f1c40f]' }}"
                 >
                     {{ $category }}
                 </button>
@@ -91,7 +91,7 @@
         </div>
 
         <!-- Shop Items Grid -->
-        <div class="grid grid-cols-2 gap-3">
+        <div class="grid grid-cols-2 gap-2 sm:gap-3">
             @foreach($filteredItems as $item)
                 @php
                     $isLocked = $userLevel < $item['required_level'];
@@ -115,8 +115,8 @@
                         </span>
                     </div>
 
-                    <div class="text-4xl mb-2">{{ $item['icon'] }}</div>
-                    <h3 class="text-sm text-white font-medium">{{ $item['name'] }}</h3>
+                    <div class="text-3xl sm:text-4xl mb-2">{{ $item['icon'] }}</div>
+                    <h3 class="text-xs sm:text-sm text-white font-medium line-clamp-2">{{ $item['name'] }}</h3>
                     <p class="text-xs text-gray-500">Lv.{{ $item['required_level'] }} Required</p>
 
                     @if($item['owned'])
@@ -135,7 +135,7 @@
                                 <span class="text-gray-500">{{ number_format($item['price']) }}</span>
                             @endif
                         </div>
-                        <button disabled class="mt-2 w-full py-1.5 bg-gray-700 text-gray-500 text-sm rounded-lg cursor-not-allowed">
+                        <button disabled class="mt-2 w-full py-2 bg-gray-700 text-gray-500 text-xs sm:text-sm rounded-lg cursor-not-allowed">
                             🔒 Lv.{{ $item['required_level'] }}
                         </button>
                     @else
@@ -150,7 +150,7 @@
                         </div>
                         <button
                             wire:click="purchaseItem({{ $item['id'] }})"
-                            class="mt-2 w-full py-1.5 bg-[#f1c40f] text-[#1a1a2e] text-sm font-medium rounded-lg hover:bg-[#d4a906] transition-colors"
+                            class="mt-2 w-full py-2 bg-[#f1c40f] text-[#1a1a2e] text-xs sm:text-sm font-medium rounded-lg hover:bg-[#d4a906] transition-colors"
                         >
                             Buy
                         </button>
@@ -168,23 +168,23 @@
     </main>
 
     <!-- Bottom Tab Bar -->
-    <nav class="fixed bottom-0 left-0 right-0 bg-[#16213e] border-t border-[#0f3460] z-50">
+    <nav class="fixed bottom-0 left-0 right-0 bg-[#16213e] border-t border-[#0f3460] z-50" style="padding-bottom: env(safe-area-inset-bottom, 0px);">
         <div class="flex justify-around">
-            <a href="{{ route('dashboard') }}" class="flex-1 py-3 text-center text-gray-400 hover:text-[#f1c40f]">
-                <div class="text-xl">⚔️</div>
-                <div class="text-xs mt-1">Hero</div>
+            <a href="{{ route('hero') }}" class="flex-1 py-3 text-center text-gray-400 hover:text-[#f1c40f] transition-colors">
+                <div class="text-lg sm:text-xl">&#x2694;&#xFE0F;</div>
+                <div class="text-[10px] sm:text-xs mt-1 font-cinzel">Hero</div>
             </a>
-            <a href="#" class="flex-1 py-3 text-center text-gray-400 hover:text-[#f1c40f]">
-                <div class="text-xl">👥</div>
-                <div class="text-xs mt-1">Team</div>
+            <a href="{{ route('team') }}" class="flex-1 py-3 text-center text-gray-400 hover:text-[#f1c40f] transition-colors">
+                <div class="text-lg sm:text-xl">&#x1F465;</div>
+                <div class="text-[10px] sm:text-xs mt-1 font-cinzel">Team</div>
             </a>
-            <a href="{{ route('dashboard') }}" class="flex-1 py-3 text-center text-gray-400 hover:text-[#f1c40f]">
-                <div class="text-xl">🗺️</div>
-                <div class="text-xs mt-1">World</div>
+            <a href="{{ route('dashboard') }}" class="flex-1 py-3 text-center text-gray-400 hover:text-[#f1c40f] transition-colors">
+                <div class="text-lg sm:text-xl">&#x1F5FA;&#xFE0F;</div>
+                <div class="text-[10px] sm:text-xs mt-1 font-cinzel">World</div>
             </a>
-            <a href="{{ route('shop') }}" class="flex-1 py-3 text-center text-[#f1c40f] tab-active">
-                <div class="text-xl">🛒</div>
-                <div class="text-xs mt-1">Shop</div>
+            <a href="{{ route('shop') }}" class="flex-1 py-3 text-center text-[#f1c40f]" style="border-top: 3px solid #f1c40f;">
+                <div class="text-lg sm:text-xl">&#x1F6D2;</div>
+                <div class="text-[10px] sm:text-xs mt-1 font-cinzel">Shop</div>
             </a>
         </div>
     </nav>

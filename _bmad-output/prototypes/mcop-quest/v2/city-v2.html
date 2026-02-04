@@ -267,51 +267,149 @@
                 padding: 12px;
             }
         }
+
+        @media (max-width: 640px) {
+            .city-header {
+                flex-direction: column;
+                gap: 8px;
+                align-items: flex-start;
+            }
+            .city-header .header-left {
+                flex-direction: column;
+                gap: 8px;
+                width: 100%;
+            }
+            .city-header .header-right {
+                width: 100%;
+                justify-content: flex-end;
+            }
+            .city-header .header-right .resource-counter {
+                padding: 4px 10px;
+            }
+            .city-header .header-right .resource-counter span {
+                font-size: 14px;
+            }
+            .city-header h1 {
+                font-size: 1.5rem !important;
+            }
+            .boss-section {
+                flex-direction: column;
+                gap: 12px;
+                padding: 12px;
+            }
+            .boss-section .boss-visuals {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 12px;
+            }
+            .boss-section .boss-svg {
+                width: 80px;
+                height: 94px;
+            }
+            .boss-section .castle-img {
+                width: 64px;
+                height: 64px;
+            }
+            .boss-info-header {
+                flex-direction: column;
+                gap: 4px;
+            }
+            .boss-info-header .boss-title h2 {
+                font-size: 1.25rem !important;
+            }
+            .boss-info-header .boss-title p {
+                font-size: 0.875rem;
+            }
+            .boss-info-header .boss-percent {
+                text-align: left;
+            }
+            .boss-info-header .boss-percent span {
+                font-size: 1.5rem;
+            }
+            .golden-frame-mobile {
+                min-height: auto !important;
+            }
+            .golden-frame-mobile .content-scroll {
+                max-height: none !important;
+                overflow-y: visible !important;
+            }
+            .stat-box {
+                padding: 8px;
+            }
+            .stat-box p.stat-value {
+                font-size: 1.25rem;
+            }
+            .bottom-info-bar {
+                flex-direction: column;
+                gap: 8px;
+                padding: 12px;
+            }
+            .bottom-info-bar .info-left {
+                flex-wrap: wrap;
+                gap: 6px;
+            }
+            .bottom-info-bar .info-left span {
+                font-size: 0.75rem;
+            }
+            .bottom-info-bar .info-right {
+                display: none;
+            }
+            .task-table th, .task-table td {
+                padding: 6px 4px;
+                font-size: 11px;
+            }
+            .task-table .hide-mobile {
+                display: none;
+            }
+        }
     </style>
 </head>
-<body class="min-h-screen p-4">
+<body class="min-h-screen p-4 pb-24">
     <div class="max-w-[1400px] mx-auto">
         <!-- Header -->
-        <div class="flex items-center justify-between mb-4 px-4">
-            <div class="flex items-center gap-4">
-                <a href="world-map-v2.html" class="back-btn rounded-lg px-4 py-2 flex items-center gap-2">
+        <div class="city-header flex items-center justify-between mb-4 px-4">
+            <div class="header-left flex items-center gap-4">
+                <a href="world-map-v2.html" class="back-btn rounded-lg px-3 py-2 flex items-center gap-2 flex-shrink-0">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
                     </svg>
-                    <span class="font-fantasy">Back to Map</span>
+                    <span class="font-fantasy text-sm">Back</span>
                 </a>
-                <div>
-                    <p class="text-amber-600 text-sm">World Map</p>
-                    <h1 class="font-fantasy text-4xl font-bold text-amber-400 drop-shadow-lg" style="text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5)">
+                <div class="min-w-0">
+                    <p class="text-amber-600 text-xs sm:text-sm">World Map</p>
+                    <h1 class="font-fantasy text-2xl sm:text-4xl font-bold text-amber-400 drop-shadow-lg truncate" style="text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5)">
                         🏰 Member City System
                     </h1>
                 </div>
             </div>
-            <div class="flex gap-4">
+            <div class="header-right flex gap-2 sm:gap-4 flex-shrink-0">
                 <div class="resource-counter rounded-lg">
-                    <img src="assets-pixels/ui/coin.png" alt="Gold" class="w-6 h-6 pixel-art">
-                    <span class="text-amber-300 text-xl">2,450</span>
+                    <img src="assets-pixels/ui/coin.png" alt="Gold" class="w-5 h-5 sm:w-6 sm:h-6 pixel-art">
+                    <span class="text-amber-300 text-sm sm:text-xl">2,450</span>
                 </div>
                 <div class="resource-counter rounded-lg">
-                    <img src="assets-pixels/ui/gem.png" alt="Gems" class="w-6 h-6 pixel-art">
-                    <span class="text-cyan-300 text-xl">15</span>
+                    <img src="assets-pixels/ui/gem.png" alt="Gems" class="w-5 h-5 sm:w-6 sm:h-6 pixel-art">
+                    <span class="text-cyan-300 text-sm sm:text-xl">15</span>
                 </div>
             </div>
         </div>
 
         <!-- Main Game Frame -->
         <div class="golden-frame rounded-lg overflow-hidden">
-            <div class="parchment min-h-[800px] flex">
+            <div class="parchment golden-frame-mobile flex" style="min-height: auto;">
                 <!-- Main Content Area -->
-                <div class="flex-1 p-6 overflow-y-auto" style="max-height: 800px;">
+                <div class="content-scroll flex-1 p-3 sm:p-6 sm:overflow-y-auto" style="max-height: none;">
 
                     <!-- City Boss Section -->
                     <div class="mb-6">
-                        <div class="flex items-start gap-6 bg-gradient-to-br from-amber-100/50 to-amber-50/30 rounded-xl p-6 border-4 border-amber-600/50">
+                        <div class="boss-section flex flex-col sm:flex-row items-center sm:items-start gap-4 sm:gap-6 bg-gradient-to-br from-amber-100/50 to-amber-50/30 rounded-xl p-4 sm:p-6 border-4 border-amber-600/50">
+                            <!-- Boss Visuals (Character + Castle) -->
+                            <div class="boss-visuals flex items-center gap-3 sm:contents">
                             <!-- City Boss Character -->
                             <div class="flex-shrink-0 relative">
                                 <!-- Boss Character SVG -->
-                                <svg width="120" height="140" viewBox="0 0 120 140" class="drop-shadow-2xl">
+                                <svg width="120" height="140" viewBox="0 0 120 140" class="boss-svg drop-shadow-2xl w-20 h-24 sm:w-[120px] sm:h-[140px]">
                                     <!-- Shadow -->
                                     <ellipse cx="60" cy="130" rx="40" ry="8" fill="#0f3460" opacity="0.3"/>
                                     <!-- Cape -->
@@ -346,19 +444,20 @@
                             </div>
                             <!-- Castle Visual (Smaller, secondary) -->
                             <div class="flex-shrink-0 relative opacity-80">
-                                <img src="assets-v2/castle.png" alt="Member City Castle" class="w-24 h-24 pixel-art">
+                                <img src="assets-v2/castle.png" alt="Member City Castle" class="castle-img w-16 h-16 sm:w-24 sm:h-24 pixel-art">
                             </div>
+                            </div><!-- /boss-visuals -->
 
                             <!-- City Info -->
-                            <div class="flex-1">
-                                <div class="flex items-center justify-between mb-3">
-                                    <div>
-                                        <h2 class="font-fantasy text-3xl font-bold text-amber-800">👑 King of Members</h2>
-                                        <p class="text-amber-700 text-lg">City Boss • System Module</p>
+                            <div class="flex-1 w-full">
+                                <div class="boss-info-header flex items-center justify-between mb-3">
+                                    <div class="boss-title min-w-0">
+                                        <h2 class="font-fantasy text-xl sm:text-3xl font-bold text-amber-800">👑 King of Members</h2>
+                                        <p class="text-amber-700 text-sm sm:text-lg">City Boss • System Module</p>
                                     </div>
-                                    <div class="text-right">
-                                        <span class="text-3xl font-bold text-amber-600">75%</span>
-                                        <p class="text-sm text-amber-700">Overall Health</p>
+                                    <div class="boss-percent text-right flex-shrink-0">
+                                        <span class="text-2xl sm:text-3xl font-bold text-amber-600">75%</span>
+                                        <p class="text-xs sm:text-sm text-amber-700">Overall Health</p>
                                     </div>
                                 </div>
 
@@ -376,22 +475,22 @@
                     </div>
 
                     <!-- Stats Panel -->
-                    <div class="grid grid-cols-4 gap-4 mb-6">
+                    <div class="grid grid-cols-4 gap-2 sm:gap-4 mb-6">
                         <div class="stat-box">
-                            <p class="text-amber-400 text-xs font-fantasy mb-1">FLOWS</p>
-                            <p class="text-amber-200 text-2xl font-bold">3</p>
+                            <p class="text-amber-400 text-[10px] sm:text-xs font-fantasy mb-1">FLOWS</p>
+                            <p class="stat-value text-amber-200 text-xl sm:text-2xl font-bold">3</p>
                         </div>
                         <div class="stat-box">
-                            <p class="text-amber-400 text-xs font-fantasy mb-1">TASKS</p>
-                            <p class="text-amber-200 text-2xl font-bold">12</p>
+                            <p class="text-amber-400 text-[10px] sm:text-xs font-fantasy mb-1">TASKS</p>
+                            <p class="stat-value text-amber-200 text-xl sm:text-2xl font-bold">12</p>
                         </div>
                         <div class="stat-box">
-                            <p class="text-amber-400 text-xs font-fantasy mb-1">BUGS</p>
-                            <p class="text-red-400 text-2xl font-bold">2</p>
+                            <p class="text-amber-400 text-[10px] sm:text-xs font-fantasy mb-1">BUGS</p>
+                            <p class="stat-value text-red-400 text-xl sm:text-2xl font-bold">2</p>
                         </div>
                         <div class="stat-box">
-                            <p class="text-amber-400 text-xs font-fantasy mb-1">PROGRESS</p>
-                            <p class="text-green-400 text-2xl font-bold">75%</p>
+                            <p class="text-amber-400 text-[10px] sm:text-xs font-fantasy mb-1">PROGRESS</p>
+                            <p class="stat-value text-green-400 text-xl sm:text-2xl font-bold">75%</p>
                         </div>
                     </div>
 
@@ -679,12 +778,12 @@
                             <span>📋</span>
                             <span>Active Tasks</span>
                         </h3>
-                        <div class="bg-gradient-to-br from-amber-100/30 to-amber-50/20 rounded-xl border-2 border-amber-600/30 overflow-hidden">
-                            <table class="w-full task-table">
+                        <div class="bg-gradient-to-br from-amber-100/30 to-amber-50/20 rounded-xl border-2 border-amber-600/30 overflow-x-auto">
+                            <table class="w-full task-table" style="min-width: 340px;">
                                 <thead>
                                     <tr>
                                         <th>Task</th>
-                                        <th>Flow</th>
+                                        <th class="hide-mobile">Flow</th>
                                         <th>Stage</th>
                                         <th>Assignee</th>
                                         <th>Status</th>
@@ -692,29 +791,29 @@
                                 </thead>
                                 <tbody class="text-amber-900">
                                     <tr>
-                                        <td class="font-medium">Implement JWT authentication</td>
-                                        <td>Login</td>
+                                        <td class="font-medium">Implement JWT auth</td>
+                                        <td class="hide-mobile">Login</td>
                                         <td><span class="px-2 py-1 bg-purple-200 rounded text-xs">API</span></td>
                                         <td>Ken</td>
                                         <td><span class="status-badge status-active">In Progress</span></td>
                                     </tr>
                                     <tr>
                                         <td class="font-medium">Design login form UI</td>
-                                        <td>Login</td>
+                                        <td class="hide-mobile">Login</td>
                                         <td><span class="px-2 py-1 bg-orange-200 rounded text-xs">Design</span></td>
                                         <td>May</td>
                                         <td><span class="status-badge status-defeated">Complete</span></td>
                                     </tr>
                                     <tr>
-                                        <td class="font-medium">Write login AC documentation</td>
-                                        <td>Login</td>
+                                        <td class="font-medium">Write login AC docs</td>
+                                        <td class="hide-mobile">Login</td>
                                         <td><span class="px-2 py-1 bg-blue-200 rounded text-xs">AC</span></td>
                                         <td>Ton</td>
                                         <td><span class="status-badge status-defeated">Complete</span></td>
                                     </tr>
                                     <tr>
-                                        <td class="font-medium">Build login React component</td>
-                                        <td>Login</td>
+                                        <td class="font-medium">Build login React comp</td>
+                                        <td class="hide-mobile">Login</td>
                                         <td><span class="px-2 py-1 bg-teal-200 rounded text-xs">FE</span></td>
                                         <td>Ken</td>
                                         <td><span class="status-badge status-blocked">Blocked</span></td>
@@ -773,23 +872,23 @@
         </div>
 
         <!-- Bottom Info Bar -->
-        <div class="mt-4 flex items-center justify-between px-6 py-4 bg-gradient-to-r from-amber-900/60 via-amber-800/40 to-amber-900/60 rounded-lg border border-amber-700/50">
-            <div class="flex items-center gap-6">
-                <span class="text-amber-200 text-lg">Location: <span class="text-white font-bold">Member City System</span></span>
-                <span class="text-amber-600">|</span>
-                <span class="text-amber-200 text-lg">Active Tasks: <span class="text-green-400 font-bold">4</span></span>
-                <span class="text-amber-600">|</span>
-                <span class="text-amber-200 text-lg">Bugs: <span class="text-red-400 font-bold">2</span></span>
+        <div class="bottom-info-bar mt-4 flex items-center justify-between px-3 sm:px-6 py-3 sm:py-4 bg-gradient-to-r from-amber-900/60 via-amber-800/40 to-amber-900/60 rounded-lg border border-amber-700/50">
+            <div class="info-left flex items-center gap-2 sm:gap-6 flex-wrap">
+                <span class="text-amber-200 text-xs sm:text-lg">Location: <span class="text-white font-bold">Member City System</span></span>
+                <span class="text-amber-600 hidden sm:inline">|</span>
+                <span class="text-amber-200 text-xs sm:text-lg">Tasks: <span class="text-green-400 font-bold">4</span></span>
+                <span class="text-amber-600 hidden sm:inline">|</span>
+                <span class="text-amber-200 text-xs sm:text-lg">Bugs: <span class="text-red-400 font-bold">2</span></span>
             </div>
-            <div class="flex items-center gap-3">
-                <span class="text-amber-300">Select a commander to view details</span>
+            <div class="info-right flex items-center gap-3">
+                <span class="text-amber-300 text-sm">Select a commander to view details</span>
                 <img src="assets-pixels/ui/arrow_right.png" alt="Hint" class="w-5 h-5 pixel-art opacity-60">
             </div>
         </div>
     </div>
 
     <!-- Bottom Navigation -->
-    <nav style="position: fixed; bottom: 0; left: 0; right: 0; background: linear-gradient(180deg, #2c1810 0%, #1a0f0a 100%); border-top: 3px solid #8b6914; box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.5); z-index: 100;">
+    <nav style="position: fixed; bottom: 0; left: 0; right: 0; background: linear-gradient(180deg, #2c1810 0%, #1a0f0a 100%); border-top: 3px solid #8b6914; box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.5); z-index: 100; padding-bottom: env(safe-area-inset-bottom, 0px);">
         <div style="max-width: 800px; margin: 0 auto; display: flex; justify-content: space-around; padding: 10px 0;">
             <a href="hero-v2.html" style="display: flex; flex-direction: column; align-items: center; gap: 5px; padding: 8px 20px; color: #5c4018; text-decoration: none; transition: all 0.3s ease;">
                 <span style="font-size: 24px;">⚔️</span>

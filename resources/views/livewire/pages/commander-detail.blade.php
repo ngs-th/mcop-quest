@@ -38,7 +38,7 @@
                 </a>
                 <div class="flex-1">
                     <h1 class="text-xl font-cinzel" style="color: var(--rpg-gold);">⚔️ {{ $flow->name }}</h1>
-                    <p class="text-xs text-gray-500">
+                    <p class="text-[10px] sm:text-xs text-gray-500 truncate">
                         🗺️ World > 🏰 {{ $flow->system->name ?? 'Unknown System' }} > ⚔️ {{ $flow->name }}
                     </p>
                 </div>
@@ -52,18 +52,18 @@
         <main class="p-4 space-y-4">
             <!-- Commander Summary Card -->
             <div class="rounded-xl p-4 border" style="background: var(--rpg-card); border-color: var(--rpg-gold);">
-                <div class="flex items-center gap-4 mb-4">
-                    <div class="text-5xl">⚔️</div>
-                    <div class="flex-1">
-                        <h2 class="text-xl text-white font-cinzel">{{ $flow->name }}</h2>
+                <div class="flex items-center gap-2 sm:gap-4 mb-4">
+                    <div class="text-4xl sm:text-5xl">⚔️</div>
+                    <div class="flex-1 min-w-0">
+                        <h2 class="text-lg sm:text-xl text-white font-cinzel truncate">{{ $flow->name }}</h2>
                         <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs"
                               style="background: rgba(241, 196, 15, 0.2); color: var(--rpg-gold);">
                             ⚔️ {{ $this->getStatusLabel() }}
                         </span>
                     </div>
-                    <div class="text-center">
-                        <div class="text-3xl font-bold" style="color: var(--rpg-gold);">{{ $this->getOverallProgress() }}%</div>
-                        <div class="text-xs text-gray-400">Overall</div>
+                    <div class="text-center flex-shrink-0">
+                        <div class="text-2xl sm:text-3xl font-bold" style="color: var(--rpg-gold);">{{ $this->getOverallProgress() }}%</div>
+                        <div class="text-[10px] sm:text-xs text-gray-400">Overall</div>
                     </div>
                 </div>
 
@@ -184,7 +184,7 @@
                 <div class="flex gap-2 overflow-x-auto pb-2">
                     @foreach($this->getTaskCountsByType() as $type => $counts)
                         @if($counts['total'] > 0)
-                            <div class="px-3 py-1.5 rounded-lg whitespace-nowrap text-sm border"
+                            <div class="px-2 sm:px-3 py-2 rounded-lg whitespace-nowrap text-xs sm:text-sm border"
                                  style="background: var(--rpg-card); border-color: var(--rpg-border); color: var(--hp-{{ strtolower($type) }});">
                                 {{ $this->getTypeIcon($type) }} {{ $type }} ({{ $counts['done'] }}/{{ $counts['total'] }})
                             </div>
@@ -261,7 +261,7 @@
             @if(count($team) > 0)
                 <div class="rounded-xl p-4 mt-6 border" style="background: var(--rpg-card); border-color: var(--rpg-border);">
                     <h3 class="text-sm font-cinzel mb-3" style="color: var(--rpg-gold);">Team Assigned</h3>
-                    <div class="flex flex-wrap gap-3">
+                    <div class="flex flex-wrap gap-2 sm:gap-3">
                         @foreach($team as $member)
                             <div class="flex items-center gap-2 rounded-lg px-3 py-2"
                                  style="background: rgba(15, 52, 96, 0.5);">
@@ -295,5 +295,27 @@
                 </div>
             @endif
         </main>
+
+        <!-- Bottom Tab Bar -->
+        <nav class="fixed bottom-0 left-0 right-0 bg-[#16213e] border-t border-[#0f3460] z-50" style="padding-bottom: env(safe-area-inset-bottom, 0px);">
+            <div class="flex justify-around">
+                <a href="{{ route('hero') }}" class="flex-1 py-3 text-center text-gray-400 hover:text-[#f1c40f] transition-colors">
+                    <div class="text-lg sm:text-xl">&#x2694;&#xFE0F;</div>
+                    <div class="text-[10px] sm:text-xs mt-1" style="font-family: 'Cinzel', serif;">Hero</div>
+                </a>
+                <a href="{{ route('team') }}" class="flex-1 py-3 text-center text-gray-400 hover:text-[#f1c40f] transition-colors">
+                    <div class="text-lg sm:text-xl">&#x1F465;</div>
+                    <div class="text-[10px] sm:text-xs mt-1" style="font-family: 'Cinzel', serif;">Team</div>
+                </a>
+                <a href="{{ route('dashboard') }}" class="flex-1 py-3 text-center text-gray-400 hover:text-[#f1c40f] transition-colors">
+                    <div class="text-lg sm:text-xl">&#x1F5FA;&#xFE0F;</div>
+                    <div class="text-[10px] sm:text-xs mt-1" style="font-family: 'Cinzel', serif;">World</div>
+                </a>
+                <a href="{{ route('shop') }}" class="flex-1 py-3 text-center text-gray-400 hover:text-[#f1c40f] transition-colors">
+                    <div class="text-lg sm:text-xl">&#x1F6D2;</div>
+                    <div class="text-[10px] sm:text-xs mt-1" style="font-family: 'Cinzel', serif;">Shop</div>
+                </a>
+            </div>
+        </nav>
     </div>
 </div>
