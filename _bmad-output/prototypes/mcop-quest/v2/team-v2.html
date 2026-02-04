@@ -805,39 +805,267 @@
         }
 
         /* Responsive */
-        @media (max-width: 600px) {
+        @media (max-width: 640px) {
+            body {
+                padding-bottom: 90px;
+            }
+
+            /* Header */
+            .header {
+                padding: 10px 12px;
+            }
+
+            .header-title {
+                font-size: 17px;
+            }
+
+            .header-subtitle {
+                font-size: 11px;
+            }
+
+            .team-dropdown-btn {
+                padding: 8px 12px;
+                font-size: 12px;
+                gap: 6px;
+            }
+
+            /* Main Content */
+            .main-content {
+                padding: 12px;
+            }
+
+            /* Section Cards */
+            .section-card {
+                padding: 15px;
+                margin-bottom: 14px;
+            }
+
+            .section-title {
+                font-size: 15px;
+                gap: 8px;
+                margin-bottom: 12px;
+            }
+
+            /* Members Grid */
             .members-grid {
                 grid-template-columns: repeat(3, 1fr);
-                gap: 10px;
+                gap: 8px;
             }
 
             .member-avatar {
-                width: 60px;
-                height: 60px;
+                width: 56px;
+                height: 56px;
+                font-size: 26px;
+            }
+
+            .member-name {
+                font-size: 11px;
+            }
+
+            .member-level {
+                font-size: 10px;
+            }
+
+            .member-tasks {
+                font-size: 9px;
+            }
+
+            .task-pill {
+                padding: 1px 5px;
+                font-size: 9px;
+            }
+
+            .task-badge {
+                width: 18px;
+                height: 18px;
+                font-size: 10px;
+                top: -3px;
+                right: -3px;
+            }
+
+            /* Stats Grid - keep 3 columns */
+            .stats-grid {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 8px;
+                margin-bottom: 14px;
+            }
+
+            .stat-box {
+                padding: 10px 5px;
+            }
+
+            .stat-value {
+                font-size: 20px;
+            }
+
+            .stat-label {
+                font-size: 10px;
+            }
+
+            /* Progress */
+            .progress-header {
+                font-size: 12px;
+            }
+
+            /* Battle Card */
+            .battle-card {
+                padding: 15px;
+                margin-bottom: 14px;
+            }
+
+            .battle-header {
+                gap: 8px;
+                margin-bottom: 12px;
+            }
+
+            .battle-title {
+                font-size: 14px;
+            }
+
+            .battle-count {
+                font-size: 11px;
+                padding: 3px 10px;
+            }
+
+            .battle-member {
+                padding: 12px;
+                margin-bottom: 10px;
+            }
+
+            .battle-member-header {
+                gap: 8px;
+                margin-bottom: 10px;
+            }
+
+            .battle-avatar {
+                width: 34px;
+                height: 34px;
+                font-size: 16px;
+            }
+
+            .battle-name {
+                font-size: 13px;
+            }
+
+            .battle-meta {
+                font-size: 10px;
+            }
+
+            .battle-status {
+                font-size: 9px;
+                padding: 3px 8px;
+            }
+
+            .battle-arena {
+                padding: 10px;
+                min-height: 70px;
+            }
+
+            .hero-mini {
                 font-size: 28px;
             }
 
-            .stats-grid {
-                grid-template-columns: 1fr;
-                gap: 10px;
-            }
-
-            .skills-grid {
-                grid-template-columns: repeat(2, 1fr);
+            .monster-icon {
+                font-size: 24px;
             }
 
             .monster-side {
                 flex-wrap: wrap;
                 justify-content: flex-end;
-                max-width: 120px;
+                max-width: 110px;
+                gap: 4px;
+            }
+
+            .monster-type {
+                font-size: 8px;
+            }
+
+            .task-mini-item {
+                font-size: 11px;
+                gap: 6px;
+            }
+
+            /* Resting */
+            .resting-section {
+                padding: 10px;
+            }
+
+            .resting-member {
+                font-size: 10px;
+                padding: 3px 8px;
+            }
+
+            /* Skills Grid */
+            .skills-grid {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 8px;
+            }
+
+            .skill-card {
+                padding: 10px 6px;
+            }
+
+            .skill-icon {
+                font-size: 22px;
+                margin-bottom: 4px;
+            }
+
+            .skill-name {
+                font-size: 9px;
+            }
+
+            .skill-value {
+                font-size: 12px;
+            }
+
+            /* Modal */
+            .modal-content {
+                max-width: 340px;
+            }
+
+            .modal-header {
+                padding: 15px;
+            }
+
+            .modal-body {
+                padding: 15px;
+            }
+
+            .modal-avatar {
+                width: 80px;
+                height: 80px;
+                font-size: 40px;
+                margin-bottom: 15px;
+            }
+
+            .modal-stats {
+                gap: 6px;
+                margin-bottom: 15px;
+            }
+
+            .modal-stat {
+                padding: 8px;
+            }
+
+            .modal-stat-value {
+                font-size: 16px;
+            }
+
+            /* Bottom Nav */
+            .bottom-nav {
+                padding-bottom: env(safe-area-inset-bottom, 0px);
             }
 
             .nav-item {
-                padding: 8px 15px;
+                padding: 8px 12px;
             }
 
             .nav-icon {
                 font-size: 20px;
+            }
+
+            .nav-label {
+                font-size: 10px;
             }
         }
     </style>
