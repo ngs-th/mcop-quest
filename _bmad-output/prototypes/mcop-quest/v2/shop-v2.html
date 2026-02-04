@@ -540,6 +540,182 @@
             font-size: 11px;
             font-weight: 600;
         }
+        /* Responsive Mobile */
+        @media (max-width: 640px) {
+            body {
+                padding-bottom: 90px;
+            }
+
+            /* Header */
+            .header {
+                padding: 10px 12px;
+            }
+
+            .header-title {
+                font-size: 17px;
+            }
+
+            .header-subtitle {
+                font-size: 11px;
+            }
+
+            .currency-display {
+                gap: 6px;
+            }
+
+            .currency-item {
+                padding: 4px 8px;
+                gap: 4px;
+            }
+
+            .currency-icon {
+                font-size: 14px;
+            }
+
+            .currency-value {
+                font-size: 13px;
+            }
+
+            /* Main Content */
+            .main-content {
+                padding: 12px;
+            }
+
+            /* Info Banner */
+            .info-banner {
+                padding: 12px;
+                margin-bottom: 12px;
+                gap: 10px;
+            }
+
+            .info-icon {
+                font-size: 20px;
+            }
+
+            .info-content h3 {
+                font-size: 13px;
+            }
+
+            .info-content p {
+                font-size: 12px;
+            }
+
+            /* Category Tabs */
+            .category-tabs {
+                gap: 6px;
+                margin-bottom: 14px;
+            }
+
+            .category-tab {
+                padding: 8px 14px;
+                font-size: 12px;
+            }
+
+            /* Shop Grid */
+            .shop-grid {
+                gap: 10px;
+            }
+
+            .item-card {
+                padding: 12px;
+                border-radius: 12px;
+            }
+
+            .rarity-badge {
+                padding: 3px 8px;
+                font-size: 9px;
+            }
+
+            .item-icon {
+                font-size: 32px;
+                height: 40px;
+                margin-bottom: 8px;
+            }
+
+            .item-name {
+                font-size: 12px;
+                margin-bottom: 3px;
+            }
+
+            .item-description {
+                font-size: 10px;
+                min-height: 24px;
+                margin-bottom: 6px;
+            }
+
+            .item-level {
+                font-size: 9px;
+                margin-bottom: 6px;
+            }
+
+            .item-price {
+                font-size: 14px;
+                margin-bottom: 8px;
+            }
+
+            .btn-buy {
+                padding: 10px 8px;
+                font-size: 11px;
+            }
+
+            .btn-owned, .btn-locked {
+                padding: 8px;
+                font-size: 11px;
+            }
+
+            /* Section Title */
+            .section-title {
+                font-size: 15px;
+                margin: 18px 0 12px;
+            }
+
+            /* History Card */
+            .history-card {
+                padding: 15px;
+                margin-top: 18px;
+            }
+
+            .history-title {
+                font-size: 13px;
+                margin-bottom: 12px;
+            }
+
+            .history-item {
+                padding: 8px;
+            }
+
+            .history-item-name {
+                font-size: 12px;
+                gap: 6px;
+            }
+
+            .history-item-price {
+                font-size: 11px;
+            }
+
+            /* Toast */
+            .toast {
+                font-size: 12px;
+                padding: 10px 18px;
+            }
+
+            /* Bottom Nav */
+            .bottom-nav {
+                padding-bottom: env(safe-area-inset-bottom, 0px);
+            }
+
+            .nav-item {
+                padding: 8px 12px;
+            }
+
+            .nav-icon {
+                font-size: 20px;
+            }
+
+            .nav-label {
+                font-size: 10px;
+            }
+        }
     </style>
 </head>
 <body x-data="shopData()">
