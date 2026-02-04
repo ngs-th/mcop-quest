@@ -197,9 +197,9 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 32px;
             position: relative;
             transition: all 0.3s ease;
+            overflow: hidden;
         }
 
         .member-card:hover .member-avatar {
@@ -383,8 +383,8 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 20px;
             border: 2px solid;
+            overflow: hidden;
         }
 
         .battle-info {
@@ -442,7 +442,9 @@
         }
 
         .hero-mini {
-            font-size: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             animation: float 2s ease-in-out infinite;
         }
 
@@ -670,7 +672,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 50px;
+            overflow: hidden;
         }
 
         .modal-stats {
@@ -1120,7 +1122,7 @@
                     <div class="member-card" @click="openModal(member.id)">
                         <div class="member-avatar"
                              :style="'background: ' + member.color + '20; border-color: ' + member.color">
-                            <span x-text="member.icon"></span>
+                            <span x-html="getCharacterSVG(member.role, 44, 52)"></span>
                             <span class="task-badge" x-text="member.tasks.doing + member.tasks.pending" x-show="member.tasks.doing + member.tasks.pending > 0"></span>
                         </div>
                         <div class="member-name" x-text="member.name"></div>
@@ -1186,7 +1188,7 @@
                         <div class="battle-member-header">
                             <div class="battle-avatar"
                                  :style="'background: ' + member.color + '20; border-color: ' + member.color">
-                                <span x-text="member.icon"></span>
+                                <span x-html="getCharacterSVG(member.role, 24, 28)"></span>
                             </div>
                             <div class="battle-info">
                                 <div class="battle-name" x-text="member.name"></div>
@@ -1198,7 +1200,7 @@
                         <!-- Battle Arena -->
                         <div class="battle-arena">
                             <div class="hero-side">
-                                <div class="hero-mini" x-text="member.icon"></div>
+                                <div class="hero-mini" x-html="getCharacterSVG(member.role, 36, 42)"></div>
                             </div>
                             <div style="font-size: 18px; color: #8b6914;">VS</div>
                             <div class="monster-side">
@@ -1232,7 +1234,7 @@
                     <div class="resting-list">
                         <template x-for="member in currentTeam.members.filter(m => m.tasks.doing === 0)" :key="member.id">
                             <div class="resting-member">
-                                <span x-text="member.icon"></span>
+                                <span x-html="getCharacterSVG(member.role, 20, 24)"></span>
                                 <span style="color: #8b6914;" x-text="member.name"></span>
                                 <span class="check">✓</span>
                             </div>
@@ -1295,7 +1297,7 @@
                 <!-- Avatar -->
                 <div class="modal-avatar"
                      :style="'background: ' + selectedMember?.color + '20; border-color: ' + selectedMember?.color">
-                    <span x-text="selectedMember?.icon"></span>
+                    <span x-html="getCharacterSVG(selectedMember?.role, 60, 72)"></span>
                 </div>
 
                 <!-- Info -->
@@ -1738,6 +1740,139 @@
                         'UAT': '🍄'
                     };
                     return emojis[type] || '👾';
+                },
+
+                getCharacterSVG(role, w, h) {
+                    const svgs = {
+                        Warrior: `
+                            <ellipse cx="50" cy="112" rx="25" ry="4" fill="#000" opacity="0.3"/>
+                            <path d="M25 45 Q15 80 20 105 L80 105 Q85 80 75 45 Z" fill="#8B4513"/>
+                            <path d="M30 40 L28 100 L72 100 L70 40 Z" fill="#C0C0C0"/>
+                            <path d="M30 40 L28 90 L45 90 L43 40 Z" fill="#A0A0A0"/>
+                            <rect x="38" y="50" width="24" height="30" rx="3" fill="#D4A853"/>
+                            <rect x="45" y="55" width="10" height="20" rx="2" fill="#B8860B"/>
+                            <rect x="30" y="85" width="40" height="8" fill="#8B4513"/>
+                            <rect x="46" y="83" width="8" height="12" fill="#D4A853"/>
+                            <circle cx="50" cy="28" r="15" fill="#F5DEB3"/>
+                            <path d="M32 20 L35 5 L50 0 L65 5 L68 20 Z" fill="#C0C0C0"/>
+                            <rect x="35" y="18" width="30" height="10" fill="#A0A0A0"/>
+                            <rect x="48" y="-5" width="4" height="10" fill="#E74C3C"/>
+                            <circle cx="45" cy="28" r="2" fill="#2C1810"/>
+                            <circle cx="55" cy="28" r="2" fill="#2C1810"/>
+                            <rect x="75" y="30" width="4" height="60" fill="#8B4513"/>
+                            <rect x="72" y="25" width="10" height="6" fill="#D4A853"/>
+                            <rect x="75" y="15" width="4" height="15" fill="#C0C0C0"/>
+                            <circle cx="77" cy="12" r="5" fill="#E74C3C"/>
+                            <ellipse cx="22" cy="65" rx="10" ry="20" fill="#8B4513"/>
+                            <ellipse cx="22" cy="65" rx="7" ry="15" fill="#D4A853"/>
+                            <ellipse cx="22" cy="65" rx="4" ry="8" fill="#B8860B"/>
+                        `,
+                        Mage: `
+                            <ellipse cx="50" cy="112" rx="25" ry="4" fill="#000" opacity="0.3"/>
+                            <path d="M25 45 Q15 85 22 108 L78 108 Q85 85 75 45 Z" fill="#6C3483"/>
+                            <path d="M25 45 Q18 80 22 105 L40 105 Q35 80 35 45 Z" fill="#5B2C6F"/>
+                            <rect x="32" y="82" width="36" height="7" fill="#D4A853"/>
+                            <rect x="46" y="80" width="8" height="11" fill="#F1C40F"/>
+                            <circle cx="50" cy="30" r="14" fill="#F5DEB3"/>
+                            <path d="M28 25 L50 -15 L72 25 Z" fill="#6C3483"/>
+                            <path d="M28 25 L50 -15 L42 25 Z" fill="#5B2C6F"/>
+                            <rect x="24" y="22" width="52" height="8" rx="4" fill="#4A235A"/>
+                            <circle cx="50" cy="-12" r="4" fill="#3498DB"/>
+                            <circle cx="45" cy="30" r="2" fill="#2C1810"/>
+                            <circle cx="55" cy="30" r="2" fill="#2C1810"/>
+                            <rect x="78" y="10" width="4" height="95" fill="#8B6914"/>
+                            <circle cx="80" cy="8" r="8" fill="#3498DB" opacity="0.8"/>
+                            <circle cx="80" cy="8" r="5" fill="#5DADE2"/>
+                            <circle cx="80" cy="8" r="3" fill="#AED6F1"/>
+                            <rect x="12" y="60" width="16" height="20" rx="2" fill="#8B4513"/>
+                            <rect x="14" y="62" width="12" height="16" rx="1" fill="#F4D03F"/>
+                        `,
+                        Smith: `
+                            <ellipse cx="50" cy="112" rx="25" ry="4" fill="#000" opacity="0.3"/>
+                            <path d="M30 40 L26 105 L74 105 L70 40 Z" fill="#8B6914"/>
+                            <path d="M33 50 L30 105 L70 105 L67 50 Z" fill="#5D4037"/>
+                            <path d="M33 50 L30 95 L45 95 L42 50 Z" fill="#4E342E"/>
+                            <rect x="30" y="80" width="40" height="7" fill="#2C1810"/>
+                            <rect x="46" y="78" width="8" height="11" fill="#D4A853"/>
+                            <circle cx="50" cy="28" r="15" fill="#F5DEB3"/>
+                            <path d="M34 22 Q50 12 66 22 L66 28 Q50 20 34 28 Z" fill="#C0392B"/>
+                            <path d="M66 22 L75 28 L72 32 L66 28 Z" fill="#E74C3C"/>
+                            <circle cx="45" cy="28" r="2" fill="#2C1810"/>
+                            <circle cx="55" cy="28" r="2" fill="#2C1810"/>
+                            <rect x="74" y="35" width="4" height="55" fill="#8B6914"/>
+                            <rect x="68" y="25" width="16" height="14" rx="2" fill="#95A5A6"/>
+                            <rect x="68" y="25" width="16" height="7" rx="2" fill="#BDC3C7"/>
+                            <line x1="18" y1="50" x2="18" y2="90" stroke="#95A5A6" stroke-width="3"/>
+                            <line x1="26" y1="50" x2="26" y2="90" stroke="#95A5A6" stroke-width="3"/>
+                            <path d="M15 50 Q22 45 29 50" fill="none" stroke="#95A5A6" stroke-width="3"/>
+                        `,
+                        Scout: `
+                            <ellipse cx="50" cy="112" rx="25" ry="4" fill="#000" opacity="0.3"/>
+                            <path d="M22 35 Q10 75 18 108 L82 108 Q90 75 78 35 Z" fill="#1E8449"/>
+                            <path d="M22 35 Q14 70 18 105 L38 105 Q32 70 30 35 Z" fill="#196F3D"/>
+                            <path d="M32 40 L30 100 L70 100 L68 40 Z" fill="#6E4B23"/>
+                            <path d="M32 40 L30 85 L48 85 L45 40 Z" fill="#5D4037"/>
+                            <rect x="31" y="80" width="38" height="6" fill="#2C1810"/>
+                            <circle cx="50" cy="28" r="14" fill="#F5DEB3"/>
+                            <path d="M30 30 Q32 8 50 2 Q68 8 70 30 L66 30 Q64 14 50 10 Q36 14 34 30 Z" fill="#1E8449"/>
+                            <path d="M30 30 Q32 8 50 2 Q40 10 34 30 Z" fill="#196F3D"/>
+                            <circle cx="45" cy="28" r="2" fill="#2C1810"/>
+                            <circle cx="55" cy="28" r="2" fill="#2C1810"/>
+                            <path d="M80 15 Q92 55 80 95" fill="none" stroke="#8B6914" stroke-width="3"/>
+                            <line x1="80" y1="15" x2="80" y2="95" stroke="#D4A853" stroke-width="1.5"/>
+                            <rect x="14" y="35" width="10" height="30" rx="3" fill="#8B4513"/>
+                            <line x1="17" y1="30" x2="17" y2="35" stroke="#C0C0C0" stroke-width="2"/>
+                            <line x1="20" y1="28" x2="20" y2="35" stroke="#C0C0C0" stroke-width="2"/>
+                            <line x1="22" y1="30" x2="22" y2="35" stroke="#C0C0C0" stroke-width="2"/>
+                        `,
+                        Healer: `
+                            <ellipse cx="50" cy="112" rx="25" ry="4" fill="#000" opacity="0.3"/>
+                            <path d="M26 42 Q18 80 22 108 L78 108 Q82 80 74 42 Z" fill="#ECF0F1"/>
+                            <path d="M26 42 Q20 75 22 105 L42 105 Q38 75 36 42 Z" fill="#D5DBDB"/>
+                            <rect x="46" y="55" width="8" height="22" fill="#27AE60"/>
+                            <rect x="40" y="62" width="20" height="8" fill="#27AE60"/>
+                            <rect x="30" y="82" width="40" height="6" fill="#27AE60"/>
+                            <circle cx="50" cy="28" r="14" fill="#F5DEB3"/>
+                            <path d="M34 22 Q42 10 50 10 Q58 10 66 22 L66 28 L34 28 Z" fill="#ECF0F1"/>
+                            <rect x="46" y="12" width="8" height="12" fill="#E74C3C"/>
+                            <rect x="42" y="16" width="16" height="4" fill="#E74C3C"/>
+                            <circle cx="45" cy="30" r="2" fill="#2C1810"/>
+                            <circle cx="55" cy="30" r="2" fill="#2C1810"/>
+                            <rect x="76" y="20" width="4" height="80" fill="#8B6914"/>
+                            <circle cx="78" cy="16" r="8" fill="#27AE60" opacity="0.7"/>
+                            <circle cx="78" cy="16" r="5" fill="#2ECC71"/>
+                            <circle cx="78" cy="16" r="3" fill="#ABEBC6"/>
+                            <rect x="14" y="62" width="12" height="16" rx="3" fill="#3498DB" opacity="0.6"/>
+                            <rect x="18" y="58" width="4" height="6" fill="#BDC3C7"/>
+                        `,
+                        Leader: `
+                            <ellipse cx="50" cy="112" rx="25" ry="4" fill="#000" opacity="0.3"/>
+                            <path d="M20 40 Q8 80 15 108 L85 108 Q92 80 80 40 Z" fill="#4A235A"/>
+                            <path d="M20 40 Q12 75 15 105 L35 105 Q28 75 28 40 Z" fill="#6C3483"/>
+                            <path d="M28 42 L26 105 L74 105 L72 42 Z" fill="#7D3C98"/>
+                            <path d="M28 42 L26 90 L48 90 L45 42 Z" fill="#6C3483"/>
+                            <rect x="26" y="42" width="48" height="4" fill="#D4A853"/>
+                            <rect x="26" y="95" width="48" height="4" fill="#D4A853"/>
+                            <rect x="30" y="78" width="40" height="8" fill="#D4A853"/>
+                            <rect x="46" y="76" width="8" height="12" fill="#F1C40F"/>
+                            <circle cx="50" cy="28" r="15" fill="#F5DEB3"/>
+                            <path d="M33 18 L35 0 L40 12 L45 0 L50 12 L55 0 L60 12 L65 0 L67 18 Z" fill="#F1C40F"/>
+                            <rect x="33" y="16" width="34" height="8" fill="#D4A853"/>
+                            <circle cx="42" cy="20" r="2" fill="#E74C3C"/>
+                            <circle cx="50" cy="20" r="2" fill="#3498DB"/>
+                            <circle cx="58" cy="20" r="2" fill="#2ECC71"/>
+                            <circle cx="45" cy="28" r="2" fill="#2C1810"/>
+                            <circle cx="55" cy="28" r="2" fill="#2C1810"/>
+                            <rect x="76" y="25" width="4" height="70" fill="#D4A853"/>
+                            <circle cx="78" cy="20" r="8" fill="#F1C40F"/>
+                            <circle cx="78" cy="20" r="5" fill="#D4A853"/>
+                            <path d="M73 15 L78 10 L83 15 L78 8 Z" fill="#F1C40F"/>
+                            <rect x="12" y="58" width="14" height="22" rx="4" fill="#F5DEB3"/>
+                            <rect x="14" y="60" width="10" height="18" rx="2" fill="#FDEBD0"/>
+                        `
+                    };
+                    const inner = svgs[role] || svgs['Warrior'];
+                    return `<svg width="${w}" height="${h}" viewBox="0 0 100 120">${inner}</svg>`;
                 },
 
                 getClassCount(role) {
